@@ -79,18 +79,18 @@
 
 
 
-<meta name="description" content="更新记录  2018/03/02 新增Gitment评论系统记录  Hexo文件结构12345678910├── .deploy       #部署的文件  ├── node_modules  #Hexo插件  ├── public        #生成的静态网页文件  ├── scaffolds     #模板，定义新文章初始样式  ├── source        #博客正文和其他源文件,">
+<meta name="description" content="更新记录  2018/03/02 新增Gitment评论系统记录2019/03/10 valine替换Gitment评论系统  Hexo文件结构12345678910├── .deploy       #部署的文件  ├── node_modules  #Hexo插件  ├── public        #生成的静态网页文件  ├── scaffolds     #模板，定义新文章初始样式  ├">
 <meta name="keywords" content="Hexo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hexo配置使用">
 <meta property="og:url" content="http://yummylau.com/2016/10/21/Hexo_2016-10-21_Hexo配置使用/index.html">
 <meta property="og:site_name" content="YummyLau">
-<meta property="og:description" content="更新记录  2018/03/02 新增Gitment评论系统记录  Hexo文件结构12345678910├── .deploy       #部署的文件  ├── node_modules  #Hexo插件  ├── public        #生成的静态网页文件  ├── scaffolds     #模板，定义新文章初始样式  ├── source        #博客正文和其他源文件,">
+<meta property="og:description" content="更新记录  2018/03/02 新增Gitment评论系统记录2019/03/10 valine替换Gitment评论系统  Hexo文件结构12345678910├── .deploy       #部署的文件  ├── node_modules  #Hexo插件  ├── public        #生成的静态网页文件  ├── scaffolds     #模板，定义新文章初始样式  ├">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-10T05:35:03.473Z">
+<meta property="og:updated_time" content="2019-03-10T07:44:35.291Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo配置使用">
-<meta name="twitter:description" content="更新记录  2018/03/02 新增Gitment评论系统记录  Hexo文件结构12345678910├── .deploy       #部署的文件  ├── node_modules  #Hexo插件  ├── public        #生成的静态网页文件  ├── scaffolds     #模板，定义新文章初始样式  ├── source        #博客正文和其他源文件,">
+<meta name="twitter:description" content="更新记录  2018/03/02 新增Gitment评论系统记录2019/03/10 valine替换Gitment评论系统  Hexo文件结构12345678910├── .deploy       #部署的文件  ├── node_modules  #Hexo插件  ├── public        #生成的静态网页文件  ├── scaffolds     #模板，定义新文章初始样式  ├">
 
 
 
@@ -364,24 +364,34 @@
       
         <p><strong>更新记录</strong></p>
 <blockquote>
-<p>2018/03/02 新增Gitment评论系统记录</p>
+<p>2018/03/02 新增Gitment评论系统记录<br>2019/03/10 valine替换Gitment评论系统</p>
 </blockquote>
 <h3 id="Hexo文件结构"><a href="#Hexo文件结构" class="headerlink" title="Hexo文件结构"></a>Hexo文件结构</h3><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">├── .deploy       <span class="meta">#部署的文件  </span></span><br><span class="line">├── node_modules  <span class="meta">#Hexo插件  </span></span><br><span class="line">├── public        <span class="meta">#生成的静态网页文件  </span></span><br><span class="line">├── scaffolds     <span class="meta">#模板，定义新文章初始样式  </span></span><br><span class="line">├── source        <span class="meta">#博客正文和其他源文件, 404 favicon CNAME 等都应该放在这里  </span></span><br><span class="line"><span class="variable">&amp;emsp</span>;<span class="variable">&amp;emsp</span>;<span class="variable">&amp;emsp</span>;├── _drafts    <span class="meta">#草稿  </span></span><br><span class="line"><span class="variable">&amp;emsp</span>;<span class="variable">&amp;emsp</span>;<span class="variable">&amp;emsp</span>;└── _posts     <span class="meta">#文章  </span></span><br><span class="line">├── themes        <span class="meta">#主题  </span></span><br><span class="line">├── _config.yml   <span class="meta">#全局配置文件  </span></span><br><span class="line">└── package.json</span><br></pre></td></tr></table></figure>
 <h3 id="Hexo及主题更新"><a href="#Hexo及主题更新" class="headerlink" title="Hexo及主题更新"></a>Hexo及主题更新</h3><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">npm</span> update -g hexo　　            <span class="comment">#更新hexo  </span></span><br><span class="line">cd themes/主题<span class="function">  -&gt;</span>  git pull      <span class="comment">#更新主题</span></span><br></pre></td></tr></table></figure>
 <p><em>ps:</em>如无法正常更新主题，具体可参考<a href="http://yummylau.com/2018/03/02/Hexo_2018-03-02_Hexo%E4%B8%BB%E9%A2%98Next%E5%8D%87%E7%BA%A7/">Hexo主题Next升级</a></p>
-<h3 id="Hexo指令"><a href="#Hexo指令" class="headerlink" title="Hexo指令"></a>Hexo指令</h3><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">hexo n <span class="string">"title"</span>               #创建新文章   </span><br><span class="line">hexo new [layout] <span class="string">"title"</span>    #创建新文章 </span><br><span class="line">hexo new page <span class="string">"about"</span>        ＃创建新页面</span><br><span class="line">hexo generate  &lt;=&gt;  hexo g   #生成静态页面    </span><br><span class="line">hexo generate --watch         #监视文件变动   </span><br><span class="line">hexo deploy  &lt;=&gt;  hexo d     #部署  </span><br><span class="line">hexo server                  #运行    </span><br><span class="line">hexo server -p <span class="number">4000</span>          #更改端口    </span><br><span class="line">hexo clean                   #清除缓存     </span><br><span class="line">``` </span><br><span class="line">### hexo文章模板</span><br><span class="line">&lt;pre&gt;&lt;<span class="keyword">code</span>&gt;title: title                                 #文章名称</span><br><span class="line">layout: post                                 #布局，可省略</span><br><span class="line">date: <span class="number">2016</span><span class="number">-10</span><span class="number">-21</span> <span class="number">14</span>:<span class="number">07</span>:<span class="number">43</span>                    #创建时间  </span><br><span class="line">comments: true                               #是否可评论</span><br><span class="line">categories: Blog                             #文章分类</span><br><span class="line">tags: [Hexo] 多个tags用格式[tag1,tag2,tag3...] #文章tag</span><br><span class="line">keywords: Hexo, Blog                          #关键字</span><br><span class="line">&lt;/<span class="keyword">code</span>&gt;&lt;/pre&gt;</span><br><span class="line"></span><br><span class="line">### Hexo功能性使用</span><br><span class="line"></span><br><span class="line">* 添加Gitment评论系统</span><br><span class="line"></span><br><span class="line">参考 [添加Gitment评论系统踩过的坑](<span class="string">"http://xichen.pub/2018/01/31/2018-01-31-gitment/"</span>)  </span><br><span class="line">如果遇到`Error：validation failed`,在</span><br></pre></td></tr></table></figure>
-<p>themes\next\layout_third-party\comments<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目录下修改<span class="selector-tag">gitments</span><span class="selector-class">.swig</span></span><br></pre></td></tr></table></figure></p>
-<pre><code>...
-  function renderGitment(){
-    var gitment = new {{CommentsClass}}({
-</code></pre><ul>
-<li>id: window.location.pathname,</li>
-</ul>
+<h3 id="Hexo指令"><a href="#Hexo指令" class="headerlink" title="Hexo指令"></a>Hexo指令</h3><pre><code>hexo n &quot;title&quot;               #创建新文章   
+hexo new [layout] &quot;title&quot;    #创建新文章 
+hexo new page &quot;about&quot;        ＃创建新页面
+hexo generate  &lt;=&gt;  hexo g   #生成静态页面    
+hexo generate --watch         #监视文件变动   
+hexo deploy  &lt;=&gt;  hexo d     #部署  
+hexo server                  #运行    
+hexo server -p 4000          #更改端口    
+hexo clean                   #清除缓存     
+</code></pre><h3 id="hexo文章模板"><a href="#hexo文章模板" class="headerlink" title="hexo文章模板"></a>hexo文章模板</h3><blockquote>
+<p>title: title                                 #文章名称<br>layout: post                                 #布局，可省略<br>date: 2016-10-21 14:07:43                    #创建时间<br>comments: true                               #是否可评论<br>categories: Blog                             #文章分类  </p>
 <ul>
-<li>id: ‘‘,<br>owner: ‘‘,<br>repo: ‘‘,
-…</li>
+<li>cate1  </li>
+<li>cate2<br>tags: [Hexo] 多个tags用格式[tag1,tag2,tag3]    #文章tag.<br>keywords: Hexo, Blog                          #关键字. </li>
 </ul>
-<p><code>之后重新</code>hexo g -d<code>`</code>就ok了，请保证没有浏览器缓存。</p>
+</blockquote>
+<h3 id="Hexo功能性使用"><a href="#Hexo功能性使用" class="headerlink" title="Hexo功能性使用"></a>Hexo功能性使用</h3><ul>
+<li><p><del>添加Gitment评论系统<del> </del></del></p>
+</li>
+<li><p>添加 valine 替换 Gitment</p>
+</li>
+</ul>
+<p>更新 next 主题，参考<a href="https://blog.csdn.net/blue_zy/article/details/79071414" target="_blank" rel="noopener"></a> 注册 leancloud 账号然后完成主题 <code>_config.yml</code> 中 valine 配置项内容即可。</p>
 <h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><blockquote>
 <p><a href="http://springxiege.github.io/2016/07/14/hexo-command/" target="_blank" rel="noopener">hexo常用命令</a><br><a href="http://ibruce.info/2013/11/22/hexo-your-blog/?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="noopener">hexo你的博客</a> </p>
 </blockquote>
@@ -592,7 +602,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo文件结构"><span class="nav-number">1.</span> <span class="nav-text">Hexo文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo及主题更新"><span class="nav-number">2.</span> <span class="nav-text">Hexo及主题更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo指令"><span class="nav-number">3.</span> <span class="nav-text">Hexo指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">4.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo文件结构"><span class="nav-number">1.</span> <span class="nav-text">Hexo文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo及主题更新"><span class="nav-number">2.</span> <span class="nav-text">Hexo及主题更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo指令"><span class="nav-number">3.</span> <span class="nav-text">Hexo指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hexo文章模板"><span class="nav-number">4.</span> <span class="nav-text">hexo文章模板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hexo功能性使用"><span class="nav-number">5.</span> <span class="nav-text">Hexo功能性使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">6.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
             
 
           </div>
