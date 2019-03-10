@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android基础,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="View Animation 即Tween（补间）动画，该动画执行之后并不会真实改变View的布局属性，支持透明度（alpha）、伸缩（scale）、位移（translate）、平面旋转（rotate）4中动画处理。   推荐在res/anim文件下定义xml文件资源，支持定义一个或多个动画 1234567891011121314151617181920212223242526272829303">
+<meta name="keywords" content="Android基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android动画相关">
+<meta property="og:url" content="http://yummylau.com/2016/09/02/Adnroid_2016-09-02_Android动画相关/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="View Animation 即Tween（补间）动画，该动画执行之后并不会真实改变View的布局属性，支持透明度（alpha）、伸缩（scale）、位移（translate）、平面旋转（rotate）4中动画处理。   推荐在res/anim文件下定义xml文件资源，支持定义一个或多个动画 1234567891011121314151617181920212223242526272829303">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-10T05:35:03.468Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android动画相关">
+<meta name="twitter:description" content="View Animation 即Tween（补间）动画，该动画执行之后并不会真实改变View的布局属性，支持透明度（alpha）、伸缩（scale）、位移（translate）、平面旋转（rotate）4中动画处理。   推荐在res/anim文件下定义xml文件资源，支持定义一个或多个动画 1234567891011121314151617181920212223242526272829303">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2016/09/02/Adnroid_2016-09-02_Android动画相关/">
+
+
+
+
+
+  <title>Android动画相关 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2016/09/02/Adnroid_2016-09-02_Android动画相关/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android动画相关</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-02T00:00:00+08:00">
+                2016-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/09/02/Adnroid_2016-09-02_Android动画相关/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2016/09/02/Adnroid_2016-09-02_Android动画相关/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h1 id="View-Animation"><a href="#View-Animation" class="headerlink" title="View Animation"></a>View Animation</h1><blockquote>
+<p>即Tween（补间）动画，该动画执行之后并不会真实改变View的布局属性，支持透明度（alpha）、伸缩（scale）、位移（translate）、平面旋转（rotate）4中动画处理。</p>
+</blockquote>
+<ul>
+<li><p>推荐在res/anim文件下定义xml文件资源，支持定义一个或多个动画</p>
+<figure class="highlight django"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span><span class="meta">?&gt;</span></span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- res/anim/alpha.xml --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- fromAlpha 动画开始时的透明度，0为全透明，1.0为不透明，默认1.0 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- toAlpha   动画结束时的透明度，0为全透明，1.0为不透明，默认1.0 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">alpha</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span></span><br><span class="line"><span class="xml">       android:duration="1000"</span></span><br><span class="line"><span class="xml">       android:fromAlpha="1.0"</span></span><br><span class="line"><span class="xml">       android:toAlpha="0.5"</span></span><br><span class="line"><span class="xml">    /&gt;</span></span><br><span class="line"><span class="xml"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span><span class="meta">?&gt;</span></span> </span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- res/anim/scale.xml --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- fromXScale 动画开始时x坐标的缩放倍数 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- fromYScale 动画开始时y坐标的缩放倍数 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- toXScale   动画结束时x坐标的缩放倍数 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- toYScale   动画结束时y坐标的缩放倍数 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- pivotX     开始做动画时固定组件x轴上的位置，可以使用百分比，也可以使用数值 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- pivotY     开始做动画时固定组件y轴上的位置，可以使用百分比，也可以使用数值 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果  android:pivotX="0%"  android:pivotY="100%" 则表示固定控件左下角，从改点开始对x轴y轴做伸缩 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果  android:pivotX="0"  android:pivotY="100" 则表示固定在控件左上角正下方100px处，从该点开始对x轴y轴做伸缩--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">scale</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span></span><br><span class="line"><span class="xml">       android:duration="1000"</span></span><br><span class="line"><span class="xml">       android:fromXScale="1"</span></span><br><span class="line"><span class="xml">       android:fromYScale="1"</span></span><br><span class="line"><span class="xml">       android:pivotX="0%"</span></span><br><span class="line"><span class="xml">       android:pivotY="100%"</span></span><br><span class="line"><span class="xml">       android:toXScale="2"</span></span><br><span class="line"><span class="xml">       android:toYScale="2"</span></span><br><span class="line"><span class="xml">    /&gt;</span></span><br><span class="line"><span class="xml"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span><span class="meta">?&gt;</span></span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- res/anim/translate.xml --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- fromXDelta 动画开始时x坐标的偏移--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- fromYDelta 动画开始时y坐标的偏移 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- toXDelta   动画结束时x坐标的偏移--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- toYDelta   动画结束时y坐标的偏移--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 上述四个值的取值可以为 n（数值）、n%、n%p--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果值为 n，则表示偏移为npx，即离原位置距离为npx，左负右正--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果值为 n%，则表示偏移为width * n%，即离原位置距离为百分之n个自身宽度像素，左负右正 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果值为 n%p，则表示偏移为parent_width * n%，即离原位置距离为百分之n个父布局宽度像素，左负右正 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">translate</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span></span><br><span class="line"><span class="xml">           android:duration="1000"</span></span><br><span class="line"><span class="xml">           android:fromXDelta="20%p"</span></span><br><span class="line"><span class="xml">           android:fromYDelta="0"</span></span><br><span class="line"><span class="xml">           android:toXDelta="100%"</span></span><br><span class="line"><span class="xml">           android:toYDelta="0"/&gt;</span></span><br><span class="line"><span class="xml"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span><span class="meta">?&gt;</span></span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- res/anim/rotate.xml --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- fromDegrees 旋转开始时的角度，0为默认位置--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- toDegrees   旋转结束时的角度 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- pivotX      旋转时旋转中心的x坐标--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- pivotY      旋转时旋转中心的y坐标--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 上述pivotX、pivotY可以为 n（数值）、n%、n%p--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果值为 n，则表示偏移为npx，即离原位置距离为npx，左负右正--&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果值为 n%，则表示偏移为width * n%，即离原位置距离为百分之n个自身宽度像素，左负右正 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!-- 如果值为 n%p，则表示偏移为parent_width * n%，即离原位置距离为百分之n个父布局宽度像素，左负右正 --&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">rotate</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span></span><br><span class="line"><span class="xml">    android:duration="5000"</span></span><br><span class="line"><span class="xml">    android:fromDegrees="0"</span></span><br><span class="line"><span class="xml">    android:toDegrees="360"</span></span><br><span class="line"><span class="xml">    android:pivotX="50%"</span></span><br><span class="line"><span class="xml">    android:pivotY="50%"/&gt;</span></span><br><span class="line"><span class="xml"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span><span class="meta">?&gt;</span></span> </span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">set</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span> </span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">alpha</span> </span></span></span><br><span class="line"><span class="xml">        android:duration="2000"&gt; </span></span><br><span class="line"><span class="xml">        android:fromAlpha="1" </span></span><br><span class="line"><span class="xml">        android:toAlpha="0"/&gt; </span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">rotate</span> </span></span></span><br><span class="line"><span class="xml">        android:fromDegrees="0" </span></span><br><span class="line"><span class="xml">        android:pivotX="50%" </span></span><br><span class="line"><span class="xml">        android:pivotY="50%" </span></span><br><span class="line"><span class="xml">        android:toDegrees="360"/&gt; </span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">translate</span> </span></span></span><br><span class="line"><span class="xml">        android:fromXDelta="0" </span></span><br><span class="line"><span class="xml">        android:fromYDelta="0" </span></span><br><span class="line"><span class="xml">        android:toXDelta="100%" </span></span><br><span class="line"><span class="xml">        android:toYDelta="0"/&gt; </span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">scale</span> </span></span></span><br><span class="line"><span class="xml">        android:fromXScale="1" </span></span><br><span class="line"><span class="xml">        android:fromYScale="1" </span></span><br><span class="line"><span class="xml">        android:pivotX="100%" </span></span><br><span class="line"><span class="xml">        android:toXScale="5" </span></span><br><span class="line"><span class="xml">        android:toYScale="1"/&gt; </span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">set</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>涉及的动画类：AlpaAnimation、ScaleAnimation、TranslateAnimation、RotateAnimation均继承于抽象类Animation，Animation拥有重置动画、开始/取消动画、判断当前动画是否开始/取消、监听动画等方法，可参考<a href="https://developer.android.com/reference/android/animation/Animator.html" target="_blank" rel="noopener">Google Animation文档</a>；</p>
+</li>
+<li>加载xml动画资源可直接用AnimationUtils的loadAnimation方法；</li>
+<li>通过Interpolator的子类来实现动画过程的速率，官方提供了部分实现。</li>
+</ul>
+<p>另外，除了在xml文件中定义动画，我们也可以在代码里面实现动画效果，但是在项目中尽量减少代码量，最好还是回归到xml文件中定义较好。</p>
+<h1 id="Drawable-Animation"><a href="#Drawable-Animation" class="headerlink" title="Drawable Animation"></a>Drawable Animation</h1><blockquote>
+<p>即Frame（帧）动画，该动画的执行时依赖一组drawable资源来“轮播”，每个资源之间可定义时间间隔。</p>
+</blockquote>
+<ul>
+<li><p>推荐在res/drawable目录下定义xml文件资源</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="php"><span class="meta">&lt;?</span>xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span><span class="meta">?&gt;</span></span></span><br><span class="line"><span class="comment">&lt;!-- frame_animation.xml文件位于res/drawable/目录下 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">animation-list</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:oneshot</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:drawable</span>=<span class="string">"@drawable/drawable1"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">"1000"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:drawable</span>=<span class="string">"@drawable/drawable2"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">"1000"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:drawable</span>=<span class="string">"@drawable/drawable3"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">"1000"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:drawable</span>=<span class="string">"@drawable/drawable4"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">"1000"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">animation-list</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置drawable资源并启动动画</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ImageView <span class="built_in">image</span> = (ImageView) findViewById(R.id.<span class="built_in">image</span>);</span><br><span class="line"><span class="built_in">image</span>.setBackgroundResource(R.drawable.frame_animation);</span><br><span class="line">AnimationDrawable <span class="built_in">animation</span> = (AnimationDrawable)<span class="built_in">image</span>.getBackground();</span><br><span class="line"><span class="built_in">animation</span>.start();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>注意：动画依附的View需确保已经绘制完毕。</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2016/09/02/Adnroid_2016-09-02_Android动画相关/" title="Android动画相关">http://yummylau.com/2016/09/02/Adnroid_2016-09-02_Android动画相关/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android基础/" rel="tag"># Android基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/28/Android_2016-08-28_Androidl开发踩坑录/" rel="next" title="Android开发踩坑录">
+                <i class="fa fa-chevron-left"></i> Android开发踩坑录
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/10/05/Android_2016-10-05_Android兼容低版本api/" rel="prev" title="Android兼容低版本api">
+                Android兼容低版本api <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#View-Animation"><span class="nav-number">1.</span> <span class="nav-text">View Animation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Drawable-Animation"><span class="nav-number">2.</span> <span class="nav-text">Drawable Animation</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            <!-- id: window.location.pathname, -->
+            id: '1472745600000',
+            owner: 'YummyLau',
+            repo: 'yummylau.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6fe337b055b804a83be6b90892bbdcd30af1c3ca',
+            
+                client_id: '28e609f26193c030b068'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

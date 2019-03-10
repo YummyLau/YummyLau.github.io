@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="多媒体,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="核心概念封装格式 （Container format）即容器 ， 定义了编码器生成的多媒体内容 (视频 ， 音频 ， 字幕 ， 章节信息等) 混合封装在一起的标准 。组合起来的多媒体能实现同步播放 （音视频字幕同步） ， 也提供了内容索引 （可以拖动进度条调整播放进度） 。一个视频文件往往会包含图像和音频 ， 还有一些配置信息 （如何关联图像和音频 ， 如何解码它们等） 。 编解码 （Codec）">
+<meta name="keywords" content="多媒体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多媒体音视频核心概念">
+<meta property="og:url" content="http://yummylau.com/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="核心概念封装格式 （Container format）即容器 ， 定义了编码器生成的多媒体内容 (视频 ， 音频 ， 字幕 ， 章节信息等) 混合封装在一起的标准 。组合起来的多媒体能实现同步播放 （音视频字幕同步） ， 也提供了内容索引 （可以拖动进度条调整播放进度） 。一个视频文件往往会包含图像和音频 ， 还有一些配置信息 （如何关联图像和音频 ， 如何解码它们等） 。 编解码 （Codec）">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-10T05:35:03.476Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多媒体音视频核心概念">
+<meta name="twitter:description" content="核心概念封装格式 （Container format）即容器 ， 定义了编码器生成的多媒体内容 (视频 ， 音频 ， 字幕 ， 章节信息等) 混合封装在一起的标准 。组合起来的多媒体能实现同步播放 （音视频字幕同步） ， 也提供了内容索引 （可以拖动进度条调整播放进度） 。一个视频文件往往会包含图像和音频 ， 还有一些配置信息 （如何关联图像和音频 ， 如何解码它们等） 。 编解码 （Codec）">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/">
+
+
+
+
+
+  <title>多媒体音视频核心概念 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">多媒体音视频核心概念</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-25T16:16:10+08:00">
+                2018-05-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/多媒体/" itemprop="url" rel="index">
+                    <span itemprop="name">多媒体</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><h4 id="封装格式-（Container-format）"><a href="#封装格式-（Container-format）" class="headerlink" title="封装格式 （Container format）"></a>封装格式 （Container format）</h4><p>即容器 ， 定义了编码器生成的多媒体内容 (视频 ， 音频 ， 字幕 ， 章节信息等) 混合封装在一起的标准 。组合起来的多媒体能实现同步播放 （音视频字幕同步） ， 也提供了内容索引 （可以拖动进度条调整播放进度） 。一个视频文件往往会包含图像和音频 ， 还有一些配置信息 （如何关联图像和音频 ， 如何解码它们等） 。</p>
+<h4 id="编解码-（Codec）"><a href="#编解码-（Codec）" class="headerlink" title="编解码 （Codec）"></a>编解码 （Codec）</h4><p>定义了原有媒体数据进行压缩 （编码） 或解压缩 （解码） 的标准 。 为了便于存储和传输 ， 原始的音频和视频会通过编码压缩体积 ， 然后在需要播放的时候再逆向解码还原 。 Codec 规定了编解码过程中的细节 （数字存储空间 、 帧速率 、 比特率 、 分辨率等） 标准 。</p>
+<h4 id="码率"><a href="#码率" class="headerlink" title="码率"></a>码率</h4><p>即传输码率/比特率 （bps ， Bit Per Second） ， 每秒传输压缩后的数据的比特数 。 一般媒体的信号质量和体积取决于两个方面 ： <strong>采样率</strong> 和 <strong>压缩比</strong> ， 其中采样率直接影响传输码率 。</p>
+<p>通常来说 ， 一个视频包含了画面和声音 。 例如一个RMVB的视频文件 ， 里面包含了视频信息和音频信息 ， 音频及视频都有各自不同的采样方式和比特率 ， 也就是说 ， 同一个视频文件音频和视频的比特率并不是一样的 。 而我们所说的一个视频文件码流率大小 ， 一般是指视频文件中音频及视频信息码流率的总和 。例如 ， 一个音频编码率为 128Kbps ，视频编码率为 800Kbps 的文件 ，其总编码率为 928Kbps ，意思是经过编码后的数据每秒钟需要用 928K比特来表示 。</p>
+<p>另外 ， 传输码率可按照以下三种进行分类 ：</p>
+<ul>
+<li>常见码率 （CBR ， Constant Bitrate） ， 指文件从头到尾都是一种位速率。相对于 VBR 和 ABR 来讲，它压缩出来的文件体积很大，而且音质相对于 VBR 和 ABR 不会有明显的提高 。</li>
+<li>可变码率 （VBR ， Variable Bitrate） ， 压缩软件在压缩时根据音频数据即时确定使用什么比特率，这是以质量为前提兼顾文件大小的方式 。</li>
+<li>平均码率 （ABR ， Average Bitrate） ， LAME 针对 CBR 不佳的文件体积比和 VBR 生成文件大小不定的特点独创了这种编码模式 。 ABR 在指定的文件大小内 ，以每 50 帧 （30帧约1秒） 为一段 ， 低频和不敏感频率使用相对低的流量 ， 高频和大动态表现时使用高流量 ， 可以做为VBR和CBR的一种折衷选择 。</li>
+</ul>
+<h4 id="采样率"><a href="#采样率" class="headerlink" title="采样率"></a>采样率</h4><p>即采样速度或采样频率 ， 定义了每秒从连续信息好提取并组成离散信息的采样个数 ， 单位赫兹 （Hz） 。</p>
+<p>电影的采样率是 24HZ ， 类似于动态影像的帧数 ， 如果把采样到的一个个静止画面以采样的相同速度播放 ， 看到的画面就是连续的 。 对于声音采样 ， 一般以 44.1kHZ 的采样率几率的 CD 以相同的速率播放时 ， 能听到连续的声音 。 人的听觉和视觉器官能分辨的采样率是有限的，基本上高于 44.1kHZ 采样的声音 ，绝大部分人已经觉察不到其中差异 。 声音的位数相当于画面的颜色数 ， 表示每个取样的数据量 。 所采的数据量越大 ， 声音越准确 ， 画面更清晰 。 受人的器官的机能限制 ，16位 的声音和 24位 的画面基本已经是普通人类的极限了 ， 更高位数就只能靠仪器才能分辨出来了 。 比如电话就是 3kHZ 取样的 7位 声音，而CD是 44.1kHZ 取样的 16位 声音 ，所以CD就比电话更清楚 。</p>
+<h4 id="分辨率"><a href="#分辨率" class="headerlink" title="分辨率"></a>分辨率</h4><p>即屏幕每一帧图像的像素分布矩阵 ， 同个屏幕上分辨率越高图像越大显示越细腻 ， 反之越小越模糊 。</p>
+<h4 id="帧率"><a href="#帧率" class="headerlink" title="帧率"></a>帧率</h4><p>即帧速率 （FPS ， Frames Per Second） ， 即每秒显示的帧数 ， 影响画面流畅 。</p>
+<h4 id="清晰度"><a href="#清晰度" class="headerlink" title="清晰度"></a>清晰度</h4><p>即肉眼感知画面的清晰程度 。 受码率与分辨率的影响 。</p>
+<h4 id="概念之间的关系"><a href="#概念之间的关系" class="headerlink" title="概念之间的关系"></a>概念之间的关系</h4><ul>
+<li><p>视频编解码流程</p>
+<p>  <strong>采集样本</strong> -&gt; <strong>编码压缩</strong> -&gt; <strong>数据传输</strong> -&gt; <strong>数据接收</strong> -&gt; <strong>解压解码</strong></p>
+</li>
+<li><p>封装格式和编解码的关系</p>
+<p>  假设有一个 MP4 电影文件 film.mp4 ， 则 film.mp4 可视为一个 Container ， .mp4是封装格式 。 其文件中盛放着视频、 音频、 字幕等信息 ， 这些内容各自遵循着不同的 Codec 。所以封装格式与编解码无必然联系 ， 但是封装格式状态的媒体内容决定了这些媒体内容应该如何 codec 。</p>
+</li>
+<li><p>采样率和码率的关系</p>
+<p>  假设存在一张 60 分钟的 CD ， 其采样率为 44.1 kHZ ， 两个声道且每个声道取样为 13位 PCM 编码 。 则这张 CD 的比特率计算为</p>
+  <figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">44100 </span>* <span class="number">2</span> * <span class="number">13</span> = <span class="number">1146600</span> bps</span><br></pre></td></tr></table></figure>
+<p>  表示每秒采样 44100 次 ， 每次采样数据 26 Bit 。</p>
+</li>
+<li><p>帧率、 分辨率、 码率、清晰度的关系</p>
+<p>  举个栗子 ，    帧率 30fps ， 分辨率为 1920 * 1080 ， 每个像素点 2 字节 ， 则压缩前每秒数据量为</p>
+  <figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">30 </span>* <span class="number">1920</span> * <span class="number">1080</span> * <span class="number">2</span> * <span class="number">8</span> / <span class="number">1024</span> / <span class="number">1024</span> = <span class="number">1492992000</span> Bit ≈ <span class="number">1423.8</span> Mbit</span><br></pre></td></tr></table></figure>
+<p>  这意味着每秒要传输大约 1424 Mb 的数据 ， 这不压缩根本不可能在线播放 ， 所以视频传输的时候必定需要压缩处理 。故存在</p>
+  <figure class="highlight fix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">帧率 * 分辨率 </span>=<span class="string"> 压缩前每秒所需传输的数据量 （单位比特）</span></span><br></pre></td></tr></table></figure>
+<p>  而压缩视频之后经过进行传输 ， 则存在</p>
+  <figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">压缩比 = 压缩前每秒所需传输的数据量 / （ 码率 * <span class="number">1</span>s） * <span class="number">100</span> %</span><br></pre></td></tr></table></figure>
+<p>  在码率一定的情况下 ， 分辨率与清晰度是反比关系 。 这里的分辨率指的是传输前的媒体的分辨率 ， 越高则意味着压缩前每秒所需传输的数据量越大 ， 失真程度越大 。</p>
+<p>  在分辨率一定的情况下 ， 码率与清晰度是正比关系。 码率越高 ， 意味着压缩比约接近 1 ，失真越不明显 ， 图像越清晰 。</p>
+</li>
+<li><p>如何理解采样导致清晰度变化</p>
+<p>  采样会导致分辨率发生变化 。 如高分辨率变成低分辨率称为下采样 ， 由于采样前数据充足 ，只需要尽量保留更多的信息量 ， 一般可以获得相对较好的结果 。 而由低分辨率变成高分辨率称为上采样 ， 由于需要插值等方法来补充缺少的像素点 ， 故必然会带有失真 ， 这就是一种视频质量（清晰度）的损失 。</p>
+</li>
+<li><p>帧率是不是越高越好</p>
+<p>  假定固定一个码率 800kbps , 则每秒传输接收的数据固定 ， 若帧率越高 ， 则每秒的图像越多 ， 单张图像的压缩比则会变大 ， 也就是通过降低画质来承载更多的帧数 。</p>
+</li>
+<li><p>码率是不是越大越好</p>
+<p>  假定码率不做大小限制 ， 帧率固定分辨率越高 ， 则码率变大画质会更细腻 ； 分辨率固定则帧率变大 ， 则码率变大视频更流畅 。 这可能消耗更多的流量。</p>
+</li>
+</ul>
+<p><strong>参考资料</strong></p>
+<p><a href="https://www.zhihu.com/question/20997688" target="_blank" rel="noopener">视频格式那么多，MP4/RMVB/MKV/AVI 等，这些视频格式与编码压缩标准 mpeg4，H.264.H.265 等有什么关系?</a><br><a href="https://www.jianshu.com/p/efa47bc1ad68?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation" target="_blank" rel="noopener">I帧,P帧,B帧,视频码率,帧率和分辨率 区别和理解</a><br><a href="http://www.easydarwin.org/article/Streaming/92.html" target="_blank" rel="noopener">论码流、码率、采样率、比特率、帧速率、分辨率、高清视频的概念</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/" title="多媒体音视频核心概念">http://yummylau.com/2018/05/25/多媒体_2018-05-25_多媒体音视频核心概念/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/多媒体/" rel="tag"># 多媒体</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/24/译文_2018-05-24_ExoPlayer开发指南/" rel="next" title="ExoPlayer开发指南 (译)">
+                <i class="fa fa-chevron-left"></i> ExoPlayer开发指南 (译)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/01/多媒体_2018-06-01_ExoPlayer系列一之多媒体资源加载/" rel="prev" title="ExoPlayer系列一之多媒体加载">
+                ExoPlayer系列一之多媒体加载 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#核心概念"><span class="nav-number">1.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#封装格式-（Container-format）"><span class="nav-number">1.1.</span> <span class="nav-text">封装格式 （Container format）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编解码-（Codec）"><span class="nav-number">1.2.</span> <span class="nav-text">编解码 （Codec）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#码率"><span class="nav-number">1.3.</span> <span class="nav-text">码率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#采样率"><span class="nav-number">1.4.</span> <span class="nav-text">采样率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分辨率"><span class="nav-number">1.5.</span> <span class="nav-text">分辨率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#帧率"><span class="nav-number">1.6.</span> <span class="nav-text">帧率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#清晰度"><span class="nav-number">1.7.</span> <span class="nav-text">清晰度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概念之间的关系"><span class="nav-number">1.8.</span> <span class="nav-text">概念之间的关系</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            <!-- id: window.location.pathname, -->
+            id: '1527236170000',
+            owner: 'YummyLau',
+            repo: 'yummylau.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6fe337b055b804a83be6b90892bbdcd30af1c3ca',
+            
+                client_id: '28e609f26193c030b068'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

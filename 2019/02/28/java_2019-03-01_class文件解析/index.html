@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="字节码,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="阅读本文你能收获到  了解class字节码文件的结构 熟悉 jvm 时如何读取解析字节码  tip : 本文请结合 Java字节码内容的那些表 和 Java字节码的那些指令 进行学习, 使用到16进制转UTF-8字符串工具。 任何一个Class文件都对应着一个类或者接口的定义信息。但是类和接口也可以通过类加载其直接生成，所以不一定定义在文件里面。Class文件是一组以8字节为基础的单位的二进制流，">
+<meta name="keywords" content="字节码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何读懂一个 class 文件">
+<meta property="og:url" content="http://yummylau.com/2019/02/28/java_2019-03-01_class文件解析/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="阅读本文你能收获到  了解class字节码文件的结构 熟悉 jvm 时如何读取解析字节码  tip : 本文请结合 Java字节码内容的那些表 和 Java字节码的那些指令 进行学习, 使用到16进制转UTF-8字符串工具。 任何一个Class文件都对应着一个类或者接口的定义信息。但是类和接口也可以通过类加载其直接生成，所以不一定定义在文件里面。Class文件是一组以8字节为基础的单位的二进制流，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-10T05:35:03.475Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何读懂一个 class 文件">
+<meta name="twitter:description" content="阅读本文你能收获到  了解class字节码文件的结构 熟悉 jvm 时如何读取解析字节码  tip : 本文请结合 Java字节码内容的那些表 和 Java字节码的那些指令 进行学习, 使用到16进制转UTF-8字符串工具。 任何一个Class文件都对应着一个类或者接口的定义信息。但是类和接口也可以通过类加载其直接生成，所以不一定定义在文件里面。Class文件是一组以8字节为基础的单位的二进制流，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2019/02/28/java_2019-03-01_class文件解析/">
+
+
+
+
+
+  <title>如何读懂一个 class 文件 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2019/02/28/java_2019-03-01_class文件解析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">如何读懂一个 class 文件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-28T00:00:00+08:00">
+                2019-02-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/02/28/java_2019-03-01_class文件解析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count gitment-comments-count" data-xid="/2019/02/28/java_2019-03-01_class文件解析/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>阅读本文你能收获到</strong></p>
+<ul>
+<li>了解class字节码文件的结构</li>
+<li>熟悉 jvm 时如何读取解析字节码</li>
+</ul>
+<p><em>tip</em> : 本文请结合 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/">Java字节码内容的那些表</a> 和 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/">Java字节码的那些指令</a> 进行学习, 使用到<a href="https://www.bejson.com/convert/ox2str/" target="_blank" rel="noopener">16进制转UTF-8字符串</a>工具。</p>
+<p>任何一个Class文件都对应着一个类或者接口的定义信息。但是类和接口也可以通过类加载其直接生成，所以不一定定义在文件里面。<br>Class文件是一组以8字节为基础的单位的二进制流，各个数据项目严格按照顺序紧凑地排列在Class文件中，中间不会添加任何分隔符。</p>
+<p>下面以简单例子分析</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//TestClass.java 文件</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestClass</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> m;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">inc</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> m + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 <code>javac</code> 编译 <code>TestClass.java</code> 输出 <code>TestClass.Class</code>，得到的二进制流文件可以通过工具查看其内容。笔者在 MAC 平台上使用 <code>iHex-Hex Editor</code> 以十六进制格式查看。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CAFEBABE <span class="number">00000034</span> <span class="number">00130</span>A00 <span class="number">04000</span>F09 <span class="number">00030010</span> <span class="number">07001107</span> <span class="number">00120100</span> <span class="number">016</span>D0100 <span class="number">01490100</span> <span class="number">063</span>C696E </span><br><span class="line"><span class="number">69743E01</span> <span class="number">00032829</span> <span class="number">56010004</span> <span class="number">436</span>F6465 <span class="number">01000</span>F4C <span class="number">696E654</span>E <span class="number">756</span>D6265 <span class="number">72546162</span> <span class="number">6</span>C650100 <span class="number">03696E63</span> </span><br><span class="line"><span class="number">01000328</span> <span class="number">29490100</span> <span class="number">0</span>A536F75 <span class="number">72636546</span> <span class="number">696</span>C6501 <span class="number">000E5465</span> <span class="number">7374436</span>C <span class="number">6173732</span>E <span class="number">6</span>A617661 <span class="number">0</span>C000700 </span><br><span class="line"><span class="number">080</span>C0005 <span class="number">00060100</span> <span class="number">09546573</span> <span class="number">74436</span>C61 <span class="number">73730100</span> <span class="number">106</span>A6176 <span class="number">612</span>F6C61 <span class="number">6E672</span>F4F <span class="number">626</span>A6563 <span class="number">74002100</span> </span><br><span class="line"><span class="number">03000400</span> <span class="number">00000100</span> <span class="number">02000500</span> <span class="number">06000000</span> <span class="number">02000100</span> <span class="number">07000800</span> <span class="number">01000900</span> <span class="number">00001</span>D00 <span class="number">01000100</span> <span class="number">0000052</span>A </span><br><span class="line">B70001B1 <span class="number">00000001</span> <span class="number">000</span>A0000 <span class="number">00060001</span> <span class="number">00000001</span> <span class="number">0001000</span>B <span class="number">000</span>C0001 <span class="number">00090000</span> <span class="number">001</span>F0002 <span class="number">00010000</span> </span><br><span class="line"><span class="number">00072</span>AB4 <span class="number">00020460</span> AC000000 <span class="number">01000</span>A00 <span class="number">00000600</span> <span class="number">01000000</span> <span class="number">06000100</span> <span class="number">0</span>D000000 <span class="number">02000</span>E</span><br></pre></td></tr></table></figure>
+<p>上述的内容看起来像 “天书” 无从下手， 这时候就要用到 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/">Java字节码内容的那些表</a>。JVM为了能统一解析这些 “天书”， 要求其内容必须按照严格的格式来排版。查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#1">Class文件结构表</a> 可知上述内容有规律可循，为了增强上述内容的可读性，我按照 Class 文件结构重新排序了内容并标注了行数，方便后续分析。</p>
+<figure class="highlight tap"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">line<span class="number"> 1 </span> : CAFEBABE   </span><br><span class="line">line<span class="number"> 2 </span> :<span class="number"> 00000034 </span></span><br><span class="line">line<span class="number"> 3 </span> : 0013</span><br><span class="line">line<span class="number"> 4 </span> : 0A<span class="number"> 0004 </span>000F</span><br><span class="line">line<span class="number"> 5 </span> :<span class="number"> 09 </span>0003<span class="number"> 0010 </span></span><br><span class="line">line<span class="number"> 6 </span> :<span class="number"> 07 </span>0011 </span><br><span class="line">line<span class="number"> 7 </span> :<span class="number"> 07 </span>0012 </span><br><span class="line">line<span class="number"> 8 </span> :<span class="number"> 01 </span>0001 6D</span><br><span class="line">line<span class="number"> 9 </span> :<span class="number"> 01 </span>0001<span class="number"> 49 </span></span><br><span class="line">line<span class="number"> 10 </span>:<span class="number"> 01 </span>0006 3C<span class="number"> 69 </span>6E<span class="number"> 69 </span>74 3E </span><br><span class="line">line<span class="number"> 11 </span>:<span class="number"> 01 </span>0003<span class="number"> 28 </span>29<span class="number"> 56 </span></span><br><span class="line">line<span class="number"> 12 </span>:<span class="number"> 01 </span>0004<span class="number"> 43 </span>6F<span class="number"> 64 </span>65 </span><br><span class="line">line<span class="number"> 13 </span>:<span class="number"> 01 </span>000F 4C<span class="number"> 69 </span>6E<span class="number"> 65 </span>4E<span class="number"> 75 </span>6D<span class="number"> 62 </span>65<span class="number"> 72 </span>54<span class="number"> 61 </span>62 6C<span class="number"> 65 </span></span><br><span class="line">line<span class="number"> 14 </span>:<span class="number"> 01 </span>0003<span class="number"> 69 </span>6E<span class="number"> 63 </span></span><br><span class="line">line<span class="number"> 15 </span>:<span class="number"> 01 </span>0003<span class="number"> 28 </span>29<span class="number"> 49 </span></span><br><span class="line">line<span class="number"> 16 </span>:<span class="number"> 01 </span>000A<span class="number"> 53 </span>6F<span class="number"> 75 </span>72<span class="number"> 63 </span>65<span class="number"> 46 </span>69 6C<span class="number"> 65 </span></span><br><span class="line">line<span class="number"> 17 </span>:<span class="number"> 01 </span>000E<span class="number"> 54 </span>65<span class="number"> 73 </span>74<span class="number"> 43 </span>6C<span class="number"> 61 </span>73<span class="number"> 73 </span>2E 6A<span class="number"> 61 </span>76<span class="number"> 61 </span></span><br><span class="line">line<span class="number"> 18 </span>: 0C<span class="number"> 0007 </span>0008</span><br><span class="line">line<span class="number"> 19 </span>: 0C<span class="number"> 0005 </span>0006 </span><br><span class="line">line<span class="number"> 20 </span>:<span class="number"> 01 </span>0009<span class="number"> 54 </span>65<span class="number"> 73 </span>74<span class="number"> 43 </span>6C<span class="number"> 61 </span>73<span class="number"> 73 </span></span><br><span class="line">line<span class="number"> 21 </span>:<span class="number"> 01 </span>0010 6A<span class="number"> 61 </span>76<span class="number"> 61 </span>2F 6C<span class="number"> 61 </span>6E<span class="number"> 67 </span>2F 4F<span class="number"> 62 </span>6A<span class="number"> 65 </span>63<span class="number"> 74 </span>         </span><br><span class="line">line<span class="number"> 22 </span>:<span class="number"> 0021 </span>   </span><br><span class="line">line<span class="number"> 23 </span>:<span class="number"> 0003 </span>  </span><br><span class="line">line<span class="number"> 24 </span>:<span class="number"> 0004 </span> </span><br><span class="line">line<span class="number"> 25 </span>:<span class="number"> 0000 </span> </span><br><span class="line">line<span class="number"> 26 </span>:<span class="number"> 0001 </span></span><br><span class="line">line<span class="number"> 27 </span>:<span class="number"> 0002 </span>0005<span class="number"> 0006 </span>0000 </span><br><span class="line">line<span class="number"> 28 </span>:<span class="number"> 0002 </span> </span><br><span class="line">line<span class="number"> 29 </span>:<span class="number"> 0001 </span><span class="number"> 0007 </span>0008<span class="number"> 0001 </span> </span><br><span class="line">line<span class="number"> 30 </span>:<span class="number"> 0009 </span> 0000001D <span class="number"> 0001 </span>0001<span class="number"> 00000005 </span>2A B7<span class="number"> 0001 </span>B1 </span><br><span class="line">line<span class="number"> 31 </span>:<span class="number"> 0000 </span>0001 </span><br><span class="line">line<span class="number"> 32 </span>: 000A<span class="number"> 00000006 </span>0001<span class="number"> 0000 </span>0001 </span><br><span class="line">line<span class="number"> 33 </span>:<span class="number"> 0001 </span>000B 000C<span class="number"> 0001 </span></span><br><span class="line">line<span class="number"> 34 </span>:<span class="number"> 0009 </span>0000001F<span class="number"> 0002 </span>0001<span class="number"> 00000007 </span> 2A B4 <span class="number"> 0002 </span>04<span class="number"> 60 </span>AC  </span><br><span class="line">line<span class="number"> 35 </span>:<span class="number"> 0000 </span>0001 </span><br><span class="line">line<span class="number"> 36 </span>: 000A<span class="number"> 00000006 </span>0001<span class="number"> 0000 </span>0006 </span><br><span class="line">line<span class="number"> 37 </span>:<span class="number"> 0001 </span></span><br><span class="line">line<span class="number"> 38 </span>: 000D<span class="number"> 00000002 </span>000E</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>以下解析流程涉及的外链比较多, 在解析过程中需要跳转查阅对应内容。基本的逻辑都某个索引指向某个数据结构, 该数据结构对应一张表格的内容,于是向下解析该表格内容长度的内容。</p>
+</blockquote>
+<p><strong>line 1</strong> 为 <code>魔数</code>, 主要是用于确认这个文件是否能被虚拟机加载， CAFEBABE 其实就是 <code>Baristas咖啡</code>。</p>
+<p><strong>line 2</strong> 为 <code>主次版本号</code> , 从 <a href="https://en.wikipedia.org/wiki/Java_class_file#General_layout" target="_blank" rel="noopener">java-class版本对应</a> 可知表示 Java SE 10, 向下兼容到 JDK1.1。</p>
+<p><strong>line 3</strong> 为 <code>常量池中常量数量</code> , 由于从1开始计数，第0项预留用于表示“不引用任何一个常量池项目”， 转化 16 进制之后可知常量池有 18 项常量。 每一项常量都对应 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#2">常量表</a> 的某一项， 按照表中规定的每一项常量对应各自的结构。</p>
+<p><strong>line 4</strong> 为 <code>第 1 项常量</code>，为类中方法的符号引用, 格式为 <em>{第4项常量}.{第15项常量}</em> ，为 “java/lang/Object.&lt; init &gt;:()V”</p>
+<p><strong>line 5</strong> 为 <code>第 2 项常量</code>，为字段的符号引用, 格式为 <em>{第3项常量}.{第16项常量}</em> ， 为 “TestClass.m:I”</p>
+<p><strong>line 6</strong> 为 <code>第 3 项常量</code>，为类或接口的符号引用, 指向第 17 项常量，为 “TestClass”</p>
+<p><strong>line 7</strong> 为 <code>第 4 项常量</code>，为类或接口的符号引用, 指向第 18 项常量，为 “java/lang/Object”</p>
+<p><strong>line 8</strong> 为 <code>第 5 项常量</code>，为 UTF-8 编码的字符串, 长度为1, 转化得到 “m”</p>
+<p><strong>line 9</strong> 为 <code>第 6 项常量</code>，为 UTF-8 编码的字符串, 长度为1, 转化得到 “I”</p>
+<p><strong>line 10</strong> 为 <code>第 7 项常量</code>，为 UTF-8 编码的字符串, 长度为6, 转化得到 “&lt; init &gt;” </p>
+<p><strong>line 11</strong> 为 <code>第 8 项常量</code>，为 UTF-8 编码的字符串, 长度为3, 转化得到 “()V”</p>
+<p><strong>line 12</strong> 为 <code>第 9 项常量</code>，为 UTF-8 编码的字符串, 长度为4, 转化得到 “Code”</p>
+<p><strong>line 13</strong> 为 <code>第 10 项常量</code>，为 UTF-8 编码的字符串, 长度为15, 转化得到 “LineNumberTable”</p>
+<p><strong>line 14</strong> 为 <code>第 11 项常量</code>，为 UTF-8 编码的字符串, 长度为3, 转化得到 “inc” </p>
+<p><strong>line 15</strong> 为 <code>第 12 项常量</code>，为 UTF-8 编码的字符串, 长度为3, 转化得到 “()I”</p>
+<p><strong>line 16</strong> 为 <code>第 13 项常量</code>，为 UTF-8 编码的字符串, 长度为14, 转化得到 “SourceFile”</p>
+<p><strong>line 17</strong> 为 <code>第 14 项常量</code>，为 UTF-8 编码的字符串, 长度为10, 转化得到 “TestClass.java”</p>
+<p><strong>line 18</strong> 为 <code>第 15 项常量</code>，为字段或方法的部分符号引用, 格式为 <em>{第7项常量}:{第8项常量}</em> “&lt; init &gt;:()V”</p>
+<p><strong>line 19</strong> 为 <code>第 16 项常量</code>，为字段或方法的部分符号引用，格式为 <em>{第5项常量}:{第6项常量}</em>, 为 “m:I”</p>
+<p><strong>line 20</strong> 为 <code>第 17 项常量</code>，为 UTF-8 编码的字符串, 长度为9, 转化得到 “TestClass”</p>
+<p><strong>line 21</strong> 为 <code>第 18 项常量</code>，为 UTF-8 编码的字符串, 长度为16, 转化得到 “java/lang/Object”</p>
+<p><strong>line 22</strong> 为 <code>访问标志</code>， 查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#3_1">类访问标志</a> 可知为 0x0021（0x0001|0x0020）表明这个是一个普通类，既不是接口，枚举也不是注解，被public关键字修饰但没有被声明为final和abstract</p>
+<p><strong>line 23</strong> 为 <code>类索引</code>, 对应 <code>第 3 项常量</code>, 为 “TestClass”</p>
+<p><strong>line 24</strong> 为 <code>父类索引</code>, 对应 <code>第 4 项常量</code>, 为 “java/lang/Object”</p>
+<p><strong>line 25</strong> 为 <code>实现接口的数目</code>, 0 表示没有实现任何接口</p>
+<p><strong>line 26</strong> 为 <code>字段的数目</code>, 存在一个字段需要解析</p>
+<p><strong>line 27</strong> 为 <code>第 1 个字段</code>, 查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#4">字段表</a> 可知 访问标志（0002）为 <em>private</em>, 名字（0005）为 <em>m</em>, 描述（0006）为 <em>I</em>, 没有属性（0000）</p>
+<p><strong>line 28</strong> 为 <code>方法的数目</code>, 存在两个方法需要解析</p>
+<p><strong>line 29-32</strong> 为 <code>第 1 个方法</code>, 查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#5">方法表</a> 可知 访问标志（0001）为 <em>public</em>, 名字（0007）为 <em><init></init></em>, 描述（0008）为 <em>()V</em>, 一个属性（0001）。由于存在一个属性，继续查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#6">属性表</a>。从 30 行开始解析属性 0009解析为 <code>第 9 项常量</code> Code, 查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#6_1">属性表-Code属性结构</a>及结合<a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/">Java字节码的那些指令</a> 继续可知。</p>
+<p><em>以下为Code属性所有内容</em></p>
+<ul>
+<li>0009, 起始标示 “code”</li>
+<li>0000001D, 该属性的长度为 29（ 2+2+4+5+2+2+2+4+2+2+2）, 也就是该属性后面的所有内容长度之和</li>
+<li>0001, 操作数栈深度的最大值，也就是说方法执行的任意时刻操作栈不会超过深度 1</li>
+<li>0001, 局部变量表需要的存储空间，单位 Slot，这个使用 1 个 Slot</li>
+<li>00000005, 字节码指令长度为 5</li>
+<li>2A B7 0001 B1, 代表 “ aload_0 invokespecail  java/lang/Object.”<init>“:()V  return”</init></li>
+<li>0000, 需要处理的异常为 0个</li>
+<li>0001, 有一个属性<ul>
+<li>000A, 起始标志为 “LineNumberTable” ,用于描述Java源代码行号与字节码行号的对应关系，可查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#6_4">LineNumberTable</a></li>
+<li>00000006, 该属性的长度为 6</li>
+<li>0001 lineNumberInfo 长度为 1 <ul>
+<li>0000, 字节码行号 0</li>
+<li>0001, Java源代码行号 1     </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>line 33-36</strong> 为 <code>第 2 个方法</code>, 查看 <a href>方法表</a> 可知 访问标志（0001）为 <em>public</em>, 名字（000B）为 <em>inc</em>, 描述（000C）为 <em>()I</em>, 一个属性（0001）。也存在一个属性。从 34 行开始解析属性 0009解析为 <code>第 9 项常量</code> Code, 继续看该 Code 的值。</p>
+<p><em>以下为Code属性所有内容</em></p>
+<ul>
+<li>0009, 起始标示 “code”</li>
+<li>0000001F, 该属性的长度为 31（2+2+4+7+2+2+2+4+2+2+2）</li>
+<li>0002, 操作数栈深度的最大值，也就是说方法执行的任意时刻操作栈不会超过深度 2</li>
+<li>0001, 局部变量表需要的存储空间，单位 Slot，这个使用 1 个 Slot</li>
+<li>00000007, 字节码指令长度为 7</li>
+<li>2A B4  0002 04 60 AC, 代表 “aload_0 getfield TestClass.m:I  iconst_1 iadd ireturn”</li>
+<li>0000, 需要处理的异常为 0个</li>
+<li>0001, 有一个属性<ul>
+<li>000A, 起始标志为 “LineNumberTable” ,用于描述Java源代码行号与字节码行号的对应关系，可查看 <a href="http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/#6_4">LineNumberTable</a></li>
+<li>00000006, 该属性的长度为 6</li>
+<li>0001 lineNumberInfo 长度为 1<ul>
+<li>0000, 字节码行号 0</li>
+<li>0001, Java源代码行号 6     </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>line 37</strong> 为 <code>属性的数目</code>, 存在一个属性</p>
+<p><strong>line 38</strong> 为 为 <code>第 1 个属性</code>, 000D解析为 <code>第 13 项常量</code> “sourceFile”, 解析 sourceFile属性得到 “ TestClass.java”</p>
+<p>为了验证我们的思路是否正确，可以通过 <code>javap</code> 查看 <code>TestClass.class</code> 的结构来进行对比。</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">gih<span class="params">-d</span><span class="number">-14238</span>:java yummy$ javap <span class="params">-verbose</span> TestClass</span><br><span class="line">Classfile /Users/yummy/workspace/java/TestClass.class</span><br><span class="line">  Last modified Feb <span class="number">12</span>, <span class="number">2019</span>; size <span class="number">275</span> <span class="built_in">bytes</span></span><br><span class="line">  MD5 checksum c287135973ee287548a00413f187a523</span><br><span class="line">  Compiled from <span class="string">"TestClass.java"</span></span><br><span class="line"><span class="keyword">public</span> class TestClass</span><br><span class="line">  minor version: <span class="number">0</span></span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #4.#15         <span class="comment">// java/lang/Object."&lt;init&gt;":()V</span></span><br><span class="line">   #2 = Fieldref           #3.#16         <span class="comment">// TestClass.m:I</span></span><br><span class="line">   #3 = Class              #17            <span class="comment">// TestClass</span></span><br><span class="line">   #4 = Class              #18            <span class="comment">// java/lang/Object</span></span><br><span class="line">   #5 = Utf8               m</span><br><span class="line">   #6 = Utf8               I</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               ()V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Utf8               LineNumberTable</span><br><span class="line">  #11 = Utf8               inc</span><br><span class="line">  #12 = Utf8               ()I</span><br><span class="line">  #13 = Utf8               SourceFile</span><br><span class="line">  #14 = Utf8               TestClass.java</span><br><span class="line">  #15 = NameAndType        #7:#8          <span class="comment">// "&lt;init&gt;":()V</span></span><br><span class="line">  #16 = NameAndType        #5:#6          <span class="comment">// m:I</span></span><br><span class="line">  #17 = Utf8               TestClass</span><br><span class="line">  #18 = Utf8               java/lang/Object</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> TestClass();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      <span class="built_in">stack</span>=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: invokespecial #1                  <span class="comment">// Method java/lang/Object."&lt;init&gt;":()V</span></span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">1</span>: <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> int inc();</span><br><span class="line">    descriptor: ()I</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      <span class="built_in">stack</span>=<span class="number">2</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         <span class="number">1</span>: getfield      #2                  <span class="comment">// Field m:I</span></span><br><span class="line">         <span class="number">4</span>: iconst_1</span><br><span class="line">         <span class="number">5</span>: iadd</span><br><span class="line">         <span class="number">6</span>: ireturn</span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">6</span>: <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">"TestClass.java"</span></span><br></pre></td></tr></table></figure>
+<p>实际上 <code>javap</code> 也是按照我们分析字节码的逻辑来进行内容的输出, 感兴趣的伙伴可以查看 <code>javap</code> 内部实现。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2019/02/28/java_2019-03-01_class文件解析/" title="如何读懂一个 class 文件">http://yummylau.com/2019/02/28/java_2019-03-01_class文件解析/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/字节码/" rel="tag"># 字节码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/28/java_2019-02-28_字节码指令/" rel="next" title="Java字节码的那些指令">
+                <i class="fa fa-chevron-left"></i> Java字节码的那些指令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/01/java_2019-03-01_类加载器/" rel="prev" title="聊一聊 " 类加载器"">
+                聊一聊 "类加载器" <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      
+        <div id="gitment-container"></div>
+      
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+<!-- LOCAL: You can save these files to your site and update links -->
+    
+        
+        <link rel="stylesheet" href="https://aimingoo.github.io/gitmint/style/default.css">
+        <script src="https://aimingoo.github.io/gitmint/dist/gitmint.browser.js"></script>
+    
+<!-- END LOCAL -->
+
+    
+
+    
+      <script type="text/javascript">
+      function renderGitment(){
+        var gitment = new Gitmint({
+            <!-- id: window.location.pathname, -->
+            id: '1551283200000',
+            owner: 'YummyLau',
+            repo: 'yummylau.github.io',
+            
+            lang: "" || navigator.language || navigator.systemLanguage || navigator.userLanguage,
+            
+            oauth: {
+            
+            
+                client_secret: '6fe337b055b804a83be6b90892bbdcd30af1c3ca',
+            
+                client_id: '28e609f26193c030b068'
+            }});
+        gitment.render('gitment-container');
+      }
+
+      
+      renderGitment();
+      
+      </script>
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
