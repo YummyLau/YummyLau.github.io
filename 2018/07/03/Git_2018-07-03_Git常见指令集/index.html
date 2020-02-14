@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Git经验,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647git config --global user.name &quot;Name&quot;git confif --global user.email &quot;a@xx.com&quot;git init //初始化git仓库git add &amp;lt;fName&amp;g">
+<meta name="keywords" content="Git经验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git常见指令集">
+<meta property="og:url" content="http://yummylau.com/2018/07/03/Git_2018-07-03_Git常见指令集/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647git config --global user.name &quot;Name&quot;git confif --global user.email &quot;a@xx.com&quot;git init //初始化git仓库git add &amp;lt;fName&amp;g">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-09-14T14:28:33.774Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git常见指令集">
+<meta name="twitter:description" content="1234567891011121314151617181920212223242526272829303132333435363738394041424344454647git config --global user.name &quot;Name&quot;git confif --global user.email &quot;a@xx.com&quot;git init //初始化git仓库git add &amp;lt;fName&amp;g">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2018/07/03/Git_2018-07-03_Git常见指令集/">
+
+
+
+
+
+  <title>Git常见指令集 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2018/07/03/Git_2018-07-03_Git常见指令集/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git常见指令集</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-03T14:21:57+08:00">
+                2018-07-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/07/03/Git_2018-07-03_Git常见指令集/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/07/03/Git_2018-07-03_Git常见指令集/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">git config --<span class="keyword">global</span> user.name <span class="string">"Name"</span></span><br><span class="line">git confif --<span class="keyword">global</span> user.email <span class="string">"a@xx.com"</span></span><br><span class="line">git init //初始化git仓库</span><br><span class="line">git <span class="built_in">add</span> <span class="symbol">&lt;fName&gt;</span> //添加到暂存区</span><br><span class="line">git commit -<span class="keyword">m</span> <span class="string">"提交描述"</span> //提交暂存区所有内容到仓库</span><br><span class="line">git status 查看仓库当前状态,能查工作区哪些被修改，暂存区哪些还没有提交</span><br><span class="line">git diff <span class="symbol">&lt;fName&gt;</span> 查看工作区文件内容与仓库文件内容的区别</span><br><span class="line">git diff HEAD -- <span class="symbol">&lt;fName&gt;</span> 查看工作区与版本库里最新版本的区别</span><br><span class="line">git <span class="built_in">log</span> --pretty=oneline查看最近到最远的提交日志</span><br><span class="line">git <span class="built_in">log</span> --graph --pretty=oneline --abbrev-commit 查看分支合并情况</span><br><span class="line">git reset --hard HEAD^ 回退到上一个版本</span><br><span class="line">git reset --hard cId 回退到commitId版本</span><br><span class="line">git reset HEAD <span class="symbol">&lt;fName&gt;</span> 把暂存区的修改撤销</span><br><span class="line">git reflog 查看历史命令</span><br><span class="line">git checkout -- <span class="symbol">&lt;fName&gt;</span> 用版本库的版本替换工作区的版本。条件：如果从修改后都没有放到暂存区，则丢弃修改后</span><br><span class="line">就回到和版本库一样的状态；如果已添加到暂存区，同时工作区又做了修改，那么就回到添加到暂</span><br><span class="line">存区后的状态</span><br><span class="line">git rm <span class="symbol">&lt;fName&gt;</span> 从版本库删除该文件，记得删除后要commit说明</span><br><span class="line">git remote <span class="built_in">add</span> origin git@server-name:path/repo-name.git 次关联远程仓库</span><br><span class="line">git push origin --<span class="keyword">delete</span> serverfix</span><br><span class="line">git push origin <span class="symbol">&lt;bName&gt;</span>把当前分支内容推送到远程同名分支，如果远程库是空的，第一次要加入-<span class="keyword">u</span>参数</span><br><span class="line">git push origin <span class="symbol">&lt;tName&gt;</span> 推送某个标签到远程</span><br><span class="line">git push origin --<span class="keyword">tags</span> 一次性推送全部尚未推送到远程的本地标签</span><br><span class="line">git push origin :refs/<span class="keyword">tags</span>/<span class="symbol">&lt;tName&gt;</span> 删除一个远程标签，一般需要删除本地再删除远程</span><br><span class="line">git clone httpsUrl 使用的是https协议，默认gi<span class="variable">t:</span>// 使用ssh</span><br><span class="line">git branch 查看当前分支情况，后加-<span class="keyword">a</span>参数表示查看全部分支信息</span><br><span class="line">git branch <span class="symbol">&lt;bName&gt;</span> 创建新分支</span><br><span class="line">git checkout-<span class="keyword">b</span> <span class="symbol">&lt;bName&gt;</span> 创建并切换到新分支</span><br><span class="line">git branch -d <span class="symbol">&lt;bName&gt;</span> 删除分支</span><br><span class="line">git branch -D <span class="symbol">&lt;bName&gt;</span> 强制删除一个没有被合并过的分支</span><br><span class="line">git checkout <span class="symbol">&lt;bName&gt;</span> 切换到对应分支</span><br><span class="line">git merge <span class="symbol">&lt;bName&gt;</span> 合并指定分支到当前分支，为“快进模式”；如果有冲突，可以在git status中看到冲突文件，修</span><br><span class="line">改冲突文件后重新<span class="built_in">add</span>并commit，完成后就会自动合并</span><br><span class="line">git merge --<span class="keyword">no</span>-ff -<span class="keyword">m</span> <span class="string">"合并信息"</span> <span class="symbol">&lt;bName&gt;</span> 禁用“快进模式”进行合并，能从分支历史看到分支信息，而</span><br><span class="line">“快进模式”合并则看不出来曾经做过合并</span><br><span class="line">git stash 保存当前分支工作区和暂存区的工作状态</span><br><span class="line">git stash <span class="keyword">list</span> 查看分支的工作现场</span><br><span class="line">git stash apply 恢复现场</span><br><span class="line">git stash <span class="keyword">drop</span> 删除stash内容（不是工作内容）</span><br><span class="line">git stash <span class="keyword">pop</span> 恢复的同时也删除内容（不是工作内容）</span><br><span class="line">git <span class="keyword">tag</span> 查看所有标签</span><br><span class="line">git <span class="keyword">tag</span> <span class="symbol">&lt;vNumber&gt;</span> 打一个新标签，默认是打在最新HEAD上，如果想在历史打标签，需要git <span class="built_in">log</span> --pretty=oneline --abbrev-commit查看历史</span><br><span class="line">找到commitId，执行git <span class="keyword">tag</span> <span class="symbol">&lt;vNumber&gt;</span> commitId</span><br><span class="line">git show <span class="symbol">&lt;tName&gt;</span> 查看标签信息</span><br><span class="line">git <span class="keyword">tag</span> -<span class="keyword">a</span> <span class="symbol">&lt;tName&gt;</span> -<span class="keyword">m</span> <span class="string">"说明文字"</span> <span class="symbol">&lt;cId&gt;</span> 打标签并说明</span><br><span class="line">git <span class="keyword">tag</span> -s <span class="symbol">&lt;tName&gt;</span> -<span class="keyword">m</span> <span class="string">"说明文字"</span> <span class="symbol">&lt;cId&gt;</span> 用私钥签名一个标签</span><br><span class="line">git <span class="keyword">tag</span> -d <span class="symbol">&lt;tName&gt;</span> 删除标签，创建的标签只存储在本地</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2018/07/03/Git_2018-07-03_Git常见指令集/" title="Git常见指令集">http://yummylau.com/2018/07/03/Git_2018-07-03_Git常见指令集/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git经验/" rel="tag"># Git经验</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/02/多媒体_2018-06-02_ExoPlayer系列二之带宽预测/" rel="next" title="ExoPlayer系列二之带宽预测">
+                <i class="fa fa-chevron-left"></i> ExoPlayer系列二之带宽预测
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/18/开源项目_2018-08-18_SharedPreference注入框架/" rel="prev" title="开源项目之 SharedPreferencesInjector">
+                开源项目之 SharedPreferencesInjector <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

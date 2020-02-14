@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android进阶,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="场景 　　在实际业务开发中，当Google提供的原生控件满足不了业务需求（可能实现不了或者实现需要重写修改的地方过多导致性能下降/代码耦合度太高）时，我们往往需要自己写View。在重写View的过程中经常需要处理? 点击?、? 滑动?、? 长按?等事件，因此需要对Touch事件的传递有一定的认识了解。  认识Touch传递过程 分派过程，假设以Activity为最底层，则从最底层开始往最上层分派，">
+<meta name="keywords" content="Android进阶">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Touch事件传递总结">
+<meta property="og:url" content="http://yummylau.com/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="场景 　　在实际业务开发中，当Google提供的原生控件满足不了业务需求（可能实现不了或者实现需要重写修改的地方过多导致性能下降/代码耦合度太高）时，我们往往需要自己写View。在重写View的过程中经常需要处理? 点击?、? 滑动?、? 长按?等事件，因此需要对Touch事件的传递有一定的认识了解。  认识Touch传递过程 分派过程，假设以Activity为最底层，则从最底层开始往最上层分派，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-10-18T14:56:57.921Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Touch事件传递总结">
+<meta name="twitter:description" content="场景 　　在实际业务开发中，当Google提供的原生控件满足不了业务需求（可能实现不了或者实现需要重写修改的地方过多导致性能下降/代码耦合度太高）时，我们往往需要自己写View。在重写View的过程中经常需要处理? 点击?、? 滑动?、? 长按?等事件，因此需要对Touch事件的传递有一定的认识了解。  认识Touch传递过程 分派过程，假设以Activity为最底层，则从最底层开始往最上层分派，">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/">
+
+
+
+
+
+  <title>Android Touch事件传递总结 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android Touch事件传递总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-27T00:00:00+08:00">
+                2016-08-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><blockquote>
+<p>　　在实际业务开发中，当Google提供的原生控件满足不了业务需求（可能实现不了或者实现需要重写修改的地方过多导致性能下降/代码耦合度太高）时，我们往往需要自己写View。在重写View的过程中经常需要处理? 点击?、? 滑动?、? 长按?等事件，因此需要对Touch事件的传递有一定的认识了解。</p>
+</blockquote>
+<h1 id="认识"><a href="#认识" class="headerlink" title="认识"></a>认识</h1><h2 id="Touch传递过程"><a href="#Touch传递过程" class="headerlink" title="Touch传递过程"></a>Touch传递过程</h2><ul>
+<li>分派过程，假设以Activity为最底层，则从最底层开始往最上层分派，中途可拦截;</li>
+<li>消费过程，任何一层都可以消费事件，如果不消费事件，则会往下层方向传递;如果消费了则表示该事件传递结束。</li>
+</ul>
+<h2 id="事务事件"><a href="#事务事件" class="headerlink" title="事务事件"></a>事务事件</h2><p>　　一个事务过程有大致有(事件):1个<code>ACTION_DOWM</code>，0-N个<code>ACTION_MOVE</code>，1个<code>ACTION_UP</code>。</p>
+<h2 id="涉及方法"><a href="#涉及方法" class="headerlink" title="涉及方法"></a>涉及方法</h2><p>　　主要的方法涉及到以下3个，其中ViewGroup可重写3个，而View和Activity只能重写后两个:</p>
+<pre><code>
+@Override
+ public boolean onInterceptTouchEvent(MotionEvent ev) {
+ //TODO 主要用于拦截事件，
+ }
+ @Override
+ public boolean onTouchEvent(MotionEvent ev) {
+ //TODO 主要用于拦截事件
+ }
+ @Override
+ public boolean dispatchTouchEvent(MotionEvent ev) {
+ //TODO 主要用于拦截事件
+ }
+</code></pre>
+
+<h2 id="方法返回值说明"><a href="#方法返回值说明" class="headerlink" title="方法返回值说明"></a>方法返回值说明</h2><ul>
+<li>dispatchTouchEvent默认返回<code>false</code>表示不消费事件，返回<code>true</code>则表示事件已消费;</li>
+<li>onInterceptTouchEvent默认返回<code>false</code>表示不拦截事件，返回<code>true</code>则表示拦截事件;</li>
+<li>onTouchEvent默认返回<code>false</code>表示不消费事件，返回<code>true</code>则表示消费事件;</li>
+<li>如果调用onTouchEvent，则onTouchEvent返回值会作为dispatchTouchEvent返回值。</li>
+</ul>
+<h2 id="方法调用说明"><a href="#方法调用说明" class="headerlink" title="方法调用说明"></a>方法调用说明</h2><ul>
+<li>dispatchTouchEvent方法处理的事情很多，对子View做处理（是否可用、点击、长按等）。假设只涉及4点中的三个方法，如果是ViewGroup类型，会调用onInterceptTouchEvent方法;如果是View类型，会调用onTouchEvent方法;</li>
+<li>onInterceptTouchEvent方法返回<code>true</code>，则拦截了事件，即后续调用onTouch处理;返回<code>flase</code>，则不拦截,继续调用上一层子View的dispatchTouchEvent方法，(之后处理方法同上一点);</li>
+<li>onTouchEvent返回<code>true</code>，则消费了事件，返回值也作为dispatchTouchEvent返回值;返回<code>false</code>则不处理事件，往下层抛事件。</li>
+</ul>
+<h1 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h1><ul>
+<li>以传递<code>ACTION_DOWM</code>为例子，假设布局的嵌套为：</li>
+</ul>
+<p><pre><code>（底层）Activity–&gt;ViewGroup<code>–&gt;</code>ViewGroup2<code>–&gt;</code>View`(最上层)<br>Activity → dispatchTouchEvent（开始）<br>false（默认）? ViewGroup1 → dispatchTouchEvent → onInterceptTouchEvent<br>             |——true ? ViewGroup1 → onTouchEvent<br>                     |——true ? 结束<br>                     |——false? Activity → onTouchEvent<br>                             |——true ? 结束<br>                             |——false? 系统处理<br>             |——false? ViewGroup2 → dispatchTouchEvent → onInterceptTouchEvent<br>                     |——true ? ViewGroup2 → onTouchEvent<br>                             |——true ? 结束<br>                             |——false? ViewGroup1 → onTouchEvent<br>                                     |——true ? 结束<br>                                     |——false? Activity → onTouchEvent<br>                                             |——true ? 结束<br>                                             |——false? 系统处理<br>                     |——false?View → dispatchTouchEvent → onTouchEvent<br>                             |——true ? 结束<br>                             |——false? ViewGroup2 → onTouchEvent<br>                                      |——true ? 结束<br>                                     |——false?ViewGroup1 → onTouchEvent<br>                                             |——true ? 结束<br>                                             |——false?Activity → onTouchEvent<br>                                                     |——true ? 结束<br>                                                     |——false? 系统处理<br></code></pre>  </p>
+<ul>
+<li>从上述流程中得到：<ul>
+<li>只要事件一被拦截，则进入onTouchEvent;</li>
+<li>只要事件一被消费，则事件传递结束，否则递归返回;</li>
+<li>调用onTouchEvent方法的前置条件：<ol>
+<li>要么该层拦截;</li>
+<li>要么该层为最上层且内层都不拦截;</li>
+<li>要么该层非最上层，上层都不消费事件。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>另外上述三个事件还存在以下关系：<ul>
+<li>传递的时间顺序：<code>?ACTION_DOWM?</code>可能前驱于<code>?ACTION_MOVE?</code>前驱于<code>?ACTION_UP?</code>;</li>
+<li>传递域的大小关系：<code>?ACTION_DOWM?</code>&gt;=<code>?ACTION_MOVE?</code>&gt;=<code>?ACTION_UP?</code>;</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>值得说明的是</strong>：在分派的过程中，系统可能会分派?ACTION_CANCEL?。Google文档中大致解释这种场景为<em>“如果本该接收到某个事件的布局层因为事件在分派的过程中被拦截，那么该层则会收到?ACTION_CANCEL?”</em>。</p>
+</blockquote>
+<p>如何理解呢?<br>假设当布局嵌套为：<strong><em>Activity</em></strong>–&gt;<strong><em>ViewGroup1</em></strong>–&gt;<strong><em>ViewGroup2</em></strong>–&gt;<strong><em>View</em></strong><br>用户点击屏幕且产生滑动行为最后离开屏幕的过程中：</p>
+<ul>
+<li>倘若ViewGroup2 消费了<code>?ACTION_DOWM?</code>，则 View 会收到<code>?ACTION_CANCEL?</code>且后续如果还有<code>?ACTION_MOVE?</code>，则最多只能被传递到ViewGroup2(考虑到可能被内层拦截);</li>
+<li>倘若ViewGroup1拦截了<code>?ACTION_MOVE?</code>，则 Activity会收到<code>?ACTION_CANCEL?</code>且后续如果还有多个<code>?ACTION_MOVE?</code>，则这些事件最多只能被传递到ViewGroup1(考虑到可能被Activity拦截)。这里要注意，如果ViewGroup1在onTouchEvent中处理<code>?ACTION_MOVE?</code>后返回false，事件也不会回传给上层(Activity);</li>
+<li>倘若ViewGroup1消费了所有<code>?ACTION_MOVE?</code>，则<code>?ACTION_UP?</code>理论上会传递到ViewGroup1。当Activity拦截<code>?ACTION_UP?</code>，则ViewGroup1会收到<code>?ACTION_CANCEL?</code>。同样，如果Activity不拦截<code>?ACTION_UP?</code>且ViewGroup1在onTouchEvent中处理<code>?ACTION_UP?</code>返回false，也不会把事件回传给上层(Activity)。</li>
+</ul>
+<p>从上述场景中得到：</p>
+<ul>
+<li>在onTouchEvent方法中，处理?ACTION_DOWM?时返回false事件会回传给上层，如果事件为?ACTION_MOVE?和?ACTION_UP?则不会;</li>
+<li>?ACTION_CANCEL?产生的条件为“事件被拦截”。在三个事件的分派流程中，如果事件中途被拦截，则拦截层的上层会收到?ACTION_CANCEL?。</li>
+</ul>
+<p>以上总结参考Android源码与实际开发经验，如有错误请指出，共勉！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/" title="Android Touch事件传递总结">http://yummylau.com/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android进阶/" rel="tag"># Android进阶</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/18/工具_2016-08-18_手机录制GIF/" rel="next" title="手机录制GIF">
+                <i class="fa fa-chevron-left"></i> 手机录制GIF
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/09/02/Adnroid_2016-09-02_Android动画相关/" rel="prev" title="Android动画相关">
+                Android动画相关 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#场景"><span class="nav-number">1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#认识"><span class="nav-number">2.</span> <span class="nav-text">认识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Touch传递过程"><span class="nav-number">2.1.</span> <span class="nav-text">Touch传递过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务事件"><span class="nav-number">2.2.</span> <span class="nav-text">事务事件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#涉及方法"><span class="nav-number">2.3.</span> <span class="nav-text">涉及方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法返回值说明"><span class="nav-number">2.4.</span> <span class="nav-text">方法返回值说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#方法调用说明"><span class="nav-number">2.5.</span> <span class="nav-text">方法调用说明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流程"><span class="nav-number">3.</span> <span class="nav-text">流程</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

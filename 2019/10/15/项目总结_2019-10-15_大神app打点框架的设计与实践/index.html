@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="项目,框架设计,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="背景随着业务不断迭代更新，网易大神的页面结构变得越发复杂。在使用自助打点框架之前，我们用过百度统计/哈勃统计等第三方统计工具，但是对于“页面嵌套统计”存在缺陷。由于策划非常重视“页面嵌套的子页面”停留市场，故废弃第三方并建立一套支持“页面嵌套”统计的打点框架。  何为 “页面嵌套” ？ 并非指 Android 开发中的 fragment 页面，而是作为用户所能看见界面布局中被划分为 N 个子页面">
+<meta name="keywords" content="项目,框架设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网易大神复杂打点框架的设计与实践">
+<meta property="og:url" content="http://yummylau.com/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="背景随着业务不断迭代更新，网易大神的页面结构变得越发复杂。在使用自助打点框架之前，我们用过百度统计/哈勃统计等第三方统计工具，但是对于“页面嵌套统计”存在缺陷。由于策划非常重视“页面嵌套的子页面”停留市场，故废弃第三方并建立一套支持“页面嵌套”统计的打点框架。  何为 “页面嵌套” ？ 并非指 Android 开发中的 fragment 页面，而是作为用户所能看见界面布局中被划分为 N 个子页面">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_1.jpeg?raw=true">
+<meta property="og:image" content="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_2.jpg?raw=true">
+<meta property="og:image" content="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_3.png?raw=true">
+<meta property="og:updated_time" content="2019-10-18T14:56:57.922Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网易大神复杂打点框架的设计与实践">
+<meta name="twitter:description" content="背景随着业务不断迭代更新，网易大神的页面结构变得越发复杂。在使用自助打点框架之前，我们用过百度统计/哈勃统计等第三方统计工具，但是对于“页面嵌套统计”存在缺陷。由于策划非常重视“页面嵌套的子页面”停留市场，故废弃第三方并建立一套支持“页面嵌套”统计的打点框架。  何为 “页面嵌套” ？ 并非指 Android 开发中的 fragment 页面，而是作为用户所能看见界面布局中被划分为 N 个子页面">
+<meta name="twitter:image" content="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_1.jpeg?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/">
+
+
+
+
+
+  <title>网易大神复杂打点框架的设计与实践 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">网易大神复杂打点框架的设计与实践</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-15T00:00:00+08:00">
+                2019-10-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>随着业务不断迭代更新，网易大神的页面结构变得越发复杂。在使用自助打点框架之前，我们用过百度统计/哈勃统计等第三方统计工具，但是对于“页面嵌套统计”存在缺陷。由于策划非常重视“页面嵌套的子页面”停留市场，故废弃第三方并建立一套支持“页面嵌套”统计的打点框架。</p>
+<blockquote>
+<p>何为 “页面嵌套” ？ 并非指 Android 开发中的 fragment 页面，而是作为用户所能看见界面布局中被划分为 N 个子页面结构，子页面结构依然可以继续划分 M 个子页面结构….</p>
+</blockquote>
+<p><img src="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_1.jpeg?raw=true" alt="黑人问号" align="center"></p>
+<p>好吧，一开始我真的无 Fuck 话说, 你是什么运营需求需要搞这么花里胡哨的。 不过第三方统计的确能统计到页面 Fragment 内潜的生命周期，但是对于 View 级的处理很不友好。而 Android 的视图层级结构恰好满足这个需求的页面原型结构，故下手开整。</p>
+<h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><h4 id="保证原业务逻辑兼容"><a href="#保证原业务逻辑兼容" class="headerlink" title="保证原业务逻辑兼容"></a>保证原业务逻辑兼容</h4><p>业务的迁移及扩展的第一要素是 “保证原业务逻辑不能收到影响” 。由于app中的业务逻辑信息通过 json 格式上传到服务器，所以先把页面中所涉及的页面信息通过涉及 Param 接口用于返回特定页面业务信息。</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> class Param &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">transient</span> <span class="keyword">String</span> <span class="built_in">key</span>;</span><br><span class="line">    <span class="keyword">public</span> Param(<span class="keyword">String</span> <span class="built_in">key</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.<span class="built_in">key</span> = <span class="built_in">key</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> toJsonString() &#123;</span><br><span class="line">        <span class="keyword">return</span> GsonUtils.getJsonString(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 key 用于表示一块 “逻辑页面”，可能是view/fragment/activity。</p>
+<h4 id="Hook原业务页面的底层视图"><a href="#Hook原业务页面的底层视图" class="headerlink" title="Hook原业务页面的底层视图"></a>Hook原业务页面的底层视图</h4><p>要想在不同的逻辑页面底层统一监听声明周期并实现特定时刻的业务行为打点，最快速的方法是在基础类之前封装一层 Log 逻辑，由于我们基础类都存放在 <code>libbase</code> 模块，相对来说很是方便。</p>
+<p>对于业务打点信息可分为两部分：“页面信息” + “业务信息” </p>
+<ul>
+<li>页面信息指的是逻辑页面的名称，类型，id，归属parentId，显示时间，隐藏时间；</li>
+<li>业务信息指的是比如在逻辑页面点击一个登陆按钮，此时的登陆打点信息（登陆按钮id，登陆行为id，行为时间等）为业务信息。</li>
+</ul>
+<blockquote>
+<p>事实上，上传到服务端信息不仅仅包含这些，还包含app信息/设备信息，这里不对这部分信息作扩展。</p>
+</blockquote>
+<p>定义打点信息结构</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> PageViewInfo &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> activityId;   <span class="comment">//  归属于哪个activity</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> id;           <span class="comment">//  页面hashCode</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> name;         <span class="comment">//  一般以页面的类名命名</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">String</span> <span class="keyword">type</span>;         <span class="comment">//  页面类型，view/fragment/activity</span></span><br><span class="line">    <span class="keyword">public</span> Param param;         <span class="comment">//  页面信息</span></span><br><span class="line">    <span class="keyword">public</span> PageViewInfo parent;<span class="comment">//  父亲id,目前支持的是获取上一个activity中最小的page模块</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">boolean</span> fromCopyActivity;    <span class="comment">//是否是负责activity参数，由于fragment里面点击事件需要用到param信息，但是希望不要重复上报</span></span><br><span class="line">    <span class="keyword">public</span> long startTime = Long.MAX_VALUE;</span><br><span class="line">    <span class="keyword">public</span> long endTime = Long.MAX_VALUE;</span><br><span class="line">    <span class="keyword">public</span> PageViewInfo(<span class="meta">@NonNull</span> Param param) &#123;</span><br><span class="line">        <span class="keyword">this</span>.param = param;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="string">``</span><span class="string">`  </span></span><br><span class="line"><span class="string">定义抽象页面打点信息接口</span></span><br></pre></td></tr></table></figure>
+<p>public interface PageItem {<br>    String generateId();<br>    PageViewInfo buildPageInfo();<br>    //为单例返回用于某些业务场景延迟初始化业务打点信息<br>    PageViewInfo getSinglePageInfo();<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">那么可以轻松实现针对 Activity 级的统计。</span><br></pre></td></tr></table></figure></p>
+<p>public class LogActivity extends AppCompatActivity implements PageItem {</p>
+<pre><code>public PageViewInfo pageViewInfo;
+
+@Override
+protected void onResume() {
+    super.onResume();
+    PageManager.start(getSinglePageInfo());
+}
+
+@Override
+protected void onPause() {
+    super.onPause();
+    PageManager.stop(getSinglePageInfo());
+}
+
+@Override
+protected void onDestroy() {
+    super.onDestroy();
+    PageManager.destroy(generateId());
+}
+
+@Override
+public PageViewInfo buildPageInfo() {
+    return PageUtils.getDefaultPageInfo();
+}
+
+@Override
+public PageViewInfo getSinglePageInfo() {
+    if (pageViewInfo == null) {
+        pageViewInfo = buildPageInfo();
+        pageViewInfo.name = PageUtils.getName(this);
+        pageViewInfo.activityId = PageUtils.getActivityId(this);
+        pageViewInfo.id = generateId();
+        pageViewInfo.type = &quot;ACTIVITY&quot;;
+    }
+    return pageViewInfo;
+}
+
+/**
+ * 继承 activity 的param和parent属性
+ *
+ * @param logFragment
+ * @return
+ */
+public PageViewInfo copyActivityPageInfo(LogFragment logFragment) {
+    if (logFragment == null) {
+        return PageUtils.getDefaultPageInfo();
+    }
+    PageViewInfo fragmentPageInfo = PageUtils.getDefaultPageInfo();
+    fragmentPageInfo.name = PageUtils.getName(logFragment);
+    fragmentPageInfo.activityId = PageUtils.getActivityId(logFragment);
+    fragmentPageInfo.id = generateId();
+    fragmentPageInfo.type = &quot;FRAGMENT&quot;;
+    PageViewInfo activityPageInfo = getSinglePageInfo();
+    fragmentPageInfo.param = activityPageInfo.param;
+    fragmentPageInfo.parent = activityPageInfo.parent;
+    fragmentPageInfo.fromCopyActivity = true;
+    return fragmentPageInfo;
+}
+
+@Override
+public String generateId() {
+    return PageUtils.getId(this);
+}
+</code></pre><p>}<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">其他的逻辑视图实现也基本一样。这里就不贴代码了。上述代码有几个需要点出</span><br><span class="line"></span><br><span class="line">* `buildPageInfo` 为构建页面的打点信息，子类实现，提供默认实现</span><br><span class="line">* `generateId` 一般为页面生成唯一id，用 hashcode就够了</span><br><span class="line">* `getSinglePageInfo` 为该页面提供一个打点信息单例。比如我要统计 WebActivity 中该网页的 title 是什么，只有当 WebVied#load 完之后获取到 title 信息，然后才能通过 getSinglePageInfo 方法获取单粒设置 title 。</span><br><span class="line">* `copyActivityPageInfo` 是用于特殊场景处理的预留方法。有一些业务公用的 Fragment 出现在不同的 Activity 容器中，策划可能根据不同场景来决定这个 Fragment 是不是一个逻辑视图 （=。=）。</span><br><span class="line">* `onResume/onPause` PageManager 提供了初始化页面信息及上传一次页面信息的入口。 由于我们采用透明主题，所有选择在 `onPause` 的回调中出上传。</span><br><span class="line"></span><br><span class="line">#### 打点信息的上传及管理</span><br><span class="line"></span><br><span class="line">我们从基础类中统一处理了页面信息看似已经完美，实际上还存在一些棘手的问题。</span><br><span class="line"></span><br><span class="line">* 页面的 parent 归属</span><br><span class="line"></span><br><span class="line">	针对 fragment 的归属可以通过 fragmentManager/context 联合判断嵌套。但是针对 view 的归属就比较麻烦，context 仅仅只能反应该 view 存在的 activity 视图，并不代表是其父亲容器。所以在构建 view 的时候默 parent 视图为 activity，fragment 场景业务设置。</span><br><span class="line"></span><br><span class="line">* 页面的链式设计</span><br><span class="line"></span><br><span class="line">	这里的链式仅仅针对 activity 而言。同一个 activity 内的所有逻辑视图 activityId 都相同。而链式设计意味着需要记录当前 activity 上最后一个逻辑视图及最后一个 activity 上的最后一个逻辑视图。这里涉及到逻辑视图的进栈和出栈问题。由于页面加载的时候，页面层级越低越显初始化，而从上一个页面返回的时候，页面层级越高就越显初始化。</span><br><span class="line">	</span><br><span class="line">上代码</span><br></pre></td></tr></table></figure></p>
+<p>import android.support.annotation.Nullable;<br>import android.text.TextUtils;<br>import java.util.HashMap;<br>import java.util.Map;<br>import im.yixin.gl.log.page.PageConstants;<br>import im.yixin.gl.log.page.view.LogFragment;</p>
+<p>public class PageManager {</p>
+<pre><code>public static final Map&lt;String, PageViewInfo&gt; sCache = new HashMap();
+public static final Map&lt;String, Long&gt; sInfoTime = new HashMap&lt;&gt;();
+public static PageInfoReceiver sPageInfoReceiver;
+
+
+public static PageViewInfo lastLogPageInfo = null;             // 最后一个曝光page
+public static PageViewInfo currentVisiblePageInfo = null;      // 当前可见的page
+public static PageViewInfo lastVisiblePageInfo = null;         // 倒数第二个可见的page
+
+@Nullable
+public static PageViewInfo getInfo(String id) {
+    if (!TextUtils.isEmpty(id)) {
+        return sCache.get(id);
+    }
+    return null;
+}
+
+//初始化页面信息
+public static void start(PageViewInfo pageViewInfo) {
+    if (!TextUtils.isEmpty(pageViewInfo.id)) {
+        sInfoTime.put(pageViewInfo.id, System.currentTimeMillis());
+        sCache.put(pageViewInfo.id, pageViewInfo);
+        cacheLastVisiblePageInfo(pageViewInfo);
+    }
+}
+
+
+public static void addPageInfo(LogFragment fragment) {
+    if (fragment == null) {
+        return;
+    }
+    stop(fragment.getSinglePageInfo());
+}
+
+//上传一次页面信息
+public static void stop(PageViewInfo pageViewInfo) {
+    if (pageViewInfo != null &amp;&amp; !TextUtils.isEmpty(pageViewInfo.id) &amp;&amp; pageViewInfo.param != null) {
+        PageViewInfo cacheInfo = sCache.get(pageViewInfo.id);
+        if (cacheInfo == null) {
+            sCache.put(pageViewInfo.id, pageViewInfo);
+        }
+        pageViewInfo.endTime = System.currentTimeMillis();
+        Long startTime = sInfoTime.get(pageViewInfo.id);
+        if (startTime != null) {
+            pageViewInfo.startTime = startTime;
+        }
+        pageViewInfo.parent = getParent(pageViewInfo);
+        lastLogPageInfo = pageViewInfo;
+        if (TextUtils.equals(pageViewInfo.param.key, PageConstants.UNKNOWN_VALUE) || pageViewInfo.fromCopyActivity) {
+            if (sPageInfoReceiver != null) {
+                sPageInfoReceiver.onFilter(pageViewInfo);
+            }
+        } else {
+            if (sPageInfoReceiver != null) {
+                sPageInfoReceiver.onReceiver(pageViewInfo);
+            }
+        }
+    }
+}
+
+//页面销毁是需要移除
+public static void destroy(String pageId) {
+    if (!TextUtils.isEmpty(pageId)) {
+        sCache.remove(pageId);
+        sInfoTime.remove(pageId);
+    }
+}
+
+public static void init(PageInfoReceiver pageInfoReceiver) {
+    sPageInfoReceiver = pageInfoReceiver;
+}
+
+/**
+ * 首页的所有pageview返回null
+ *
+ * @return
+ */
+@Nullable
+public static PageViewInfo getParent(PageViewInfo pageViewInfo) {
+    //如果上一个页面是同个页面
+    if (lastLogPageInfo != null &amp;&amp; TextUtils.equals(lastLogPageInfo.activityId, pageViewInfo.activityId)) {
+        return lastLogPageInfo.parent;
+    }
+    //有可能被回收
+    if (lastVisiblePageInfo != null) {
+        return lastVisiblePageInfo;
+    }
+    return null;
+}
+
+public static void cacheLastVisiblePageInfo(PageViewInfo pageViewInfo) {
+    if (pageViewInfo == null || TextUtils.isEmpty(pageViewInfo.id)) {
+        return;
+    }
+    if (currentVisiblePageInfo == null) {
+        currentVisiblePageInfo = pageViewInfo;
+    } else {
+        if (!TextUtils.equals(currentVisiblePageInfo.activityId, pageViewInfo.activityId)) {
+            lastVisiblePageInfo = currentVisiblePageInfo;
+            currentVisiblePageInfo = pageViewInfo;
+        } else {
+            //页面第一次显示，fragment显示层级是从大到小，需要取最后一个
+            //页面因为上层页面返回，fragment显示层级是从小到大，需要取第一个
+            PageViewInfo tempInfo = currentVisiblePageInfo;
+            currentVisiblePageInfo = pageViewInfo;
+            if (lastLogPageInfo != null &amp;&amp; lastLogPageInfo.parent != null &amp;&amp; TextUtils.equals(lastLogPageInfo.parent.id, tempInfo.id)) {
+                currentVisiblePageInfo = tempInfo;
+            }
+        }
+    }
+}
+</code></pre><p>}</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">代码逻辑比较清晰，就不做阐述了。</span><br><span class="line"></span><br><span class="line">`PageInfoReceiver` 为暴露给外部接口和过滤的接口，业务选择性上传需要的页面信息就可以了。</span><br></pre></td></tr></table></figure>
+<p>public interface PageInfoReceiver {<br>    void onReceiver(PageViewInfo pageViewInfo);<br>    void onFilter(PageViewInfo pageViewInfo);<br>}</p>
+<p><code>`</code></p>
+<h4 id="流程图及类图设计规范"><a href="#流程图及类图设计规范" class="headerlink" title="流程图及类图设计规范"></a>流程图及类图设计规范</h4><p><img src="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_2.jpg?raw=true" width="800" height="1000" alt="流程图" align="center"></p>
+<p><img src="https://github.com/YummyLau/hexo/blob/master/source/pics/20191015/1_3.png?raw=true" width="800" height="700" alt="类图" align="center"></p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>虽然第三方产品也没有提供这样的功能，但很多时候框架/架构孵化于业务，最终也服务于业务。 每一次坑爹的需求都可能让你的技术更上一层楼。好好写代码，好好反思总结。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/" title="网易大神复杂打点框架的设计与实践">http://yummylau.com/2019/10/15/项目总结_2019-10-15_大神app打点框架的设计与实践/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/项目/" rel="tag"># 项目</a>
+          
+            <a href="/tags/框架设计/" rel="tag"># 框架设计</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/15/项目总结_2019-10-15_大神appNative-Web交互总结/" rel="next" title="网易大神JsSdk-移动端侧的设计开发">
+                <i class="fa fa-chevron-left"></i> 网易大神JsSdk-移动端侧的设计开发
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/03/Android_2016-08-28_Androidl开发踩坑录/" rel="prev" title="Android开发踩坑经验贴(持续更新...)">
+                Android开发踩坑经验贴(持续更新...) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计"><span class="nav-number">2.</span> <span class="nav-text">设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#保证原业务逻辑兼容"><span class="nav-number">2.1.</span> <span class="nav-text">保证原业务逻辑兼容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hook原业务页面的底层视图"><span class="nav-number">2.2.</span> <span class="nav-text">Hook原业务页面的底层视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流程图及类图设计规范"><span class="nav-number">2.3.</span> <span class="nav-text">流程图及类图设计规范</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考"><span class="nav-number">3.</span> <span class="nav-text">思考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

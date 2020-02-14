@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="YummyLau">
 <meta property="og:description" content="For 4.4及以上手机，利用安卓自带的screenrecord命令来录制我们的屏幕。     录制当前屏幕保存到sd卡根目录，分辨率为1920*1080（可不设置），比特率为2M/s（默认为4M/s）比特率文件为xxx.mp 1adb shell screenrecord --size 1920*1080 --bit-rate 2097152 /sdcard/xxx.mp4  把视频输出到本">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-10T05:35:03.477Z">
+<meta property="og:updated_time" content="2019-10-18T14:56:57.918Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="手机录制GIF">
 <meta name="twitter:description" content="For 4.4及以上手机，利用安卓自带的screenrecord命令来录制我们的屏幕。     录制当前屏幕保存到sd卡根目录，分辨率为1920*1080（可不设置），比特率为2M/s（默认为4M/s）比特率文件为xxx.mp 1adb shell screenrecord --size 1920*1080 --bit-rate 2097152 /sdcard/xxx.mp4  把视频输出到本">
@@ -373,9 +373,10 @@
 <li><p>把视频输出到本地，保存D盘根目录</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb pull <span class="regexp">/sdcard/</span>xxx.mp4 <span class="string">D:</span>/</span><br></pre></td></tr></table></figure>
 </li>
-<li><p>把视频转成Gif格式<br>Window上使用Free Video to GIF Converter转化，Mac上使用gifrocket转化即可<br><a href="http://pan.baidu.com/s/1gfnvIy3" target="_blank" rel="noopener">Free Video to GIF Converter下载链接</a></p>
+<li><p>把视频转成Gif格式<br>Window上使用Free Video to GIF Converter转化，Mac上使用Gif Brewery 3转化即可<br><a href="http://pan.baidu.com/s/1gfnvIy3" target="_blank" rel="noopener">Free Video to GIF Converter下载链接</a></p>
 </li>
 </ol>
+<p><strong>tip:</strong> 华为手机无法通过 <code>adb shell screenrecord</code> 指令录制，因为在/system/bin/中已经被移除，所以使用手机提供的录制之后在 /sdcard/Pictures/Screenshots/ 目录中导出就可以了。</p>
 
       
     </div>
@@ -434,7 +435,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/08/27/Android_2016-08-27_Android-Touch事件传递总结/" rel="prev" title="Android Touch事件传递总结">
+              <a href="/2016/08/27/项目总结_2016-08-27_Touch事件传递总结/" rel="prev" title="Android Touch事件传递总结">
                 Android Touch事件传递总结 <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -509,7 +510,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">53</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -531,7 +532,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">35</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -578,7 +579,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2019</span>
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
