@@ -4,6 +4,148 @@
 
     
   <url>
+    <loc>http://yummylau.com/2020/04/06/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90%E2%80%94%E2%80%94LiveData%20&%20Life%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%AE%8C%E6%95%B4%E4%BD%93%E7%B3%BB%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2020-04-06T04:55:50.092Z</lastmod>
+    <data>
+        <display>
+        <title>源码解析——LiveData & Lifecycles 完整体系详解</title>
+        <pubTime>2020-04-05T16:00:00.000Z</pubTime>
+        
+        <tag>Android进阶</tag>
+         
+        <tag>源码分析</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android进阶" url="http://yummylau.com/categories/Android%E8%BF%9B%E9%98%B6/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2020/03/30/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_2020-03-30_%E5%A4%A7%E7%A5%9Eandroidx%E8%BF%81%E7%A7%BB%E8%AE%B0%E5%BD%95/</loc>
+    <lastmod>2020-04-05T03:40:49.659Z</lastmod>
+    <data>
+        <display>
+        <title>大神主端/库 AndroidX 迁移记录</title>
+        <pubTime>2020-03-29T16:00:00.000Z</pubTime>
+        
+        <tag>Android进阶</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2020/04/01/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90_2020-04-01_rxpermission/</loc>
+    <lastmod>2020-04-05T03:40:49.659Z</lastmod>
+    <data>
+        <display>
+        <title>系统源码解析——RxPermissions</title>
+        <pubTime>2020-03-31T16:00:00.000Z</pubTime>
+        
+        <tag>源码解析</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2017/02/12/Git_2017-02-12_Git%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE/</loc>
+    <lastmod>2020-04-05T03:40:49.658Z</lastmod>
+    <data>
+        <display>
+        <title>Git的实践建议</title>
+        <pubTime>2017-02-12T11:49:57.000Z</pubTime>
+        
+        <tag>Git经验</tag>
+         
+         
+           
+             
+              <breadCrumb title="Git" url="http://yummylau.com/categories/Git/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2020/03/31/rxjava_2020-03-31_rxjava%E6%80%9D%E8%B7%AF%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2020-04-05T03:40:49.658Z</lastmod>
+    <data>
+        <display>
+        <title>Rxjava 的归纳思考</title>
+        <pubTime>2020-03-30T16:00:00.000Z</pubTime>
+        
+        <tag>RxJava</tag>
+         
+         
+           
+             
+              <breadCrumb title="Java" url="http://yummylau.com/categories/Java/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2020/04/01/%E5%9F%BA%E4%BA%8ERxPermission%20%E5%BF%AB%E9%80%9F%E5%A4%84%E7%90%86%E6%9D%83%E9%99%90%E8%AF%B7%E6%B1%82/</loc>
+    <lastmod>2020-04-05T03:40:49.658Z</lastmod>
+    <data>
+        <display>
+        <title>基于 RxPermission 构建权限交互</title>
+        <pubTime>2020-04-01T10:24:00.000Z</pubTime>
+        
+        <tag>快速开发</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2020/03/30/Android_2016-08-28_Androidl%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E5%BD%95/</loc>
+    <lastmod>2020-04-05T03:40:49.656Z</lastmod>
+    <data>
+        <display>
+        <title>Android开发踩坑经验贴(持续更新...)</title>
+        <pubTime>2020-03-29T16:00:00.000Z</pubTime>
+        
+        <tag>Android经验</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yummylau.com/2020/03/22/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE_20120-03-22_%E8%BE%93%E5%85%A5%E6%B3%95%E5%88%87%E6%8D%A2%E6%A1%86%E6%9E%B6(2)/</loc>
     <lastmod>2020-03-22T08:18:21.820Z</lastmod>
     <data>
@@ -159,26 +301,6 @@
     
     
   <url>
-    <loc>http://yummylau.com/2020/01/03/Android_2016-08-28_Androidl%E5%BC%80%E5%8F%91%E8%B8%A9%E5%9D%91%E5%BD%95/</loc>
-    <lastmod>2020-02-14T08:31:17.531Z</lastmod>
-    <data>
-        <display>
-        <title>Android开发踩坑经验贴(持续更新...)</title>
-        <pubTime>2020-01-02T16:00:00.000Z</pubTime>
-        
-        <tag>Android经验</tag>
-         
-         
-           
-             
-              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yummylau.com/2019/06/26/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_2019-06-06_%E7%BA%BF%E4%B8%8A%E9%A1%B9%E7%9B%AE%E6%8B%89%E8%B5%B7%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E7%9A%84%E6%80%9D%E8%80%83%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2019-10-18T14:56:57.922Z</lastmod>
     <data>
@@ -265,6 +387,26 @@
 
     
   <url>
+    <loc>http://yummylau.com/2016/08/27/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_2016-08-27_Touch%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E6%80%BB%E7%BB%93/</loc>
+    <lastmod>2019-10-18T14:56:57.921Z</lastmod>
+    <data>
+        <display>
+        <title>Android Touch事件传递总结</title>
+        <pubTime>2016-08-26T16:00:00.000Z</pubTime>
+        
+        <tag>Android进阶</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yummylau.com/2018/09/26/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90_2018-09-26_Messenger/</loc>
     <lastmod>2019-10-18T14:56:57.921Z</lastmod>
     <data>
@@ -290,46 +432,6 @@
     <data>
         <display>
         <title>系统源码解析——Handler</title>
-        <pubTime>2018-09-25T16:00:00.000Z</pubTime>
-        
-        <tag>源码解析</tag>
-         
-         
-           
-             
-              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yummylau.com/2016/08/27/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_2016-08-27_Touch%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92%E6%80%BB%E7%BB%93/</loc>
-    <lastmod>2019-10-18T14:56:57.921Z</lastmod>
-    <data>
-        <display>
-        <title>Android Touch事件传递总结</title>
-        <pubTime>2016-08-26T16:00:00.000Z</pubTime>
-        
-        <tag>Android进阶</tag>
-         
-         
-           
-             
-              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yummylau.com/2018/09/26/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90_2018-09-26_AIDl/</loc>
-    <lastmod>2019-10-18T14:56:57.920Z</lastmod>
-    <data>
-        <display>
-        <title>系统源码解析——AIDL</title>
         <pubTime>2018-09-25T16:00:00.000Z</pubTime>
         
         <tag>源码解析</tag>
@@ -387,14 +489,14 @@
 
     
   <url>
-    <loc>http://yummylau.com/2019/10/10/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE_2019:10:10_%E7%BB%84%E4%BB%B6%E5%8C%96%E6%8F%92%E4%BB%B6/</loc>
-    <lastmod>2019-10-18T14:56:57.919Z</lastmod>
+    <loc>http://yummylau.com/2018/09/26/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90_2018-09-26_AIDl/</loc>
+    <lastmod>2019-10-18T14:56:57.920Z</lastmod>
     <data>
         <display>
-        <title>开源项目之 组件化插件框架</title>
-        <pubTime>2019-10-09T16:00:00.000Z</pubTime>
+        <title>系统源码解析——AIDL</title>
+        <pubTime>2018-09-25T16:00:00.000Z</pubTime>
         
-        <tag>我的开源</tag>
+        <tag>源码解析</tag>
          
          
            
@@ -427,19 +529,19 @@
 
     
   <url>
-    <loc>http://yummylau.com/2016/08/18/%E5%B7%A5%E5%85%B7_2016-08-18_%E6%89%8B%E6%9C%BA%E5%BD%95%E5%88%B6GIF/</loc>
-    <lastmod>2019-10-18T14:56:57.918Z</lastmod>
+    <loc>http://yummylau.com/2019/10/10/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE_2019:10:10_%E7%BB%84%E4%BB%B6%E5%8C%96%E6%8F%92%E4%BB%B6/</loc>
+    <lastmod>2019-10-18T14:56:57.919Z</lastmod>
     <data>
         <display>
-        <title>手机录制GIF</title>
-        <pubTime>2016-08-17T16:00:00.000Z</pubTime>
+        <title>开源项目之 组件化插件框架</title>
+        <pubTime>2019-10-09T16:00:00.000Z</pubTime>
         
-        <tag>工具</tag>
+        <tag>我的开源</tag>
          
          
            
              
-              <breadCrumb title="工具" url="http://yummylau.com/categories/%E5%B7%A5%E5%85%B7/"/>
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
           
         </display>
     </data>
@@ -487,19 +589,19 @@
 
     
   <url>
-    <loc>http://yummylau.com/2017/02/12/Git_2017-02-12_Git%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE/</loc>
-    <lastmod>2019-10-18T14:56:57.917Z</lastmod>
+    <loc>http://yummylau.com/2016/08/18/%E5%B7%A5%E5%85%B7_2016-08-18_%E6%89%8B%E6%9C%BA%E5%BD%95%E5%88%B6GIF/</loc>
+    <lastmod>2019-10-18T14:56:57.918Z</lastmod>
     <data>
         <display>
-        <title>Git的实践建议</title>
-        <pubTime>2017-02-12T11:49:57.000Z</pubTime>
+        <title>手机录制GIF</title>
+        <pubTime>2016-08-17T16:00:00.000Z</pubTime>
         
-        <tag>Git经验</tag>
+        <tag>工具</tag>
          
          
            
              
-              <breadCrumb title="Git" url="http://yummylau.com/categories/Git/"/>
+              <breadCrumb title="工具" url="http://yummylau.com/categories/%E5%B7%A5%E5%85%B7/"/>
           
         </display>
     </data>
@@ -547,26 +649,6 @@
 
     
   <url>
-    <loc>http://yummylau.com/2018/07/03/Git_2018-07-03_Git%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4%E9%9B%86/</loc>
-    <lastmod>2019-09-14T14:28:33.774Z</lastmod>
-    <data>
-        <display>
-        <title>Git常见指令集</title>
-        <pubTime>2018-07-03T06:21:57.000Z</pubTime>
-        
-        <tag>Git经验</tag>
-         
-         
-           
-             
-              <breadCrumb title="Git" url="http://yummylau.com/categories/Git/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yummylau.com/2018/08/18/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE_2018-08-18_SharedPreference%E6%B3%A8%E5%85%A5%E6%A1%86%E6%9E%B6/</loc>
     <lastmod>2019-09-14T14:28:33.774Z</lastmod>
     <data>
@@ -600,6 +682,26 @@
            
              
               <breadCrumb title="工具" url="http://yummylau.com/categories/%E5%B7%A5%E5%85%B7/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2018/07/03/Git_2018-07-03_Git%E5%B8%B8%E8%A7%81%E6%8C%87%E4%BB%A4%E9%9B%86/</loc>
+    <lastmod>2019-09-14T14:28:33.774Z</lastmod>
+    <data>
+        <display>
+        <title>Git常见指令集</title>
+        <pubTime>2018-07-03T06:21:57.000Z</pubTime>
+        
+        <tag>Git经验</tag>
+         
+         
+           
+             
+              <breadCrumb title="Git" url="http://yummylau.com/categories/Git/"/>
           
         </display>
     </data>
@@ -671,26 +773,6 @@
 
     
   <url>
-    <loc>http://yummylau.com/2017/03/20/%E9%9D%A2%E8%AF%95_2017-03-20_%E8%AE%B0%E4%B8%80%E6%AC%A1UC%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86%EF%BC%88%E4%B8%8B%EF%BC%89/</loc>
-    <lastmod>2019-03-10T05:35:03.479Z</lastmod>
-    <data>
-        <display>
-        <title>记一次UC面试经历（下）</title>
-        <pubTime>2017-03-20T15:06:30.000Z</pubTime>
-        
-        <tag>面经</tag>
-         
-         
-           
-             
-              <breadCrumb title="面试" url="http://yummylau.com/categories/%E9%9D%A2%E8%AF%95/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yummylau.com/2018/05/24/%E8%AF%91%E6%96%87_2018-05-24_ExoPlayer%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%97/</loc>
     <lastmod>2019-03-10T05:35:03.479Z</lastmod>
     <data>
@@ -733,6 +815,26 @@
 
     
   <url>
+    <loc>http://yummylau.com/2017/03/20/%E9%9D%A2%E8%AF%95_2017-03-20_%E8%AE%B0%E4%B8%80%E6%AC%A1UC%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86%EF%BC%88%E4%B8%8B%EF%BC%89/</loc>
+    <lastmod>2019-03-10T05:35:03.479Z</lastmod>
+    <data>
+        <display>
+        <title>记一次UC面试经历（下）</title>
+        <pubTime>2017-03-20T15:06:30.000Z</pubTime>
+        
+        <tag>面经</tag>
+         
+         
+           
+             
+              <breadCrumb title="面试" url="http://yummylau.com/categories/%E9%9D%A2%E8%AF%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yummylau.com/2017/03/18/%E6%83%B3%E6%B3%95_2017-03-18_%E5%85%B3%E4%BA%8E%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98%E7%9A%84%E6%83%B3%E6%B3%95/</loc>
     <lastmod>2019-03-10T05:35:03.478Z</lastmod>
     <data>
@@ -748,6 +850,26 @@
            
              
               <breadCrumb title="想法" url="http://yummylau.com/categories/%E6%83%B3%E6%B3%95/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2017/04/05/%E8%AE%A1%E5%88%92_2017-04-05_2017%E5%B9%B4%E8%AE%A1%E5%88%92/</loc>
+    <lastmod>2019-03-10T05:35:03.478Z</lastmod>
+    <data>
+        <display>
+        <title>2017年计划</title>
+        <pubTime>2017-04-04T16:00:00.000Z</pubTime>
+        
+        <tag>计划</tag>
+         
+         
+           
+             
+              <breadCrumb title="计划" url="http://yummylau.com/categories/%E8%AE%A1%E5%88%92/"/>
           
         </display>
     </data>
@@ -775,26 +897,6 @@
 
     
   <url>
-    <loc>http://yummylau.com/2017/03/13/%E7%AE%97%E6%B3%95_2017-03-13_%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</loc>
-    <lastmod>2019-03-10T05:35:03.478Z</lastmod>
-    <data>
-        <display>
-        <title>排序算法</title>
-        <pubTime>2017-03-13T11:53:27.000Z</pubTime>
-        
-        <tag>排序算法</tag>
-         
-         
-           
-             
-              <breadCrumb title="算法" url="http://yummylau.com/categories/%E7%AE%97%E6%B3%95/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yummylau.com/2017/05/21/%E6%83%B3%E6%B3%95_2017-05-21_%E7%94%9F%E6%B4%BB%E6%84%9F%E6%82%9F/</loc>
     <lastmod>2019-03-10T05:35:03.478Z</lastmod>
     <data>
@@ -815,19 +917,19 @@
 
     
   <url>
-    <loc>http://yummylau.com/2017/04/05/%E8%AE%A1%E5%88%92_2017-04-05_2017%E5%B9%B4%E8%AE%A1%E5%88%92/</loc>
+    <loc>http://yummylau.com/2017/03/13/%E7%AE%97%E6%B3%95_2017-03-13_%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2019-03-10T05:35:03.478Z</lastmod>
     <data>
         <display>
-        <title>2017年计划</title>
-        <pubTime>2017-04-04T16:00:00.000Z</pubTime>
+        <title>排序算法</title>
+        <pubTime>2017-03-13T11:53:27.000Z</pubTime>
         
-        <tag>计划</tag>
+        <tag>排序算法</tag>
          
          
            
              
-              <breadCrumb title="计划" url="http://yummylau.com/categories/%E8%AE%A1%E5%88%92/"/>
+              <breadCrumb title="算法" url="http://yummylau.com/categories/%E7%AE%97%E6%B3%95/"/>
           
         </display>
     </data>
@@ -905,26 +1007,6 @@
 
     
   <url>
-    <loc>http://yummylau.com/2019/02/01/net_http%E5%8F%8Ahttps%E8%AF%A6%E8%A7%A3/</loc>
-    <lastmod>2019-03-10T05:35:03.476Z</lastmod>
-    <data>
-        <display>
-        <title>http及https详解</title>
-        <pubTime>2019-01-31T16:00:00.000Z</pubTime>
-        
-        <tag>网络</tag>
-         
-         
-           
-             
-              <breadCrumb title="网络" url="http://yummylau.com/categories/%E7%BD%91%E7%BB%9C/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yummylau.com/2019/02/01/net_%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B%E8%AF%A6%E8%A7%A3/</loc>
     <lastmod>2019-03-10T05:35:03.476Z</lastmod>
     <data>
@@ -965,11 +1047,51 @@
 
     
   <url>
+    <loc>http://yummylau.com/2019/02/01/net_http%E5%8F%8Ahttps%E8%AF%A6%E8%A7%A3/</loc>
+    <lastmod>2019-03-10T05:35:03.476Z</lastmod>
+    <data>
+        <display>
+        <title>http及https详解</title>
+        <pubTime>2019-01-31T16:00:00.000Z</pubTime>
+        
+        <tag>网络</tag>
+         
+         
+           
+             
+              <breadCrumb title="网络" url="http://yummylau.com/categories/%E7%BD%91%E7%BB%9C/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yummylau.com/2019/02/28/java_2019-03-01_class%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90/</loc>
     <lastmod>2019-03-10T05:35:03.475Z</lastmod>
     <data>
         <display>
         <title>如何读懂一个 class 文件</title>
+        <pubTime>2019-02-27T16:00:00.000Z</pubTime>
+        
+        <tag>字节码</tag>
+         
+         
+           
+             
+              <breadCrumb title="Java" url="http://yummylau.com/categories/Java/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</loc>
+    <lastmod>2019-03-10T05:35:03.475Z</lastmod>
+    <data>
+        <display>
+        <title>Java字节码的那些指令</title>
         <pubTime>2019-02-27T16:00:00.000Z</pubTime>
         
         <tag>字节码</tag>
@@ -1010,48 +1132,6 @@
 
     
   <url>
-    <loc>http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E6%8C%87%E4%BB%A4/</loc>
-    <lastmod>2019-03-10T05:35:03.475Z</lastmod>
-    <data>
-        <display>
-        <title>Java字节码的那些指令</title>
-        <pubTime>2019-02-27T16:00:00.000Z</pubTime>
-        
-        <tag>字节码</tag>
-         
-         
-           
-             
-              <breadCrumb title="Java" url="http://yummylau.com/categories/Java/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yummylau.com/2017/03/18/Hexo_2017-03-18_%E4%BC%98%E5%8C%96Hexo%E7%9A%84%E6%90%9C%E7%B4%A2%E6%94%B6%E5%BD%95/</loc>
-    <lastmod>2019-03-10T05:35:03.474Z</lastmod>
-    <data>
-        <display>
-        <title>优化Hexo的搜索收录</title>
-        <pubTime>2017-03-18T05:43:21.000Z</pubTime>
-        
-        <tag>Hexo</tag>
-         
-        <tag>搜索优化</tag>
-         
-         
-           
-             
-              <breadCrumb title="Hexo" url="http://yummylau.com/categories/Hexo/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>http://yummylau.com/2019/02/28/java_2019-02-28_%E5%AD%97%E8%8A%82%E7%A0%81%E5%86%85%E5%AE%B9%E8%A1%A8%E6%A0%BC/</loc>
     <lastmod>2019-03-10T05:35:03.474Z</lastmod>
     <data>
@@ -1085,6 +1165,28 @@
            
              
               <breadCrumb title="Markdowm" url="http://yummylau.com/categories/Markdowm/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2017/03/18/Hexo_2017-03-18_%E4%BC%98%E5%8C%96Hexo%E7%9A%84%E6%90%9C%E7%B4%A2%E6%94%B6%E5%BD%95/</loc>
+    <lastmod>2019-03-10T05:35:03.474Z</lastmod>
+    <data>
+        <display>
+        <title>优化Hexo的搜索收录</title>
+        <pubTime>2017-03-18T05:43:21.000Z</pubTime>
+        
+        <tag>Hexo</tag>
+         
+        <tag>搜索优化</tag>
+         
+         
+           
+             
+              <breadCrumb title="Hexo" url="http://yummylau.com/categories/Hexo/"/>
           
         </display>
     </data>
@@ -1134,11 +1236,11 @@
 
     
   <url>
-    <loc>http://yummylau.com/2018/03/05/Android_2018-03-05_View%E4%BD%93%E7%B3%BB%E4%B9%8B%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%AF%86%E5%8F%8A%E6%8A%80%E5%B7%A7/</loc>
+    <loc>http://yummylau.com/2018/03/05/Android_2018-03-05_View%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2019-03-10T05:35:03.472Z</lastmod>
     <data>
         <display>
-        <title>Android View体系之基础常识及技巧</title>
+        <title>Android View体系总结</title>
         <pubTime>2018-03-04T16:00:00.000Z</pubTime>
         
         <tag>Android View体系</tag>
@@ -1154,11 +1256,11 @@
 
     
   <url>
-    <loc>http://yummylau.com/2018/03/05/Android_2018-03-05_View%E4%BD%93%E7%B3%BB%E6%80%BB%E7%BB%93/</loc>
+    <loc>http://yummylau.com/2018/03/05/Android_2018-03-05_View%E4%BD%93%E7%B3%BB%E4%B9%8B%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%AF%86%E5%8F%8A%E6%8A%80%E5%B7%A7/</loc>
     <lastmod>2019-03-10T05:35:03.472Z</lastmod>
     <data>
         <display>
-        <title>Android View体系总结</title>
+        <title>Android View体系之基础常识及技巧</title>
         <pubTime>2018-03-04T16:00:00.000Z</pubTime>
         
         <tag>Android View体系</tag>
@@ -1194,14 +1296,14 @@
 
     
   <url>
-    <loc>http://yummylau.com/2017/01/11/Android_2017-01-11_Android-SystemUI%E7%9A%84%E9%82%A3%E7%82%B9%E4%BA%8B/</loc>
+    <loc>http://yummylau.com/2017/02/06/Android_2017-02-06_%E5%BE%AE%E4%BF%A1Tinker%E7%83%AD%E4%BF%AE%E5%A4%8D%E7%9A%84%E9%A2%84%E7%A0%94%E5%AE%9E%E8%B7%B5/</loc>
     <lastmod>2019-03-10T05:35:03.470Z</lastmod>
     <data>
         <display>
-        <title>Android-SystemUI的那点事</title>
-        <pubTime>2017-01-11T08:15:48.000Z</pubTime>
+        <title>微信Tinker热修复的预研实践</title>
+        <pubTime>2017-02-06T01:35:20.000Z</pubTime>
         
-        <tag>Android进阶</tag>
+        <tag>热修复</tag>
          
          
            
@@ -1214,14 +1316,14 @@
 
     
   <url>
-    <loc>http://yummylau.com/2017/02/06/Android_2017-02-06_%E5%BE%AE%E4%BF%A1Tinker%E7%83%AD%E4%BF%AE%E5%A4%8D%E7%9A%84%E9%A2%84%E7%A0%94%E5%AE%9E%E8%B7%B5/</loc>
+    <loc>http://yummylau.com/2017/01/11/Android_2017-01-11_Android-SystemUI%E7%9A%84%E9%82%A3%E7%82%B9%E4%BA%8B/</loc>
     <lastmod>2019-03-10T05:35:03.470Z</lastmod>
     <data>
         <display>
-        <title>微信Tinker热修复的预研实践</title>
-        <pubTime>2017-02-06T01:35:20.000Z</pubTime>
+        <title>Android-SystemUI的那点事</title>
+        <pubTime>2017-01-11T08:15:48.000Z</pubTime>
         
-        <tag>热修复</tag>
+        <tag>Android进阶</tag>
          
          
            
@@ -1254,6 +1356,46 @@
 
     
   <url>
+    <loc>http://yummylau.com/2016/10/05/Android_2016-10-05_Android%E8%BE%93%E5%85%A5%E6%B3%95%E5%BF%AB%E9%80%9F%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5/</loc>
+    <lastmod>2019-03-10T05:35:03.469Z</lastmod>
+    <data>
+        <display>
+        <title>Android输入法快速开发实践</title>
+        <pubTime>2016-10-04T16:00:00.000Z</pubTime>
+        
+        <tag>Android输入法</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yummylau.com/2016/10/08/Android_2016-10-08_Android%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5/</loc>
+    <lastmod>2019-03-10T05:35:03.469Z</lastmod>
+    <data>
+        <display>
+        <title>Android存储模块实践</title>
+        <pubTime>2016-10-07T16:00:00.000Z</pubTime>
+        
+        <tag>Android基础</tag>
+         
+         
+           
+             
+              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yummylau.com/2016/12/23/Android_2016-12-23_Gradle%E6%9E%84%E5%BB%BA/</loc>
     <lastmod>2019-03-10T05:35:03.469Z</lastmod>
     <data>
@@ -1274,12 +1416,12 @@
 
     
   <url>
-    <loc>http://yummylau.com/2016/10/08/Android_2016-10-08_Android%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9D%97%E5%AE%9E%E8%B7%B5/</loc>
+    <loc>http://yummylau.com/2016/10/10/Android_2016-10-10_Android%E7%B3%BB%E7%BB%9F%E6%A0%8F%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5/</loc>
     <lastmod>2019-03-10T05:35:03.469Z</lastmod>
     <data>
         <display>
-        <title>Android存储模块实践</title>
-        <pubTime>2016-10-07T16:00:00.000Z</pubTime>
+        <title>Android系统栏开发实践</title>
+        <pubTime>2016-10-09T16:00:00.000Z</pubTime>
         
         <tag>Android基础</tag>
          
@@ -1314,34 +1456,14 @@
 
     
   <url>
-    <loc>http://yummylau.com/2016/10/05/Android_2016-10-05_Android%E8%BE%93%E5%85%A5%E6%B3%95%E5%BF%AB%E9%80%9F%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5/</loc>
-    <lastmod>2019-03-10T05:35:03.469Z</lastmod>
+    <loc>http://yummylau.com/2016/08/12/Android_2016-08-12_Android%E7%B2%BE%E7%AE%80%E5%8C%85%E4%BD%93/</loc>
+    <lastmod>2019-03-10T05:35:03.468Z</lastmod>
     <data>
         <display>
-        <title>Android输入法快速开发实践</title>
-        <pubTime>2016-10-04T16:00:00.000Z</pubTime>
+        <title>Android精简包体</title>
+        <pubTime>2016-08-11T16:00:00.000Z</pubTime>
         
-        <tag>Android输入法</tag>
-         
-         
-           
-             
-              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yummylau.com/2016/10/10/Android_2016-10-10_Android%E7%B3%BB%E7%BB%9F%E6%A0%8F%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5/</loc>
-    <lastmod>2019-03-10T05:35:03.469Z</lastmod>
-    <data>
-        <display>
-        <title>Android系统栏开发实践</title>
-        <pubTime>2016-10-09T16:00:00.000Z</pubTime>
-        
-        <tag>Android基础</tag>
+        <tag>Android经验</tag>
          
          
            
@@ -1362,26 +1484,6 @@
         <pubTime>2016-09-01T16:00:00.000Z</pubTime>
         
         <tag>Android基础</tag>
-         
-         
-           
-             
-              <breadCrumb title="Android" url="http://yummylau.com/categories/Android/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yummylau.com/2016/08/12/Android_2016-08-12_Android%E7%B2%BE%E7%AE%80%E5%8C%85%E4%BD%93/</loc>
-    <lastmod>2019-03-10T05:35:03.468Z</lastmod>
-    <data>
-        <display>
-        <title>Android精简包体</title>
-        <pubTime>2016-08-11T16:00:00.000Z</pubTime>
-        
-        <tag>Android经验</tag>
          
          
            

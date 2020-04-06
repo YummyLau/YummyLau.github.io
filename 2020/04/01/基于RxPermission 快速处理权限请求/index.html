@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="快速开发,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="随着 Android 系统的持续更新，权限的处理也发生变化。针对 6.0 版本以上的设备，在应用构建  targetSdkVersion &amp;gt; 22 时需要考虑应用运行时权限的授予对业务功能的影响.所以有必要构建一套兼容所有 Android 版本的权限处理模块来处理业务场景的权限交互.  Android 4.3Application Operations 出现 Android 4.4Api支">
+<meta name="keywords" content="快速开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 RxPermission 构建权限交互">
+<meta property="og:url" content="http://yummylau.com/2020/04/01/基于RxPermission 快速处理权限请求/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="随着 Android 系统的持续更新，权限的处理也发生变化。针对 6.0 版本以上的设备，在应用构建  targetSdkVersion &amp;gt; 22 时需要考虑应用运行时权限的授予对业务功能的影响.所以有必要构建一套兼容所有 Android 版本的权限处理模块来处理业务场景的权限交互.  Android 4.3Application Operations 出现 Android 4.4Api支">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_4.png">
+<meta property="og:updated_time" content="2020-04-05T03:40:49.658Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基于 RxPermission 构建权限交互">
+<meta name="twitter:description" content="随着 Android 系统的持续更新，权限的处理也发生变化。针对 6.0 版本以上的设备，在应用构建  targetSdkVersion &amp;gt; 22 时需要考虑应用运行时权限的授予对业务功能的影响.所以有必要构建一套兼容所有 Android 版本的权限处理模块来处理业务场景的权限交互.  Android 4.3Application Operations 出现 Android 4.4Api支">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_3.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2020/04/01/基于RxPermission 快速处理权限请求/">
+
+
+
+
+
+  <title>基于 RxPermission 构建权限交互 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2020/04/01/基于RxPermission 快速处理权限请求/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基于 RxPermission 构建权限交互</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-01T18:24:00+08:00">
+                2020-04-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/04/01/基于RxPermission 快速处理权限请求/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/04/01/基于RxPermission 快速处理权限请求/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>随着 Android 系统的持续更新，权限的处理也发生变化。针对 6.0 版本以上的设备，在应用构建  targetSdkVersion &gt; 22 时需要考虑应用运行时权限的授予对业务功能的影响.所以有必要构建一套兼容所有 Android 版本的权限处理模块来处理业务场景的权限交互.</p>
+</blockquote>
+<h4 id="Android-4-3"><a href="#Android-4-3" class="headerlink" title="Android 4.3"></a>Android 4.3</h4><p>Application Operations 出现</p>
+<h4 id="Android-4-4"><a href="#Android-4-4" class="headerlink" title="Android 4.4"></a>Android 4.4</h4><p>Api支持获取App Ops实例<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Context</span>.getSystemService(<span class="keyword">Context</span>.APP_OPS_SERVICE)</span><br></pre></td></tr></table></figure></p>
+<h4 id="Android-6-0"><a href="#Android-6-0" class="headerlink" title="Android 6.0"></a>Android 6.0</h4><p>如果操作需要某一项权限而App却没有被授予该权限，则会抛出异常。</p>
+<ol>
+<li>提高 targetSdkVersion 到23.意味着6.0以下的设备表现得和以往一样。而6.0及以上设备则会接受权限检测。</li>
+<li>由于 targetSdkVersion&lt;23,则默认App会在安装的时候授权，但是对于6.0以上的设备依然可以主动撤销权限。<br>但是，如果我们需要用户授予某种权限来调用某个函数，在targetSdkVersion&lt;23不会出现异常，如果对于需要返回值的函数，可能会返回0或者null。但是仍然可能因为我们函数的返回值而导致程序crash。</li>
+</ol>
+<p>Android 系统权限分为<code>正常权限</code>和<code>危险权限</code>  </p>
+<ul>
+<li>正常权限不会直接给用户隐私权带来风险。如果您的应用在其清单中列出了正常权限，系统将自动授予该权限。  </li>
+<li>危险权限会授予应用访问用户机密数据的权限。如果您的应用在其清单中列出了正常权限，系统将自动授予该权限。如果您列出了危险权限，则用户必须明确批准您的应用使用这些权限。</li>
+</ul>
+<p>从Api23起，包含以下正常权限</p>
+<table>
+<thead>
+<tr>
+<th>权限名称</th>
+<th>权限说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACCESS_LOCATION_EXTRA_COMMANDS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>ACCESS_NETWORK_STATE</td>
+<td>允许程序访问有关网络的信息</td>
+</tr>
+<tr>
+<td>ACCESS_NOTIFICATION_POLICY</td>
+<td>为应用标记希望访问通知策略的权限</td>
+</tr>
+<tr>
+<td>ACCESS_WIFI_STATE</td>
+<td>允许应用程序访问Wi-Fi网络的信息</td>
+</tr>
+<tr>
+<td>BLUETOOTH</td>
+<td>允许应用程序连接到已配对的蓝牙设备</td>
+</tr>
+<tr>
+<td>BLUETOOTH_ADMIN</td>
+<td>允许应用程序发现和配对蓝牙设备</td>
+</tr>
+<tr>
+<td>BROADCAST_STICKY</td>
+<td>允许应用程序使用粘性广播，广播数据由系统完成并保持，客户端可以快速地检索数据，而不用等待下一个广播</td>
+</tr>
+<tr>
+<td>CHANGE_NETWORK_STATE</td>
+<td>允许程序修改网络连接状态</td>
+</tr>
+<tr>
+<td>CHANGE_WIFI_MULTICAST_STATE</td>
+<td>允许程序进入多播状态</td>
+</tr>
+<tr>
+<td>CHANGE_WIFI_STATE</td>
+<td>允许程序修改Wifi连接状态</td>
+</tr>
+<tr>
+<td>DISABLE_KEYGUARD</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>EXPAND_STATUS_BAR</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>GET_PACKAGE_SIZE</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>INSTALL_SHORTCUT</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>INTERNET</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>KILL_BACKGROUND_PROCESSES</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>MODIFY_AUDIO_SETTINGS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>NFC</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>READ_SYNC_SETTINGS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>READ_SYNC_STATS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>RECEIVE_BOOT_COMPLETED</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>REORDER_TASKS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>REQUEST_IGNORE_BATTERY_OPTIMIZATIONS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>REQUEST_INSTALL_PACKAGES</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>SET_ALARM</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>SET_TIME_ZONE</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>SET_WALLPAPER</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>SET_WALLPAPER_HINTS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>TRANSMIT_IR</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>UNINSTALL_SHORTCUT</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>VIBRATE</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>WAKE_LOCK</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>SET_WALLPAPER</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+<tr>
+<td>WRITE_SYNC_SETTINGS</td>
+<td>允许应用程序访问额外的位置提供命令</td>
+</tr>
+</tbody>
+</table>
+<p>除此之外，被视为“危险”权限，因此需要用户明确向您的应用授予相应访问权限。</p>
+<p>权限通过组别来申请</p>
+<ul>
+<li>通过<code>Activity#checkSelfPermission</code>来检测权限  </li>
+<li>通过<code>Activity#requestPermissions</code>来请求权限，并通过 <code>Activity#onRequestPermissionsResult</code> 回调操作结果</li>
+<li>通过 <em>shouldShowRequestPermissionRationale</em> 是一个提升用户体验的信息，字面上的意思是 <strong>“是否应该显示请求权限的根本原因”</strong>。<ul>
+<li>在 6.0 版本之后，用户第一次请求权限，系统弹窗是没有 <em>checkbox</em> 可以勾选不再询问，所以 <em>shouldShowRequestPermissionRationale</em>  的值自然是 false；</li>
+<li>如果用户第一次拒绝权限之后，那么往后系统弹窗则会出现 <em>checkbox</em> 可以勾选不再询问。如果用户请求权限之后收到 onRequestPermissionsResult 反馈时，<em>shouldShowRequestPermissionRationale = true</em> 则意味着用户曾经拒绝权限且勾选了不再询问，此时你应该弹窗告诉用户 <strong>“为什么我们需要你授权并引导用户去授权”</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>权限申请结果</p>
+<ul>
+<li>PackageManager.PERMISSION_GRANTED = 0 表示通过</li>
+<li>PackageManager.PERMISSION_DENIED = 0 表示未通过</li>
+</ul>
+<p>v4包下的三个函数用于替换activity的三个对应函数</p>
+<ul>
+<li>ContextCompat.checkSelfPermission(),无论在哪个版本，该函数都会返回PERMISSION_GRANTED 或者 PERMISSION_DENIED</li>
+<li>ActivityCompat.requestPermissions()在6.0以前版本调用，则OnRequestPermissionsResultCallback will be suddenly called with correct PERMISSION_GRANTED or PERMISSION_DENIED result.</li>
+<li>ActivityCompat.shouldShowRequestPermissionRationale()在6.0之前一直返回 flase</li>
+</ul>
+<h3 id="gt-Android6-0-的终极方案"><a href="#gt-Android6-0-的终极方案" class="headerlink" title="&gt;=Android6.0 的终极方案"></a>&gt;=Android6.0 的终极方案</h3><blockquote>
+<p>善于利用别人的轮子来提升效率，才是编程的最佳手段。</p>
+</blockquote>
+<p>一开始，我们维护了一套针对不同 context 场景的权限请求，后面发现处理 Result 的回调的时候很麻烦。后来发现 <a href="https://github.com/tbruyelle/RxPermissions" target="_blank" rel="noopener">RxPermissions</a> 处理得非常完美。结合我们自己的项目使用场景，基于 RxPermissions 基础封装我们自己的权限库，针对 6.0 以上的版本进行权限动态判断。</p>
+<p>关于 RxPermissions 的原理解析,可以参考 <a href>系统源码解析——RxPermissions</a></p>
+<p>参考项目维护的旧权限请求模块,我们希望对 RxPermissions 进一步改进,基于 <strong>RxPermissions</strong> 封装了 PermissionManager用于代理 <em>rxPermissions</em> 功能,并收集请求返回的 <em>Disposable</em> 对象,统一解绑避免内存泄漏. 同时针对项目一次/多次请求权限的场景,封装了 <strong>ResultCall</strong> 和 <strong>MultiResultCall</strong> 用于简化一次/多次请求结果的回调。</p>
+<p>则从 <strong>RxPermissions</strong> 扩展的类图结构变为</p>
+<p><img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_3.png" align="center"></p>
+<p>时序图结构更改为</p>
+<p><img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_4.png" align="center"></p>
+<p>目前整套流程稳定服务于项目场景。</p>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><ul>
+<li><a href="https://inthecheesefactory.com/blog/things-you-need-to-know-about-android-m-permission-developer-edition/en" target="_blank" rel="noopener">Everything every Android Android Developer must konw about new Android’s Runtime Permission</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a></li>
+<li><a href="https://github.com/vanniktech/RxPermission" target="_blank" rel="noopener">RxPermission</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2020/04/01/基于RxPermission 快速处理权限请求/" title="基于 RxPermission 构建权限交互">http://yummylau.com/2020/04/01/基于RxPermission 快速处理权限请求/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/快速开发/" rel="tag"># 快速开发</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/01/源码解析_2020-04-01_rxpermission/" rel="next" title="系统源码解析——RxPermissions">
+                <i class="fa fa-chevron-left"></i> 系统源码解析——RxPermissions
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/06/源码解析——LiveData & Life生命周期完整体系详解/" rel="prev" title="源码解析——LiveData & Lifecycles 完整体系详解">
+                源码解析——LiveData & Lifecycles 完整体系详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Android-4-3"><span class="nav-number">1.</span> <span class="nav-text">Android 4.3</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android-4-4"><span class="nav-number">2.</span> <span class="nav-text">Android 4.4</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android-6-0"><span class="nav-number">3.</span> <span class="nav-text">Android 6.0</span></a></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#gt-Android6-0-的终极方案"><span class="nav-number"></span> <span class="nav-text">&gt;=Android6.0 的终极方案</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文章"><span class="nav-number"></span> <span class="nav-text">参考文章</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
