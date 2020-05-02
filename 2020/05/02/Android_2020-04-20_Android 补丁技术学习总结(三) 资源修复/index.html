@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="YummyLau">
 <meta property="og:description" content="资源修复是很常见的操作，热修复方案中的资源修复很多参考了 Instant Run 的实现，Instant Run 的资源修复核心流程大致如下：  构建一个新的 AssetManager 对象，并调用 addAssetPath 添加新的资源包； 修改所有 Activity 的 Activity.mAssets(AssetManager实例) 引用指向新构建的 AssetManager 对象； 修改所">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2020-05-02T11:24:02.676Z">
+<meta property="og:updated_time" content="2020-05-02T11:49:47.508Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 补丁技术学习总结(三) 资源修复">
 <meta name="twitter:description" content="资源修复是很常见的操作，热修复方案中的资源修复很多参考了 Instant Run 的实现，Instant Run 的资源修复核心流程大致如下：  构建一个新的 AssetManager 对象，并调用 addAssetPath 添加新的资源包； 修改所有 Activity 的 Activity.mAssets(AssetManager实例) 引用指向新构建的 AssetManager 对象； 修改所">
@@ -397,14 +397,6 @@
 <p>针对 <strong>Android KK 及以下版本</strong> ，为了避免和 <strong>Instant Run</strong> 一样创建新的 <strong>AssetManager</strong> 并做大量反射修改的工作，对原 <strong>AssetManager</strong> 对象析构和重构，具体就是让 native 层的 <em>AssetManager</em> 释放之前所有加载的资源然后及把 java 层的 <em>AssetManager</em> 对其的引用设置为空。之后 java 层的 <em>AssetManager</em> 在重新调用 <em>AssetManager#init</em> 方法驱动 native 创建一个没有加载过资源的 <em>AssetManager</em>。这样一来，java 层上层代码对 <em>AssetManager</em> 的引用就不需要修改了。然后在对其调用 <em>AddAssetPath</em> 添加所有资源包就可以了。</p>
 <p>资源修复整体是围绕 <strong>AssetManager</strong> 展开的，本文只是记录了大体的思路，用来学习著名框架的设计思路及解决问题思考方法。中间细节自然存有一些难点兼容点需被攻克，感兴趣可查看参考资料一书。</p>
 <p><strong>参考资料</strong> —《深入探索 Android 热修复技术原理》</p>
-<p><strong>关联文章</strong></p>
-<ul>
-<li><a href="http://yummylau.com/2020/05/02/Android_2020-04-14_Android%20%E8%A1%A5%E4%B8%81%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(%E4%B8%80">Android 补丁技术学习总结(一) 冷启动类加载</a>%20%E5%86%B7%E5%90%AF%E5%8A%A8%E7%B1%BB%E5%8A%A0%E8%BD%BD/)</li>
-<li><a href="http://yummylau.com/2020/05/02/Android_2020-04-09_Android%20%E8%A1%A5%E4%B8%81%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(%E4%BA%8C">Android 补丁技术学习总结(二) 类热替换</a>%20%E7%B1%BB%E7%83%AD%E6%9B%BF%E6%8D%A2%20/)</li>
-<li><a href="http://yummylau.com/2020/05/02/Android_2020-04-20_Android%20%E8%A1%A5%E4%B8%81%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(%E4%B8%89">Android 补丁技术学习总结(三) 资源修复</a>%20%E8%B5%84%E6%BA%90%E4%BF%AE%E5%A4%8D/)</li>
-<li><a href="http://yummylau.com/2020/05/02/Android_2020-04-26_Android%20%E8%A1%A5%E4%B8%81%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(%E5%9B%9B">Android 补丁技术学习总结(四) so修复</a>%20so%E4%BF%AE%E5%A4%8D/)</li>
-<li><a href="http://yummylau.com/2020/05/02/Android_2020-04-26_Android%20%E8%A1%A5%E4%B8%81%E6%8A%80%E6%9C%AF%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93(%E4%BA%94">Android 补丁技术学习总结(五) 技术选型及实践流程</a>%20%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B%E5%8F%8A%E5%AE%9E%E8%B7%B5%E6%B5%81%E7%A8%8B/)</li>
-</ul>
 
       
     </div>
