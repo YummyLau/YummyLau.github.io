@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="热修复,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="所谓 冷启动类加载，即应用进行重启之后，加载修复后的类文件达到修复类的已知问题。 一个类已经被虚拟机所加载，为了清除虚拟机中的类信息，只能通过重启手段解决。 这里以 QZone 插桩 ，手Q QFix 和  微信 tinker  方案为分析，并引用 Sophix 的做法做对比。 QZone方案一个 ClassLoader 可以加载多个 dex 文件，每一个 dex 文件实是一个 Element，多">
+<meta name="keywords" content="热修复">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 补丁技术学习总结(一) 冷启动类加载">
+<meta property="og:url" content="http://yummylau.com/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="所谓 冷启动类加载，即应用进行重启之后，加载修复后的类文件达到修复类的已知问题。 一个类已经被虚拟机所加载，为了清除虚拟机中的类信息，只能通过重启手段解决。 这里以 QZone 插桩 ，手Q QFix 和  微信 tinker  方案为分析，并引用 Sophix 的做法做对比。 QZone方案一个 ClassLoader 可以加载多个 dex 文件，每一个 dex 文件实是一个 Element，多">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2020-05-01T09:09:21.903Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 补丁技术学习总结(一) 冷启动类加载">
+<meta name="twitter:description" content="所谓 冷启动类加载，即应用进行重启之后，加载修复后的类文件达到修复类的已知问题。 一个类已经被虚拟机所加载，为了清除虚拟机中的类信息，只能通过重启手段解决。 这里以 QZone 插桩 ，手Q QFix 和  微信 tinker  方案为分析，并引用 Sophix 的做法做对比。 QZone方案一个 ClassLoader 可以加载多个 dex 文件，每一个 dex 文件实是一个 Element，多">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/">
+
+
+
+
+
+  <title>Android 补丁技术学习总结(一) 冷启动类加载 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 补丁技术学习总结(一) 冷启动类加载</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-14T15:17:34+08:00">
+                2020-04-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>所谓 <strong>冷启动类加载</strong>，即应用进行重启之后，加载修复后的类文件达到修复类的已知问题。</p>
+<p>一个类已经被虚拟机所加载，为了清除虚拟机中的类信息，只能通过重启手段解决。</p>
+<p>这里以 <strong>QZone</strong> <a href="https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&amp;mid=400118620&amp;idx=1&amp;sn=b4fdd5055731290eef12ad0d17f39d4a&amp;scene=0" target="_blank" rel="noopener">插桩</a> ，<strong>手Q</strong> <a href="https://cloud.tencent.com/developer/article/1071333" target="_blank" rel="noopener">QFix</a> 和  <strong>微信</strong> <a href="https://github.com/Tencent/tinker" target="_blank" rel="noopener">tinker</a>  方案为分析，并引用 <strong>Sophix</strong> 的做法做对比。</p>
+<h3 id="QZone方案"><a href="#QZone方案" class="headerlink" title="QZone方案"></a>QZone方案</h3><p>一个 <strong>ClassLoader</strong> 可以加载多个 <strong>dex</strong> 文件，每一个 <strong>dex</strong> 文件实是一个 <em>Element</em>，多个 <strong>dex</strong> 文件排列成一个有序的数组 <em>dexElements</em>。 对于 <a href="http://yummylau.com/2019/03/01/java_2019-03-01_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/">ClassLoader</a> 不熟悉的朋友，建议先看看链接里的储备知识。</p>
+<p>如果一个类已经被  <strong>ClassLoader</strong>  加载，那么在查找 <em>class</em> 对象 <em>findClass(String name, List<throwable> suppressed)</throwable></em> 过程中，如果已存在已查找的 <em>class</em> ，则直接返回该 <em>class</em>。所有 QZone 采用的方案是把经过修改过的类打包成新的 <strong>dex</strong> 文件，把该 <strong>dex</strong> 文件优先插到 <em>dexElements</em> 的待修复类 <strong>dex</strong> 文件的前面。</p>
+<p>这个方案涉及到类校验问题，该问题是由于 dex 文件被优化导致的。当我们第一次安装 APK 的时候，会对原 dex 执行 dexopt。如果使用上述方案插入一个 <strong>dex</strong> 文件，则会先执行 <em>dexopt</em> 进行优化。对应 <a href="https://android.googlesource.com/platform/dalvik.git/+/android-4.2.2_r1/vm/analysis/DexPrepare.cpp" target="_blank" rel="noopener">DexPrepare.cpp#verifyAndOptimizeClass</a> </p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Verify and/or optimize a specific class.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> verifyAndOptimizeClass(DexFile* pDexFile, ClassObject* clazz,</span><br><span class="line">    <span class="keyword">const</span> DexClassDef* pClassDef, <span class="keyword">bool</span> doVerify, <span class="keyword">bool</span> doOpt)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">	</span><br><span class="line">    <span class="keyword">if</span> (doVerify) &#123;</span><br><span class="line">        <span class="keyword">if</span> (dvmVerifyClass(clazz)) &#123; <span class="comment">//Verify class</span></span><br><span class="line">            ((DexClassDef*)pClassDef)-&gt;accessFlags |= <span class="built_in">CLASS_ISPREVERIFIED</span>;	<span class="comment">// 打上 CLASS_ISPREVERIFIED</span></span><br><span class="line">            verified = <span class="literal">true</span>;  </span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// <span class="doctag">TODO:</span> log when in verbose mode</span></span><br><span class="line">            ALOGV(<span class="string">"DexOpt: '%s' failed verification"</span>, classDescriptor);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (doOpt) &#123;</span><br><span class="line">        <span class="keyword">bool</span> needVerify = (gDvm.dexOptMode == OPTIMIZE_MODE_VERIFIED ||</span><br><span class="line">                           gDvm.dexOptMode == OPTIMIZE_MODE_FULL);</span><br><span class="line">        <span class="keyword">if</span> (!verified &amp;&amp; needVerify) &#123;</span><br><span class="line">            ALOGV(<span class="string">"DexOpt: not optimizing '%s': not verified"</span>,</span><br><span class="line">                classDescriptor);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            dvmOptimizeClass(clazz, <span class="literal">false</span>);  <span class="comment">//Optimize class</span></span><br><span class="line">            <span class="comment">/* set the flag whether or not we actually changed anything */</span></span><br><span class="line">            ((DexClassDef*)pClassDef)-&gt;accessFlags |= <span class="built_in">CLASS_ISOPTIMIZED</span>; <span class="comment">// 再打上 CLASS_ISOPTIMIZED</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>dvmVerifyClass 的目的在于防止类被篡改。会对类的 <em>static方法</em>，<em>private方法</em>，<em>构造函数</em>，<em>虚函数(可被继承的函数)</em> 进行校验，如果类的所有方法中直接引用到的第一层类和当前类是在同一个 <strong>dex</strong> 文件，则会返回 true</li>
+<li>dvmOptimizeClass 的目的在于把部分指令优化成虚拟机内部指令，为了提升方法的执行速度。</li>
+</ul>
+<p>假如原先有个 <strong>dex</strong> 文件中类 B 引用了类 A，则 B 会被打上 <strong>CLASS_ISPREVERIFIED</strong>，现在打了修复 <strong>dex</strong> 文件包含了类 A。当类 B 某个方法引用到类 A 的时候，就会尝试去解析类 A。 对应 <a href="https://android.googlesource.com/platform/dalvik.git/+/android-4.2.2_r1/vm/oo/Resolve.cpp" target="_blank" rel="noopener">Resolve.cpp#dvmResolveClass</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">ClassObject* dvmResolveClass(<span class="keyword">const</span> ClassObject* referrer, u4 classIdx,bool fromUnverifiedConstant)&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">	 resClass = dvmDexGetResolvedClass(pDvmDex, classIdx);</span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="keyword">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> resClass;</span><br><span class="line">	 </span><br><span class="line">	 className = dexStringByTypeIdx(pDvmDex-&gt;pDexFile, classIdx);</span><br><span class="line">    <span class="keyword">if</span> (className[<span class="number">0</span>] != <span class="string">'\0'</span> &amp;&amp; className[<span class="number">1</span>] == <span class="string">'\0'</span>) &#123;</span><br><span class="line">        <span class="comment">/* primitive type */</span></span><br><span class="line">        resClass = dvmFindPrimitiveClass(className[<span class="number">0</span>]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        resClass = dvmFindClassNoInit(className, referrer-&gt;classLoader);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="keyword">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!fromUnverifiedConstant &amp;&amp;</span><br><span class="line">            IS_CLASS_FLAG_SET(referrer, CLASS_ISPREVERIFIED)) <span class="comment">//B类已经被打上 CLASS_ISPREVERIFIED，满足条件</span></span><br><span class="line">        &#123;</span><br><span class="line">            ClassObject* resClassCheck = resClass;    <span class="comment">//类 A</span></span><br><span class="line">            <span class="keyword">if</span> (dvmIsArrayClass(resClassCheck))</span><br><span class="line">                resClassCheck = resClassCheck-&gt;elementClass;</span><br><span class="line">            <span class="keyword">if</span> (referrer-&gt;pDvmDex != resClassCheck-&gt;pDvmDex &amp;&amp;</span><br><span class="line">                resClassCheck-&gt;classLoader != <span class="keyword">NULL</span>)  <span class="comment">//发现类 A 和 类 B 不在同一个 dex</span></span><br><span class="line">            &#123;</span><br><span class="line">                dvmThrowIllegalAccessError(</span><br><span class="line">                    <span class="string">"Class ref in pre-verified class resolved to unexpected "</span></span><br><span class="line">                    <span class="string">"implementation"</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">NULL</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        dvmDexSetResolvedClass(pDvmDex, classIdx, resClass);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        assert(dvmCheckException(dvmThreadSelf()));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> resClass;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了解决类校验的问题， 只需要让 <em>dvmVerifyClass</em> 返回 false 就可以了。QZone 的做法是使用字节码修改技术，在所有 .class 文件的构造器中引用一个帮助类，该类单独存放在一个 <strong>dex</strong> 文件中，就可以实现所有类都不会被打上 <strong>CLASS_ISPREVERIFIED</strong> 标志，进而避免在 <em>dvmResolveClass</em> 解析中出现异常。</p>
+<p><strong>存在的问题与限制</strong></p>
+<p>由于类的加载涉及 <em>dvmResolveClass</em>，<em>dvmLinkClass</em> 和 <em>dvmInitClass</em> 三个阶段。<em>dvmInitClass</em> 会在类解析完并尝试初始化类的时候执行，如果类没有被打上  <strong>CLASS_ISPREVERIFIED</strong>  或  <strong>CLASS_ISOPTIMIZED</strong> ，校验和优化都会在该阶段进行。而正常情况下类的校验和优化应该在 APK 第一次安装的时候执行 <em>dexopt</em> 操作时执行的，但是我们干预了 <strong>CLASS_ISPREVERIFIED</strong> 的设置流程，导致在同一时间加载大量类，加载效率也收到比较大的影响。应用刚启动的时候如果出现这种情况，则容易导致白屏。</p>
+<h3 id="手Q方案"><a href="#手Q方案" class="headerlink" title="手Q方案"></a>手Q方案</h3><p>为了避免插桩带来的性能问题，手Q在 <em>dvmResolveClass</em> 直接避开了 <strong>CLASS_ISPREVERIFIED</strong> 的相关逻辑。参考上面 <a href="https://android.googlesource.com/platform/dalvik.git/+/android-4.2.2_r1/vm/oo/Resolve.cpp" target="_blank" rel="noopener">Resolve.cpp#dvmResolveClass</a></p>
+<figure class="highlight zephir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">ClassObject* dvmResolveClass(<span class="keyword">const</span> ClassObject* referrer, u4 classIdx,<span class="keyword">bool</span> fromUnverifiedConstant)&#123;</span><br><span class="line"></span><br><span class="line">	DvmDex* pDvmDex = referrer-&gt;pDvmDex;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//...</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">//从dex缓存中查找类 class</span></span><br><span class="line">	 resClass = dvmDexGetResolvedClass(pDvmDex, classIdx);</span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="keyword">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> resClass;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="keyword">NULL</span>) &#123;</span><br><span class="line">		</span><br><span class="line">        <span class="keyword">if</span> (!fromUnverifiedConstant &amp;&amp;IS_CLASS_FLAG_SET(referrer, CLASS_ISPREVERIFIED))&#123;</span><br><span class="line">            ClassObject* resClassCheck = resClass;</span><br><span class="line">            <span class="keyword">if</span> (dvmIsArrayClass(resClassCheck))</span><br><span class="line">                resClassCheck = resClassCheck-&gt;elementClass;</span><br><span class="line">            <span class="keyword">if</span> (referrer-&gt;pDvmDex != resClassCheck-&gt;pDvmDex &amp;&amp;resClassCheck-&gt;classLoader != <span class="keyword">NULL</span>)&#123;</span><br><span class="line">                dvmThrowIllegalAccessError(</span><br><span class="line">                    <span class="string">"Class ref in pre-verified class resolved to unexpected "</span></span><br><span class="line">                    <span class="string">"implementation"</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">NULL</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">			</span><br><span class="line">		 <span class="comment">//已经解析的类放入 dex 缓存</span></span><br><span class="line">        dvmDexSetResolvedClass(pDvmDex, classIdx, resClass);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><em>dvmDexGetResolvedClass</em> 方法是尝试从 dex 缓存中查找引用的类，找到了就直接返回</li>
+<li><em>dvmDexSetResolvedClass</em> 方法是将已经解析的类存入 dex 缓存中</li>
+</ul>
+<p>所以，只需要将补丁类 A 提前解析并设置 <strong>fromUnverifiedConstant</strong> 为 true 绕过类校验，然后存储 dex 缓存中。这一步可以通过 jni 调用 <em>dalvik#dvmRsolveClass</em> 方法实现。后续引用到该补丁类 A 的时候就可以直接从 dex 缓存中找到。当类 B 在校验的时候，<code>referrer-&gt;pDvmDex != resClassCheck-&gt;pDvmDex</code> 如果不打破这个条件，依然会出现异常。所以对补丁类 A 进行 dex 缓存的时候，拿到的 <em>pDvmDex</em> 应该是原来类 A 所在的 dex 。</p>
+<p>那么在 <em>dalvik#dvmRsolveClass</em> 的过程中，<em>referrer</em> 和 <em>classIdx</em> 要怎么确定 ？</p>
+<ul>
+<li><em>referrer</em> 为和原类 A 同个 dex 下的一个任意类即可。但是需要调用 <em>dvmFindLoadedClass</em> 来实现，在补丁注入之后，在每个 dex 中找一个已经成功加载的引用类的描述符作为参数来实现。比如主 dex 就用 <em>Application</em> 类描述符，其他 dex，手Q 确保了每一个分 dex 有一个空类完成初始化，使用的是空类的描述符。</li>
+<li><em>classIdx</em> 为原类 A 在所有 dex 下的类索引 ID，通过 <code>dexdump -h</code> 指令获取。</li>
+</ul>
+<p>这套方案可以完美避开插桩所带来的类校验影响。但是假如在某个待修复多态类中新增方法，可能会导致修复前类的 <em>vtable</em> 的索引与修复后类的 <em>vtable</em> 索引对不上。因此修复后的类不能新增 <em>public</em> 函数，同样 QZone 也存在这样的问题。所以只能寻找全量合成新 <strong>dex</strong> 文件的方案。</p>
+<h3 id="Tinker方案"><a href="#Tinker方案" class="headerlink" title="Tinker方案"></a>Tinker方案</h3><p>tinker 的方案是 <strong>“全量替换 dex”</strong>。使用自研的比较算法，把重新生成新的 <strong>dex</strong> 文件与需要修复的 <strong>dex</strong> 文件进行计算并得到差异 <strong>dex</strong> 文件，该差异 <strong>dex</strong> 文件会被下发到客户端与需要修复的 <strong>dex</strong> 文件进行合并生成全量 <strong>dex</strong> 文件，并把该 <strong>dex</strong> 文件插到 <em>dexElements</em> 数组的最前面。与 QZone 方法不一样的时，由于被修复的类与原类是在同一个 <strong>dex</strong> 文件内，所以不存在类校验的问题。</p>
+<p>虚拟机加载 <strong>dex</strong> 文件时</p>
+<ul>
+<li><p>dalvik 虚拟机调用 <a href="https://android.googlesource.com/platform/dalvik/+/android-4.4.4_r2/vm/native/dalvik_system_DexFile.cpp" target="_blank" rel="noopener">Dalvik_dalvik_system_DexFile_openDexFileNative</a>, 如果是一个压缩包则只会加载第一个 dex</p>
+  <figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (dvmJarFileOpen(sourceName, outputName, &amp;pJarFile, <span class="literal">false</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">       ALOGV(<span class="string">"Opening DEX file '%s' (Jar)"</span>, sourceName);</span><br><span class="line">       pDexOrJar = (DexOrJar*) malloc(sizeof(DexOrJar));</span><br><span class="line">       <span class="function"><span class="title">pDexOrJar</span>-&gt;</span>isDex = <span class="literal">false</span>;</span><br><span class="line">       <span class="function"><span class="title">pDexOrJar</span>-&gt;</span>pJarFile = pJarFile;</span><br><span class="line">       <span class="function"><span class="title">pDexOrJar</span>-&gt;</span>pDexMemory = NULL;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>art 虚拟机调用 <a href="https://android.googlesource.com/platform/art/+/master/runtime/oat_file_assistant.cc" target="_blank" rel="noopener">LoadDexFiles</a>, 加载 oat 中多个 dex 文件</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// Load the main dex file.</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> error_msg;</span><br><span class="line"><span class="keyword">const</span> OatDexFile* oat_dex_file = oat_file.GetOatDexFile(dex_location.c_str(), <span class="literal">nullptr</span>, &amp;error_msg);</span><br><span class="line"><span class="keyword">if</span> (oat_dex_file == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">  LOG(WARNING) &lt;&lt; error_msg;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Load the rest of the multidex entries</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">1</span>;; i++) &#123;</span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">string</span> multidex_dex_location = DexFileLoader::GetMultiDexLocation(i, dex_location.c_str());</span><br><span class="line">  oat_dex_file = oat_file.GetOatDexFile(multidex_dex_location.c_str(), <span class="literal">nullptr</span>);</span><br><span class="line">  <span class="keyword">if</span> (oat_dex_file == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    <span class="comment">// There are no more multidex entries to load.</span></span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  dex_file = oat_dex_file-&gt;OpenDexFile(&amp;error_msg);</span><br><span class="line">  <span class="keyword">if</span> (dex_file.get() == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">    LOG(WARNING) &lt;&lt; <span class="string">"Failed to open dex file from oat dex file: "</span> &lt;&lt; error_msg;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  out_dex_files-&gt;push_back(<span class="built_in">std</span>::move(dex_file));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>在 art 虚拟机加载的压缩包下，可能存在多个 <strong>dex</strong> 文件，main dex 为 <strong>classes.dex</strong>，其他的 <strong>dex</strong> 文件依次命名为 <strong>classes(2,3,4…)dex</strong>。 假如某个 <strong>classesNdex</strong> 出现了问题，tinker 会重新合成 <strong>classesNdex</strong> 。</p>
+<pre><code>1. 保留原来修复前 **classesNdex** dex 文件
+2. 获取修复后的 **classedNdexFix** dex 文件
+3. 使用算法计算得到 **classesNdexPatch** 补丁文件
+4. 下发 **classesNdexPatch** 补丁文件在客户端与 **classesNdex** dex 文件进行合并，得到 **classedNdexFix** dex 文件
+5. 重启应用，提前加载 **classedNdexFix** dex 文件修复问题。
+</code></pre><p>这种全量合成修复 <strong>dex</strong> 的做法，确保了修复前后的类与原 <strong>dex</strong> 其他类在同一个 <strong>dex</strong> 中，遵循了原来虚拟机所有校验方式，避开了QZone方案面临的类校验问题。</p>
+<h3 id="Sophix方案"><a href="#Sophix方案" class="headerlink" title="Sophix方案"></a>Sophix方案</h3><p>阿里 <strong>Sophix</strong> 方案认为 <strong>“既然 art 能加载压缩文件中的多个 dex 且优先加载 classes.dex，如果把补丁 dex 作为 classes.dex,然后 apk 中原来的 dex 改成 classes(2,3,4…)dex，然后重新打包压缩文件，让 DexFile.loadDex 得到 DexFile 对象，并最终替换掉旧的 dexElements 数组就可以了。”</strong></p>
+<p>但是这种方案下，Art 需要重新加载整个压缩文件，针对每一个 dex 执行 dexoat 来得到 odex 的过程是很耗时的。需要把整个过程事务化，在接收到服务端补丁之后再启动一个子线程在后台进行异步处理。如果下次重启之后发现存在处理完的完整 odex 文件集，才进行处理。</p>
+<p>同时认为 <strong>“针对 dalvik 下，全量合成dex可参照 multi-dex 方案，在原来 dex 文件中剔除需要修复的类，然后再合并进修复的类。并不需要想 tinker 方案中针对 dex 的所有内容进行比较，粒度非常细也非常复杂，以类作为粒度作为替换是较佳选择”</strong>。</p>
+<p>但是如果 <em>Application</em> 加载了新 dex 的类 <em>Application</em> 刚好被打上 <strong>CLASS_ISPREVERIFIED</strong> ，那么就会面临前面 QZone 方案的类校验问题，实际上所有全量合成的方案都会面临这个问题。 <strong>tinker</strong> 使用的是 <strong>TinkerApplication</strong> 接管应用 <strong>Application</strong> 并在生命周期回调的时候反射调用原 <strong>Application</strong> 的对应方案。而 <strong>Sophix</strong> 也是使用 <em>SohpixStubApplication</em> 做了类似的事情。</p>
+<p><strong>小结</strong></p>
+<p>冷启动方案几乎可以修复任何代码场景，但是补丁注入前已经被加载的类，如 <em>Application</em> 等是无法被修复的。综合上面的多种方案可以得到针对不同虚拟机的优先冷启动方案：</p>
+<ul>
+<li>Dalvik 虚拟机下使用类 <strong>multi-dex</strong> 全量方案避免插桩的方案</li>
+<li>Art 虚拟机下使用补丁类作为 <strong>classes.dex</strong> 重新打包压缩文件进行加载的方案</li>
+</ul>
+<p><strong>参考资料</strong></p>
+<ul>
+<li><a href="http://yummylau.com/2019/03/01/java_2019-03-01_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/">聊一聊 “类加载器”</a></li>
+<li><a href="https://juejin.im/post/5ccee8776fb9a031ee3c2475" target="_blank" rel="noopener">Android Dex分包最全总结：含Facebook解决方案</a></li>
+<li><a href="https://blog.csdn.net/xwl198937/article/details/49801975" target="_blank" rel="noopener">基于cydia Hook在线热修复补丁方案</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1071333" target="_blank" rel="noopener">QFix探索之路——手Q热补丁轻量级方案</a></li>
+<li><a href="https://www.jianshu.com/p/fa593cf27b5d" target="_blank" rel="noopener">我理解的热修复中的ART地址错乱问题</a></li>
+<li><a href="https://www.jianshu.com/p/68d2a92eb7ab" target="_blank" rel="noopener">Android热修复升级探索——代码修复冷启动方案</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/" title="Android 补丁技术学习总结(一) 冷启动类加载">http://yummylau.com/2020/04/14/Android_2020-04-14_Android 补丁技术学习总结(一) 冷启动类加载/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/热修复/" rel="tag"># 热修复</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/09/Android_2020-04-09_Android 补丁技术学习总结(二) 类热替换 /" rel="next" title="Android 补丁技术学习总结(二) 类热替换">
+                <i class="fa fa-chevron-left"></i> Android 补丁技术学习总结(二) 类热替换
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/21/Android_2020-04-26_Android 补丁技术学习总结(四) so修复/" rel="prev" title="Android 补丁技术学习总结(四) so修复">
+                Android 补丁技术学习总结(四) so修复 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#QZone方案"><span class="nav-number">1.</span> <span class="nav-text">QZone方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手Q方案"><span class="nav-number">2.</span> <span class="nav-text">手Q方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tinker方案"><span class="nav-number">3.</span> <span class="nav-text">Tinker方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sophix方案"><span class="nav-number">4.</span> <span class="nav-text">Sophix方案</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
