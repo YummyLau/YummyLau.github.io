@@ -89,7 +89,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_3.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200401/rxpermission_4.png">
-<meta property="og:updated_time" content="2020-04-05T03:40:49.658Z">
+<meta property="og:updated_time" content="2020-04-21T08:00:14.316Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于 RxPermission 构建权限交互">
 <meta name="twitter:description" content="随着 Android 系统的持续更新，权限的处理也发生变化。针对 6.0 版本以上的设备，在应用构建  targetSdkVersion &amp;gt; 22 时需要考虑应用运行时权限的授予对业务功能的影响.所以有必要构建一套兼容所有 Android 版本的权限处理模块来处理业务场景的权限交互.  Android 4.3Application Operations 出现 Android 4.4Api支">
@@ -345,6 +345,17 @@
 
           
           
+             <span id="/2020/04/01/基于RxPermission 快速处理权限请求/" class="leancloud_visitors" data-flag-title="基于 RxPermission 构建权限交互">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
 
           
 
@@ -431,103 +442,203 @@
 </tr>
 <tr>
 <td>DISABLE_KEYGUARD</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序禁用键盘锁</td>
 </tr>
 <tr>
 <td>EXPAND_STATUS_BAR</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许一个程序扩展收缩在状态栏</td>
 </tr>
 <tr>
 <td>GET_PACKAGE_SIZE</td>
-<td>允许应用程序访问额外的位置提供命令</td>
-</tr>
-<tr>
-<td>INSTALL_SHORTCUT</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许一个程序获取任何package占用空间容量</td>
 </tr>
 <tr>
 <td>INTERNET</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序打开网络套接字</td>
 </tr>
 <tr>
 <td>KILL_BACKGROUND_PROCESSES</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序调用killBackgroundProcesses(String) 方法结束后台进程</td>
 </tr>
 <tr>
 <td>MODIFY_AUDIO_SETTINGS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序修改全局音频设置</td>
 </tr>
 <tr>
 <td>NFC</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序执行NFC近距离通讯操作，用于移动支持</td>
 </tr>
 <tr>
 <td>READ_SYNC_SETTINGS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序读取同步设置</td>
 </tr>
 <tr>
 <td>READ_SYNC_STATS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序读取同步状态</td>
 </tr>
 <tr>
 <td>RECEIVE_BOOT_COMPLETED</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许一个程序接收到 ACTION_BOOT_COMPLETED广播在系统完成启动</td>
 </tr>
 <tr>
 <td>REORDER_TASKS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许程序改变Z轴排列任务</td>
 </tr>
 <tr>
-<td>REQUEST_IGNORE_BATTERY_OPTIMIZATIONS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
-</tr>
-<tr>
-<td>REQUEST_INSTALL_PACKAGES</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>INSTALL_PACKAGES</td>
+<td>允许程序安装应用</td>
 </tr>
 <tr>
 <td>SET_ALARM</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>设置闹铃提醒</td>
 </tr>
 <tr>
 <td>SET_TIME_ZONE</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>设置系统时区</td>
 </tr>
 <tr>
 <td>SET_WALLPAPER</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>设置桌面壁纸</td>
 </tr>
 <tr>
 <td>SET_WALLPAPER_HINTS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
-</tr>
-<tr>
-<td>TRANSMIT_IR</td>
-<td>允许应用程序访问额外的位置提供命令</td>
-</tr>
-<tr>
-<td>UNINSTALL_SHORTCUT</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>设置壁纸建议</td>
 </tr>
 <tr>
 <td>VIBRATE</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许访问振动设备</td>
 </tr>
 <tr>
 <td>WAKE_LOCK</td>
-<td>允许应用程序访问额外的位置提供命令</td>
-</tr>
-<tr>
-<td>SET_WALLPAPER</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>允许使用PowerManager的 WakeLocks保持进程在休眠时从屏幕消失</td>
 </tr>
 <tr>
 <td>WRITE_SYNC_SETTINGS</td>
-<td>允许应用程序访问额外的位置提供命令</td>
+<td>写入Google在线同步设置</td>
 </tr>
 </tbody>
 </table>
-<p>除此之外，被视为“危险”权限，因此需要用户明确向您的应用授予相应访问权限。</p>
+<p>除此之外，被视为“危险”权限，因此需要用户明确向您的应用授予相应访问权限。如果设备运行的是 Android6.0（API级别23），并且应用 targetSdkVersion 是 23 或更高版本，则当用户请求危险权限是系统会发生以下行为：</p>
+<ul>
+<li>如果应用请求其清单中列出的危险权限，而应用目前在权限组中没有任何权限，则系统会向用户显示一个对话框，描述应用要访问的权限组。对话框不描述该组内的具体权限。例如，如果应用请求 <code>READ_CONTACTS</code> 权限，系统对话框只说明该应用需要访问设备的联系信息。如果用户批准，系统将向应用授予其请求的权限。</li>
+<li>如果应用请求其清单中列出的危险权限，而应用在同一权限组中已有另一项危险权限，则系统会立即授予该权限，而无需与用户进行任何交互。例如，如果某应用已经请求并且被授予了 <code>READ_CONTACTS</code> 权限，然后它又请求 <code>WRITE_CONTACTS</code>，系统将立即授予该权限。</li>
+</ul>
+<p>危险权限和权限组</p>
+<table>
+<thead>
+<tr>
+<th>权限名组</th>
+<th>权限</th>
+<th>权限说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CALENDAR</td>
+<td>READ_CALENDAR</td>
+<td>日历</td>
+</tr>
+<tr>
+<td></td>
+<td>WRITE_CALENDAR</td>
+</tr>
+<tr>
+<td>CAMERA</td>
+<td>CAMERA</td>
+<td>摄像头</td>
+</tr>
+<tr>
+<td>CONTACTS</td>
+<td>READ_CONTACTS</td>
+<td>联系人</td>
+</tr>
+<tr>
+<td></td>
+<td>WRITE_CONTACTS</td>
+</tr>
+<tr>
+<td></td>
+<td>GET_ACCOUNTS</td>
+</tr>
+<tr>
+<td>LOCATION</td>
+<td>ACCESS_FINE_LOCATION</td>
+<td>定位</td>
+</tr>
+<tr>
+<td></td>
+<td>ACCESS_COARSE_LOCATION</td>
+</tr>
+<tr>
+<td>MICROPHONE</td>
+<td>RECORD_AUDIO</td>
+</tr>
+<tr>
+<td>PHONE</td>
+<td>READ_PHONE_STATE</td>
+<td>手机</td>
+</tr>
+<tr>
+<td></td>
+<td>CALL_PHONE</td>
+</tr>
+<tr>
+<td></td>
+<td>READ_CALL_LOG</td>
+</tr>
+<tr>
+<td></td>
+<td>WRITE_CALL_LOG</td>
+</tr>
+<tr>
+<td></td>
+<td>ADD_VOICEMAIL</td>
+</tr>
+<tr>
+<td></td>
+<td>USE_SIP</td>
+</tr>
+<tr>
+<td></td>
+<td>PROCESS_OUTGOING_CALLS</td>
+</tr>
+<tr>
+<td>SENSORS</td>
+<td>BODY_SENSORS</td>
+<td>传感器</td>
+</tr>
+<tr>
+<td>SMS</td>
+<td>SEND_SMS</td>
+<td>短信</td>
+</tr>
+<tr>
+<td></td>
+<td>RECEIVE_SMS</td>
+</tr>
+<tr>
+<td></td>
+<td>READ_SMS</td>
+</tr>
+<tr>
+<td></td>
+<td>RECEIVE_WAP_PUSH</td>
+</tr>
+<tr>
+<td></td>
+<td>RECEIVE_MMS</td>
+</tr>
+<tr>
+<td>STORAGE</td>
+<td>READ_EXTERNAL_STORAGE</td>
+<td>存储</td>
+</tr>
+<tr>
+<td></td>
+<td>WRITE_EXTERNAL_STORAGE</td>
+</tr>
+</tbody>
+</table>
 <p>权限通过组别来申请</p>
 <ul>
 <li>通过<code>Activity#checkSelfPermission</code>来检测权限  </li>
@@ -707,7 +818,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-count">74</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -992,6 +1103,113 @@
 
 
   
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz", "5HrONz3gb8XPDrUna01sa0gY");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
 
   
 
