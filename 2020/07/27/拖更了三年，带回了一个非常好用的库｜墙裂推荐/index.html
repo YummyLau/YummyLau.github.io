@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="起因事情是这样的。 4年前毕业那会，呆在公司的短视频项目，做 🍍 视频。那会做得比抖音还早，但是由于短视频太烧钱了，项目被公司关掉啦。当时需要开发横竖屏直播/异步视频的场景，就研究下了市场上的 app，发现输入弹幕的交互并不友好。最直接的体验就是，微信比绝大部分IM软件在聊天场景下输入法与表情面板频繁切换时表现得更为平滑，不会给用户很突兀的闪烁感。但我们除了适配竖屏，们还需要兼容横屏/满屏/沉">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拖更了三年，带回了一个非常好用的库｜墙贴推荐">
+<meta property="og:url" content="http://yummylau.com/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="起因事情是这样的。 4年前毕业那会，呆在公司的短视频项目，做 🍍 视频。那会做得比抖音还早，但是由于短视频太烧钱了，项目被公司关掉啦。当时需要开发横竖屏直播/异步视频的场景，就研究下了市场上的 app，发现输入弹幕的交互并不友好。最直接的体验就是，微信比绝大部分IM软件在聊天场景下输入法与表情面板频繁切换时表现得更为平滑，不会给用户很突兀的闪烁感。但我们除了适配竖屏，们还需要兼容横屏/满屏/沉">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/1729333b087740e3?w=1988&h=1332&f=jpeg&s=122321">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293dff6262b7d0?w=200&h=441&f=gif&s=291134">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293e0a08240ffa?w=200&h=433&f=gif&s=785716">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293e0c0f9294cf?w=200&h=433&f=gif&s=955636">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/9/17296d6a091f4654?w=300&h=660&f=jpeg&s=24862">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/9/17296d6bfeb5da55?w=300&h=660&f=jpeg&s=25631">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293da1d9e06154?w=200&h=441&f=gif&s=1805462">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293da46bfd77a9?w=200&h=441&f=gif&s=1849029">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293db07eaab70e?w=200&h=441&f=gif&s=1898588">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293db2c12b47bf?w=200&h=441&f=gif&s=1999535">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293db8e205ae44?w=200&h=441&f=gif&s=3025404">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293dbdc991ae82?w=200&h=441&f=gif&s=3327878">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293dc273402a1e?w=200&h=441&f=gif&s=171551">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/6/8/17293dc3d771d326?w=200&h=441&f=gif&s=1583311">
+<meta property="og:updated_time" content="2022-02-06T18:25:08.929Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="拖更了三年，带回了一个非常好用的库｜墙贴推荐">
+<meta name="twitter:description" content="起因事情是这样的。 4年前毕业那会，呆在公司的短视频项目，做 🍍 视频。那会做得比抖音还早，但是由于短视频太烧钱了，项目被公司关掉啦。当时需要开发横竖屏直播/异步视频的场景，就研究下了市场上的 app，发现输入弹幕的交互并不友好。最直接的体验就是，微信比绝大部分IM软件在聊天场景下输入法与表情面板频繁切换时表现得更为平滑，不会给用户很突兀的闪烁感。但我们除了适配竖屏，们还需要兼容横屏/满屏/沉">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2020/6/8/1729333b087740e3?w=1988&h=1332&f=jpeg&s=122321">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/">
+
+
+
+
+
+  <title>拖更了三年，带回了一个非常好用的库｜墙贴推荐 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">拖更了三年，带回了一个非常好用的库｜墙贴推荐</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-27T00:00:00+08:00">
+                2020-07-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h3 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h3><p>事情是这样的。</p>
+<p>4年前毕业那会，呆在公司的短视频项目，做 🍍 视频。那会做得比抖音还早，但是由于短视频太烧钱了，项目被公司关掉啦。当时需要开发横竖屏直播/异步视频的场景，就研究下了市场上的 app，发现输入弹幕的交互并不友好。最直接的体验就是，微信比绝大部分IM软件在聊天场景下输入法与表情面板频繁切换时表现得更为平滑，不会给用户很突兀的闪烁感。但我们除了适配竖屏，们还需要兼容横屏/满屏/沉浸等场景。</p>
+<p>摸索了一段时间之后，做出来的效果挺不错，比市面上的直播/异步视频播放场景下的输入交互体验都要好。于是写了个记录的 Blog <a href="https://yummylau.com/2017/01/11/Android_2017-01-11_Android-SystemUI%E7%9A%84%E9%82%A3%E7%82%B9%E4%BA%8B/">Android<br>-SystemUI的那点事</a> 。主要是将如何设计横竖屏直/点播场景下良好的输入交互。但是文章并没有写完… 留了横屏模式下使用 PopupWindow 来实现的悬念… 本打算后续接着写第二篇。结果一拖，就是三年。</p>
+<p>而在这三年里，前后参与开发了十多个项目（我们是流水线生产😂，老工具人），而涉及到输入交互的模块已经有IM聊天，直播间，异步视频播放页面，信息流评论等等。这些页面从最初使用 <code>Activity</code> 实现到演化成可用 <code>Fragment</code>，<code>Dialog</code>，<code>PopupWindow</code> 代替。所以原来那套技术实现已经不能满足。在寻找外部开源项目/技术博文无果的前提下，慢慢积累了一个库。也就是今想推荐的 <a href="https://github.com/YummyLau/PanelSwitchHelper" target="_blank" rel="noopener">PanelSwitchHelper</a>，并且还了三年前博文的 <strong>债</strong>。</p>
+<h3 id="PanelSwitchHelper-技术篇"><a href="#PanelSwitchHelper-技术篇" class="headerlink" title="PanelSwitchHelper 技术篇"></a>PanelSwitchHelper 技术篇</h3><p>网络上随便搜索 “聊天输入框跳闪” 就有大量讲述同个技术方案的博文，依靠动态更改 LinearLayout - weight 数值，随 Window 更改动态调整内容区域高度来做到不闪跳的效果。但是也是仅仅不闪跳，但是会有生硬的 “忽隐忽现” 的效果。<code>PanelSwitchHelper</code> 早期也是如此实现。微信前几年的体验也是如此，后来体验做得越来越好，过渡变得十分平滑，其方案应该不是这样做的（个人见解）。为了能做到这种平滑的效果，尝试在原来的技术进行优化，但是效果很不如意，因为这些缺陷是由技术选型决定的，所以开始寻找新的技术方案。</p>
+<blockquote>
+<p>为了更好的讲述下面方案，我们把输入法和表情面板等都统称为功能面板。</p>
+</blockquote>
+<p>实践了一段实践后，决定使用手动干预 Layout 逻辑并借助系统过渡动画来实现 “类微信” 的平滑过渡。</p>
+<h4 id="新的模式"><a href="#新的模式" class="headerlink" title="新的模式"></a>新的模式</h4><p>我们称新的实现为 “内容滑动模式”，旧的实现为 “内容固定模式”。输入交互切换前后大概如下图。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/6/8/1729333b087740e3?w=1988&amp;h=1332&amp;f=jpeg&amp;s=122321" alt></p>
+<ul>
+<li>蓝色区域为内容区域，比如聊天IM界面上，蓝色区域大多数为 Recyclerview 实现的聊天列表</li>
+<li>绿色区域为面板区域，用于存储功能面板，比如微信的表情界面</li>
+</ul>
+<p>在滑动模式下，图2是功能面板显示的结构图。也就是说，无论是输入法显示与否，蓝色区域相对于图一向上滑动了等量输入法高度的距离。当从输入法切换到其他功能面板（比如表情面板）时，如果原表情面板就已经显示在输入法底下，则可无缝的显露出来。</p>
+<p>而上述的想法，需要干预到蓝色及绿色区域的 layout 逻辑。从滑动模式下的图一切换称图二时，其整体高度实际上不变，而 layout 的启始坐标是改变的，整体 Bound 也是发生了更改，借助 <code>ChangeBounds</code> 可实现平滑过渡。 </p>
+<p>实现之后效果大致如下。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293dff6262b7d0?w=200&amp;h=441&amp;f=gif&amp;s=291134" alt></p>
+<p>使用也是非常简单。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">new</span> <span class="selector-tag">PanelSwitchHelper</span><span class="selector-class">.Builder</span>(<span class="selector-tag">this</span>)</span><br><span class="line">                    <span class="selector-class">.addKeyboardStateListener</span> &#123;&#125;</span><br><span class="line">                    <span class="selector-class">.addEditTextFocusChangeListener</span> &#123;&#125;</span><br><span class="line">                    <span class="selector-class">.addViewClickListener</span> &#123;&#125;</span><br><span class="line">                    <span class="selector-class">.addPanelChangeListener</span> &#123;&#125;</span><br><span class="line">                    <span class="selector-class">.contentCanScrollOutside</span>(<span class="selector-tag">true</span>)</span><br><span class="line">                    <span class="selector-class">.logTrack</span>(<span class="selector-tag">true</span>)                  </span><br><span class="line">                    <span class="selector-class">.build</span>()</span><br></pre></td></tr></table></figure>
+<p>为了追求更高的实时体验，我们还需要兼容用户可能随时调整输入法高度，随时显示/隐藏导航栏配置。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293e0a08240ffa?w=200&amp;h=433&amp;f=gif&amp;s=785716" alt><br><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293e0c0f9294cf?w=200&amp;h=433&amp;f=gif&amp;s=955636" alt></p>
+<p>某一天，奇怪的屏幕来了，挖孔屏/刘海屏/全面屏。</p>
+<p>某一天，issue 反馈 Pad 有点适配问题。</p>
+<p>某一天，部分使用库的朋友反馈说直播间怎么处理。</p>
+<p>维护这个库，基本都是鉴于自己的兴趣爱好，而且一般提议的功能会被审核，合理的需求都会被安排！</p>
+<p><strong>“ 统统支持！”</strong></p>
+<h4 id="库的优势"><a href="#库的优势" class="headerlink" title="库的优势"></a>库的优势</h4><p>经过多个版本迭代之后，框架表现出来的优势：</p>
+<ol>
+<li>改进传统使用 Weight+LinearLayout 动态更改布局高度适配面板的技术方案，支持多种原生 ViewGroup 容器</li>
+<li>为了追求更平滑的适配效果，当输入法动态调整高度或动态隐藏导航栏时，功能面板能实时适配</li>
+<li>为了追求更流畅的切换效果，支持滑动模式，滑动会更流畅，同时也支持固定模式</li>
+<li>丰富的机型适配，适配 全面屏/刘海屏/挖孔屏/Pad 等非常规 Phone 机型</li>
+<li>丰富的场景支持，支持 Activity/Fragment/Dialog/PopupWindow，应用到聊天/视频/直播/信息流评论等场景</li>
+<li>丰富的 API 支持，可自定义内容容器，业务面板，灵活控制面板隐藏，灵活控制切换面板速度</li>
+</ol>
+<p>如果你担心不知道怎么用，Smaple 已经最直白的帮你梳理了你所需要的场景及 API 演示</p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/6/9/17296d6a091f4654?w=300&amp;h=660&amp;f=jpeg&amp;s=24862" alt></p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/6/9/17296d6bfeb5da55?w=300&amp;h=660&amp;f=jpeg&amp;s=25631" alt></p>
+<p>如果你想看到更多的场景介绍，可前往 <a href="https://github.com/YummyLau/PanelSwitchHelper/blob/master/README_SENCE-zh.md" target="_blank" rel="noopener">场景使用介绍</a></p>
+<p>如果你想了解更多API使用，可前往 <a href="https://github.com/YummyLau/PanelSwitchHelper/blob/master/README_API-zh.md" target="_blank" rel="noopener">API使用指南</a></p>
+<h4 id="部分场景演示"><a href="#部分场景演示" class="headerlink" title="部分场景演示"></a>部分场景演示</h4><p>最后下对比 BiliBili/虎牙直播/抖音直播/微信朋友圈的效果。</p>
+<h4 id="BiliBili-视频播放场景"><a href="#BiliBili-视频播放场景" class="headerlink" title="BiliBili 视频播放场景"></a>BiliBili 视频播放场景</h4><p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293da1d9e06154?w=200&amp;h=441&amp;f=gif&amp;s=1805462" alt><br><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293da46bfd77a9?w=200&amp;h=441&amp;f=gif&amp;s=1849029" alt></p>
+<p>对比结果：<strong>比 BiliBili 的切换更平滑</strong></p>
+<h4 id="抖音直播场景"><a href="#抖音直播场景" class="headerlink" title="抖音直播场景"></a>抖音直播场景</h4><p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293db07eaab70e?w=200&amp;h=441&amp;f=gif&amp;s=1898588" alt><br><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293db2c12b47bf?w=200&amp;h=441&amp;f=gif&amp;s=1999535" alt></p>
+<p>对比结果：<strong>比 抖音直播 的切换更平滑</strong></p>
+<h4 id="虎牙直播场景"><a href="#虎牙直播场景" class="headerlink" title="虎牙直播场景"></a>虎牙直播场景</h4><p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293db8e205ae44?w=200&amp;h=441&amp;f=gif&amp;s=3025404" alt><br><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293dbdc991ae82?w=200&amp;h=441&amp;f=gif&amp;s=3327878" alt></p>
+<p>对比结果：<strong>比 虎牙直播 的切换更平滑</strong></p>
+<h4 id="朋友圈评论场景"><a href="#朋友圈评论场景" class="headerlink" title="朋友圈评论场景"></a>朋友圈评论场景</h4><p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293dc273402a1e?w=200&amp;h=441&amp;f=gif&amp;s=171551" alt><br><img src="https://user-gold-cdn.xitu.io/2020/6/8/17293dc3d771d326?w=200&amp;h=441&amp;f=gif&amp;s=1583311" alt></p>
+<p>对比结果：<strong>比 朋友圈 的切换效果基本一致</strong></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>如果你还为输入场景的页面变换忧愁，<a href="https://github.com/YummyLau/PanelSwitchHelper" target="_blank" rel="noopener">PanelSwitchHelper</a> 可以帮助你解决非常多的问题。重要的是，我还可以协助你解决你可能遇到的困难呀～。</p>
+<p>如果你未来还可以需要开发涉及输入场景的功能，<a href="https://github.com/YummyLau/PanelSwitchHelper" target="_blank" rel="noopener">PanelSwitchHelper</a> 可以成为你的首选。</p>
+<p>欢迎前往体验，任何问题可提 issue ，我会第一时间回复，如有帮助， 🌟 下呗。</p>
+<p>大家感兴趣兴趣的话，可前往 <a href="https://juejin.im/post/5f0198ede51d4534b66d421a" target="_blank" rel="noopener">我是如何设计及改造 PanelSwitchHelper 库｜实战篇章</a> 查看源码细节。</p>
+<p>文章首发于 <a href="https://juejin.im/post/5eddf8456fb9a04804041738" target="_blank" rel="noopener">掘金-拖更了三年，带回了一个非常好用的库｜墙裂推荐｜进阶必备</a> 欢迎关注我 👏 </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/" title="拖更了三年，带回了一个非常好用的库｜墙贴推荐">http://yummylau.com/2020/07/27/拖更了三年，带回了一个非常好用的库｜墙裂推荐/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/27/我是如何设计及改造 PanelSwitchHelper 库｜实战篇章/" rel="next" title="我是如何设计及改造 PanelSwitchHelper 库｜实战篇章">
+                <i class="fa fa-chevron-left"></i> 我是如何设计及改造 PanelSwitchHelper 库｜实战篇章
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/27/如何读懂晦涩的 Class 文件｜进阶必备/" rel="prev" title="如何读懂晦涩的Class文件｜进阶必备">
+                如何读懂晦涩的Class文件｜进阶必备 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#起因"><span class="nav-number">1.</span> <span class="nav-text">起因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PanelSwitchHelper-技术篇"><span class="nav-number">2.</span> <span class="nav-text">PanelSwitchHelper 技术篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#新的模式"><span class="nav-number">2.1.</span> <span class="nav-text">新的模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#库的优势"><span class="nav-number">2.2.</span> <span class="nav-text">库的优势</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分场景演示"><span class="nav-number">2.3.</span> <span class="nav-text">部分场景演示</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BiliBili-视频播放场景"><span class="nav-number">2.4.</span> <span class="nav-text">BiliBili 视频播放场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#抖音直播场景"><span class="nav-number">2.5.</span> <span class="nav-text">抖音直播场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虎牙直播场景"><span class="nav-number">2.6.</span> <span class="nav-text">虎牙直播场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#朋友圈评论场景"><span class="nav-number">2.7.</span> <span class="nav-text">朋友圈评论场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

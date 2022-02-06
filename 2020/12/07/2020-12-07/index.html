@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="热修复,Android,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="上周五线上项目出现了紧急缺陷，无奈之下周六苦逼加班发补丁😭，唯一值得欣慰的是由于出现缺陷的功能会在今天通过 ABTest 下发，补丁赶在了大推之前。刚好周日在家闲着，就写一下「救我于水深火热的热修复」。  希望当你看完这篇文章之后，能够了解到应用热修复它并不难，也不需要自己造轮子，业界很多优秀的框架如Tinker，Robust，Sophix等。 如果项目还没有支持这个热更能力，希望你能尝试折腾">
+<meta name="keywords" content="热修复,Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="救我于水深火热的「热修复」">
+<meta property="og:url" content="http://yummylau.com/2020/12/07/2020-12-07/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="上周五线上项目出现了紧急缺陷，无奈之下周六苦逼加班发补丁😭，唯一值得欣慰的是由于出现缺陷的功能会在今天通过 ABTest 下发，补丁赶在了大推之前。刚好周日在家闲着，就写一下「救我于水深火热的热修复」。  希望当你看完这篇文章之后，能够了解到应用热修复它并不难，也不需要自己造轮子，业界很多优秀的框架如Tinker，Robust，Sophix等。 如果项目还没有支持这个热更能力，希望你能尝试折腾">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_5.jpg">
+<meta property="og:updated_time" content="2022-02-06T18:25:08.924Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="救我于水深火热的「热修复」">
+<meta name="twitter:description" content="上周五线上项目出现了紧急缺陷，无奈之下周六苦逼加班发补丁😭，唯一值得欣慰的是由于出现缺陷的功能会在今天通过 ABTest 下发，补丁赶在了大推之前。刚好周日在家闲着，就写一下「救我于水深火热的热修复」。  希望当你看完这篇文章之后，能够了解到应用热修复它并不难，也不需要自己造轮子，业界很多优秀的框架如Tinker，Robust，Sophix等。 如果项目还没有支持这个热更能力，希望你能尝试折腾">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2020/12/07/2020-12-07/">
+
+
+
+
+
+  <title>救我于水深火热的「热修复」 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2020/12/07/2020-12-07/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">救我于水深火热的「热修复」</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-12-07T16:40:00+08:00">
+                2020-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/12/07/2020-12-07/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/12/07/2020-12-07/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>上周五线上项目出现了紧急缺陷，无奈之下周六苦逼加班发补丁😭，唯一值得欣慰的是由于出现缺陷的功能会在今天通过 ABTest 下发，补丁赶在了大推之前。刚好周日在家闲着，就写一下「救我于水深火热的热修复」。</p>
+</blockquote>
+<p>希望当你看完这篇文章之后，能够了解到应用<strong>热修复</strong>它并不难，也不需要自己造轮子，业界很多优秀的框架如<strong>Tinker</strong>，<strong>Robust</strong>，<strong>Sophix</strong>等。</p>
+<p>如果项目还没有支持这个热更能力，希望你能尝试折腾慢慢接入，这不仅仅能学习到新知识也能为服务项目提供容错能力。</p>
+<p>文章篇幅比较长，希望各位看官能耐心看完，掌握整体思路并有所收获。</p>
+<blockquote>
+<p>编程是为了业务解决问题，学习编程的核心是掌握程序实现的思路，而代码只是一种实现程序的工具。</p>
+</blockquote>
+<p>下面从文章围绕 <strong>技术原理</strong>-<strong>技术选型</strong>及<strong>实践流程</strong>展开。</p>
+<h2 id="技术原理"><a href="#技术原理" class="headerlink" title="技术原理"></a>技术原理</h2><p>热修复按照类修复时机可分为<strong>类冷修复</strong>及<strong>类热更新</strong>。</p>
+<p>所谓<strong>类冷修复</strong>是指应用重启之后通过加载修复后的类文件来修复类已知的问题，而<strong>类热更新</strong>则是不需要重启应用前提下修复类已知的问题。</p>
+<p>另外热更修复的对象还可包括<strong>SO库</strong>及<strong>资源文件</strong>。</p>
+<p>下面针对<strong>类冷修复</strong>，<strong>类热更新</strong>，<strong>SO库修复</strong>及<strong>资源文件修复</strong>进行了解。</p>
+<h3 id="类冷修复"><a href="#类冷修复" class="headerlink" title="类冷修复"></a>类冷修复</h3><p>一个<strong>Class文件</strong>若已被<strong>JVM虚拟机</strong>所加载，只能通过重启手段解决来清除虚拟机中已保存的类信息。</p>
+<p>我们以<strong>QZone</strong><a href="https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&amp;mid=400118620&amp;idx=1&amp;sn=b4fdd5055731290eef12ad0d17f39d4a&amp;scene=0" title="插桩方案" target="_blank" rel="noopener">插桩方案</a> 和<strong>微信</strong><a href="https://github.com/Tencent/tinker" title="tinker方案" target="_blank" rel="noopener">tinker方案</a> 方案为分析，并引用<strong>Sophix方案</strong>的法做对比。</p>
+<h4 id="QZone方案"><a href="#QZone方案" class="headerlink" title="QZone方案"></a>QZone方案</h4><p>一个<strong>ClassLoader</strong>可加载多个<strong>DEX文件</strong>，每一个<strong>DEX文件</strong>被加载后在内存中表现为一个 <em>Element</em> 对象，多个<strong>DEX文件</strong>被加载后则排列成一个有序数组 <em>dexElements</em>。 对于 <a href="http://yummylau.com/2019/03/01/java_2019-03-01_%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/" title="ClassLoader">ClassLoader</a> 不熟悉的朋友，建议先看看链接里的储备知识。</p>
+<p>如果类已被<strong>ClassLoader</strong>加载，那么查找其对应 <em>class</em> 对象是通过调用 <em>findClass(String name, List<throwable> suppressed)</throwable></em> 方法实现。整个过程中如果存在已查找的 <em>class</em> 对象 ，则直接返回该 <em>class</em> 对象。所以<strong>QZone</strong>方案是把修复过的类打包成新的<strong>DEX文件</strong>，把该文件优先加载后插到 <em>dexElements</em> 中且排在了待修复类所在 <em>Element</em> 对象前面。</p>
+<p>这个方案涉及到类校验，可能会因为<strong>DEX文件</strong>被优化而导致异常：当我们第一次安装 APK 时，虚拟机如果检测到有一项 <em>verify</em> 参数被打开，则会对<strong>DEX文件</strong>执行 <em>dexopt</em> 优化。如果使用上述方案插入一个<strong>DEX文件</strong>，则会先执行 <em>dexopt</em>，这个过程可能会抛出异常 <em>dvmThrowIllegalAccessError</em>。</p>
+<p>通过截取 <a href="https://android.googlesource.com/platform/dalvik.git/+/android-4.2.2_r1/vm/analysis/DexPrepare.cpp" title="DexPrepare.cpp#verifyAndOptimizeClass" target="_blank" rel="noopener">DexPrepare.cpp#verifyAndOptimizeClass</a> 核心代码并做注释阐述：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> verifyAndOptimizeClass(DexFile* pDexFile, ClassObject* clazz,</span><br><span class="line">    <span class="keyword">const</span> DexClassDef* pClassDef, <span class="keyword">bool</span> doVerify, <span class="keyword">bool</span> doOpt)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (doVerify) &#123;</span><br><span class="line">  </span><br><span class="line">         <span class="comment">// 目的在于防止类外部被篡改。</span></span><br><span class="line">         <span class="comment">// 会对类的 static 方法，private 方法，构造函数，虚函数(可被继承的函数) 进行校验。</span></span><br><span class="line">         <span class="comment">// 如果类的所有方法中直接引用到的第一层类和当前类是在同一个 dex 文件，则会返回 true</span></span><br><span class="line">        <span class="keyword">if</span> (dvmVerifyClass(clazz)) &#123;</span><br><span class="line">  </span><br><span class="line">            <span class="comment">// 如果满足校验规则，则打上 CLASS_ISPREVERIFIED，设置 verified 为 true</span></span><br><span class="line">            ((DexClassDef*)pClassDef)-&gt;accessFlags |= <span class="built_in">CLASS_ISPREVERIFIED</span>;	 </span><br><span class="line">            verified = <span class="literal">true</span>;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (doOpt) &#123;</span><br><span class="line">        <span class="keyword">bool</span> needVerify = (gDvm.dexOptMode == OPTIMIZE_MODE_VERIFIED ||</span><br><span class="line">                           gDvm.dexOptMode == OPTIMIZE_MODE_FULL);</span><br><span class="line">  </span><br><span class="line">        <span class="keyword">if</span> (verified || needVerify) &#123;</span><br><span class="line">  </span><br><span class="line">            <span class="comment">//把部分指令优化成虚拟机内部指令，为了提升方法的执行速度。</span></span><br><span class="line">            dvmOptimizeClass(clazz, <span class="literal">false</span>);  <span class="comment">//Optimize class</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 再打上 CLASS_ISOPTIMIZED</span></span><br><span class="line">            ((DexClassDef*)pClassDef)-&gt;accessFlags |= <span class="built_in">CLASS_ISOPTIMIZED</span>; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以只需要理解如果一个类满足校验条件，就会被打上 <strong>CLASS_ISPREVERIFIED</strong>。具体做法是去校验 Class 所有 <em>directMethod</em> 和 <em>virtualMethod</em>，包含了：</p>
+<ul>
+<li>static 方法</li>
+<li>private 方法</li>
+<li>构造器方法</li>
+<li>虚函数</li>
+<li>…</li>
+</ul>
+<p>这些方法中第一层级关系引用到的类是在同一个<strong>DEX文件</strong>，则会被打上校验通过被打上<strong>CLASS_ISPREVERIFIED</strong>。</p>
+<p>那么被打上 <strong>CLASS_ISPREVERIFIED</strong> 那么为何会有异常呢？</p>
+<p>假如原先有个<strong>DEX文件</strong>中类<strong>B</strong>引用了类<strong>A</strong>，旧的类<strong>A</strong>与类<strong>B</strong>在同一个<strong>DEX文件</strong>，则<strong>B</strong>会被打上<strong>CLASS_ISPREVERIFIED</strong>，现在修复<strong>DEX文件</strong>包含了类<strong>A</strong>，当类<strong>B</strong>某个方法引用到类<strong>A</strong>时尝试去解析类<strong>A</strong>。</p>
+<p>通过截取<a href="https://android.googlesource.com/platform/dalvik.git/+/android-4.2.2_r1/vm/oo/Resolve.cpp" title="Resolve.cpp#dvmResolveClass" target="_blank" rel="noopener">Resolve.cpp#dvmResolveClass</a> 核心代码并做注释阐述：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ClassObject* dvmResolveClass(<span class="keyword">const</span> ClassObject* referrer, u4 classIdx,bool fromUnverifiedConstant)&#123;</span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="keyword">NULL</span>) &#123;</span><br><span class="line">  </span><br><span class="line">        <span class="comment">//此时 B 类已经被打上 CLASS_ISPREVERIFIED，满足条件</span></span><br><span class="line">        <span class="keyword">if</span> (!fromUnverifiedConstant &amp;&amp;</span><br><span class="line">            IS_CLASS_FLAG_SET(referrer, CLASS_ISPREVERIFIED)) </span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//被引用类 A</span></span><br><span class="line">            ClassObject* resClassCheck = resClass;   </span><br><span class="line">      </span><br><span class="line">            <span class="comment">//发现类 A 和 类 B 不在同一个 dex</span></span><br><span class="line">            <span class="keyword">if</span> (referrer-&gt;pDvmDex != resClassCheck-&gt;pDvmDex &amp;&amp;</span><br><span class="line">                resClassCheck-&gt;classLoader != <span class="keyword">NULL</span>)  </span><br><span class="line">            &#123;</span><br><span class="line">                dvmThrowIllegalAccessError(</span><br><span class="line">                    <span class="string">"Class ref in pre-verified class resolved to unexpected "</span></span><br><span class="line">                    <span class="string">"implementation"</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">NULL</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        dvmDexSetResolvedClass(pDvmDex, classIdx, resClass);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了解决类校验的问题，需要避免类被打上<strong>CLASS_ISPREVERIFIED</strong>，那么只需要保证 <em>dvmVerifyClass</em> 返回 <em>false</em> 即可。</p>
+<p>QZone 的做法是使用字节码修改技术，在所有 <em>class</em> 构造器中引用一个 <strong>帮助类</strong>，该类单独存放在一个<strong>DEX文件</strong>中，就可以实现所有类都不会被打上 <strong>CLASS_ISPREVERIFIED</strong> 标志，进而避免在 <em>dvmResolveClass</em> 解析中出现异常。</p>
+<p>上述例子类<strong>B</strong>由于引用类帮助类进而不会被打上<strong>CLASS_ISPREVERIFIED</strong>，所以加载修复后的类<strong>A</strong>也不会有问题。</p>
+<p>当然这样的做法也存在的问题与限制：由于类的加载涉及 <em>dvmResolveClass</em>，<em>dvmLinkClass</em> 和 <em>dvmInitClass</em> 三个阶段。</p>
+<p><em>dvmInitClass</em> 会在类解析完并尝试初始化类时执行，如果类没有被打上<strong>CLASS_ISPREVERIFIED</strong> 或 <strong>CLASS_ISOPTIMIZED</strong>，校验和优化都会在该阶段进行。</p>
+<p>正常情况下类的校验和优化应该在 APK 第一次安装的时候执行 <em>dexopt</em> 操作时执行，但是我们干预了<strong>CLASS_ISPREVERIFIED</strong>的设置流程导致在同一时间加载大量类且进行校验及优化，容易在应用启动时出现白屏。</p>
+<h3 id="手Q方案"><a href="#手Q方案" class="headerlink" title="手Q方案"></a>手Q方案</h3><p>为了避免插桩带来的性能问题，手Q则选择在 <em>dvmResolveClass</em> 避开了 <strong>CLASS_ISPREVERIFIED</strong> 相关逻辑。</p>
+<p>参考上面 <a href="https://android.googlesource.com/platform/dalvik.git/+/android-4.2.2_r1/vm/oo/Resolve.cpp" title="Resolve.cpp#dvmResolveClass" target="_blank" rel="noopener">Resolve.cpp#dvmResolveClass</a>的核心逻辑可知：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ClassObject* <span class="title">dvmResolveClass</span><span class="params">(<span class="keyword">const</span> ClassObject* referrer, u4 classIdx,<span class="keyword">bool</span> fromUnverifiedConstant)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	DvmDex* pDvmDex = referrer-&gt;pDvmDex;</span><br><span class="line">	</span><br><span class="line">	 <span class="comment">//从dex缓存中查找类 class，则直接返回</span></span><br><span class="line">	 resClass = dvmDexGetResolvedClass(pDvmDex, classIdx);</span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="literal">NULL</span>)</span><br><span class="line">        <span class="keyword">return</span> resClass;</span><br><span class="line">     </span><br><span class="line">     <span class="comment">//... resClass赋值工作</span></span><br><span class="line">    <span class="keyword">if</span> (resClass != <span class="literal">NULL</span>) &#123;</span><br><span class="line"></span><br><span class="line">       <span class="comment">//记住 fromUnverifiedConstant 这个变量</span></span><br><span class="line">       <span class="keyword">if</span> (!fromUnverifiedConstant &amp;&amp;IS_CLASS_FLAG_SET(referrer, CLASS_ISPREVERIFIED))&#123;</span><br><span class="line">          <span class="comment">//...类校验流程</span></span><br><span class="line">        &#125;</span><br><span class="line">  </span><br><span class="line">		     <span class="comment">//已经解析的类放入 dex 缓存</span></span><br><span class="line">       dvmDexSetResolvedClass(pDvmDex, classIdx, resClass);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><em>dvmDexGetResolvedClass</em> 方法是尝试从 <em>dex</em> 缓存中查找引用的类，找到了就直接返回；</li>
+<li><em>dvmDexSetResolvedClass</em> 方法是将已经解析的类存入 <em>dex</em> 缓存中。</li>
+</ul>
+<p>所以只需要将补丁类<strong>A</strong>提前解析并设置 <strong>fromUnverifiedConstant</strong> 为 true 绕过类校验，然后把<strong>A</strong>存储 <em>dex</em> 缓存中就可以达到效果。这一步可以通过 <em>jni</em> 主动调用 <em>dalvik#dvmRsolveClass</em> 方法实现。</p>
+<p>后续引用到该补丁类 A 的时候就可以直接从 dex 缓存中找到。当类<strong>B</strong>在校验是否和类<strong>A</strong>在同一个 <em>dex</em>时是通过以下条件：</p>
+<p><strong>referrer-&gt;pDvmDex != resClassCheck-&gt;pDvmDex</strong></p>
+<p>如果不打破这个条件，依然会出现异常。所以对补丁类<strong>A</strong>进行 <em>dex</em> 缓存时拿到的 <em>pDvmDex</em> 应该指向原来类<strong>A</strong>所在的 dex 。</p>
+<p>那么在 <em>dalvik#dvmRsolveClass</em> 的过程中，<em>referrer</em> 和 <em>classIdx</em> 要怎么确定？</p>
+<ul>
+<li><em>referrer</em> 为和原类<strong>*<em>同个 </em>dex<em> 下的一个任意类即可。但是需要调用 </em>dvmFindLoadedClass<em> 来实现，在补丁注入之后，在每个 </em>dex<em> 中找一个已经成功加载的引用类的描述符作为参数来实现。比如主 dex 就用 </em>Application* 类描述符。其他 dex，</strong>手Q*<em>确保了每一个份 </em>dex* 有一个空类完成初始化，使用的是空类的描述符。</li>
+<li><em>classIdx</em> 为原类 <strong>A</strong> 在所 <em>dex</em> 下的类索引 ID，通过<strong>dexdump -h</strong>指令获取。</li>
+</ul>
+<p>这套方案可完美避开插桩所带来的类校验影响，但假如在某个待修复多态类中新增方法，可能会导致修复前类的 <em>vtable</em> 的索引与修复后类的 <em>vtable</em> 索引对不上。因此修复后的类不能新增 <em>public</em> 函数，同样<strong>QZone</strong>也存在这样的问题。所以只能寻找全量合成新 <strong>dex</strong>文件的方案。</p>
+<h3 id="Tinker方案"><a href="#Tinker方案" class="headerlink" title="Tinker方案"></a>Tinker方案</h3><p><strong>tinker</strong>方案是全量替换 DEX 文件。</p>
+<p>使用自研算法通过计算重新生成新的<strong>DEX文件</strong>与待修复的<strong>DEX文件</strong>差异进而得到新的<strong>DEX文件</strong>，该<strong>DEX文件</strong>文件被下发到客户端与待修复的<strong>DEX文件</strong>重新进行合并生成新的全量<strong>DEX文件</strong>，并把其加载后插到 <em>dexElements</em> 数组的最前面。</p>
+<p>与<strong>QZone</strong>方案不一样的是，由于被修复的类与原类是在同一个<strong>DEX文件</strong>，所以不存在类校验问题。</p>
+<p>由于不同 Android 虚拟机下采用不同的 DEX 加载逻辑，所以在处理全量 DEX 时也有差异。</p>
+<p>比如<strong>Dalvik虚拟机</strong> 调用 <a href="https://android.googlesource.com/platform/dalvik/+/android-4.4.4_r2/vm/native/dalvik_system_DexFile.cpp" title="Dalvik_dalvik_system_DexFile_openDexFileNative" target="_blank" rel="noopener">Dalvik_dalvik_system_DexFile_openDexFileNative</a>来加载 DEX 文件，如果是一个压缩包则只会加载第一个 DEX 文件。而<strong>art虚拟机</strong> 则是调用 <a href="https://android.googlesource.com/platform/art/+/master/runtime/oat_file_assistant.cc" title="LoadDexFiles" target="_blank" rel="noopener">LoadDexFiles</a>, 加载的是 <em>oat</em> 中多个 DEX 文件。</p>
+<p>在<strong>Art虚拟机</strong>加载的压缩包下，可能存在多个<strong>DEX文件</strong>，main dex为<strong>classes.dex</strong>，其他的<strong>DEX文件</strong>依次命名为 <em>classes(2,3,4…)dex</em>。假如某个<strong>classesNdex</strong>出现了问题，tinker 会重新合成 <strong>classesNdex</strong> 。修复流程为：</p>
+<ol>
+<li>保留原来修复前<strong>classesNdex</strong>Dex 文件</li>
+<li>获取修复后的<strong>classedNdexFix</strong>dex 文件</li>
+<li>使用算法计算得到<strong>classesNdexPatch</strong>补丁文件</li>
+<li>下发<strong>classesNdexPatch</strong>补丁文件在客户端与<strong>classesNdex</strong>DEX 文件进行合并，得到<strong>classedNdexFix</strong>Dex 文件</li>
+<li>重启应用，提前加载<strong>classedNdexFix</strong>Dex 文件修复问题。</li>
+</ol>
+<p>这种全量合成修复 <strong>DEX文件</strong> 的做法，确保了复前后的类在同一个<strong>DEX文件</strong>中，遵循原来虚拟机所有校验方式，避开了<strong>QZone方案</strong>面临的类校验问题。</p>
+<h3 id="Sophix方案"><a href="#Sophix方案" class="headerlink" title="Sophix方案"></a>Sophix方案</h3><p>阿里<strong>Sophix</strong>方案认为</p>
+<blockquote>
+<p>既然 art 能加载压缩文件中的多个 dex 且优先加载 classes.dex，如果把补丁 dex 作为 classes.dex，然后 apk 中原来的 dex 改成 classes(2,3,4…)dex，然后重新打包压缩文件，让 DexFile.loadDex 得到 DexFile 对象，并最终替换掉旧的 dexElements 数组就可以了。</p>
+</blockquote>
+<p>但是这种方案下，<strong>Art虚拟机</strong>需要重新加载整个压缩文件，针对每一个 dex 执行 dexoat 来得到 odex 的过程是很耗时的。需要把整个过程事务化，在接收到服务端补丁之后再启动一个子线程在后台进行异步处理。如果下次重启之后发现存在处理完的完整 odex 文件集，才进行处理。</p>
+<p>同时认为</p>
+<blockquote>
+<p>针对 dalvik 下，全量合成 dex 可参照 multi-dex 方案，在原来 dex 文件中剔除需要修复的类，然后再合并进修复的类。并不需要像 tinker 方案中针对 dex 的所有内容进行比较，粒度非常细也非常复杂，以类作为粒度作为替换是较佳选择。</p>
+</blockquote>
+<p>但是如果 <em>Application</em> 加载了新 dex 的类 <em>Application</em> 刚好被打上 <strong>CLASS_ISPREVERIFIED</strong> ，那么就会面临前面 QZone 方案的类校验问题，实际上所有全量合成的方案都会面临这个问题。 <strong>tinker</strong> 使用的是 <strong>TinkerApplication</strong> 接管应用 <strong>Application</strong> 并在生命周期回调的时候反射调用原 <strong>Application</strong> 的对应方案。而 <strong>Sophix</strong> 也是使用 <em>SohpixStubApplication</em> 做了类似的事情。</p>
+<p><strong>小结一波</strong></p>
+<p>由于涉及的技术非常多，细致的实现可参考其各框架方案的开源代码，重点了解大致流程。冷启动方案几乎可以修复任何代码场景，但是补丁注入前已经被加载的类，如 <em>Application</em> 等是无法被修复的。综合上面的多种方案可以得到针对不同虚拟机的优先冷启动方案：</p>
+<ul>
+<li>Dalvik 虚拟机下使用类 <strong>multi-dex</strong> 全量方案避免插桩的方案</li>
+<li>Art 虚拟机下使用补丁类作为 <strong>classes.dex</strong> 重新打包压缩文件进行加载的方案</li>
+</ul>
+<h3 id="类热更新"><a href="#类热更新" class="headerlink" title="类热更新"></a>类热更新</h3><p><strong>类热更新</strong>指的是在不需要重启应用的前提下修复类的已知问题。</p>
+<p>如果一个类已被虚拟机所加载后要修正该类的某些方法，只能通过实现<strong>类热更新</strong>来实现：在 navite 层替换到对应被虚拟机加载过的类的方法。</p>
+<p>以阿里<strong>开源项目Andfix</strong>及<strong>Sophix</strong>方案为分析。</p>
+<ol>
+<li><strong><a href="https://github.com/alibaba/AndFix/blob/master/src/com/alipay/euler/andfix/AndFix.java" title="AndFix#replaceMethod(Method src,Method dest)" target="_blank" rel="noopener">AndFix#replaceMethod(Method src,Method dest)</a></strong> 为 Java 层替换错误方法的入口，通过 JNI 调用 Navite 层代码</li>
+<li><strong><a href="https://github.com/alibaba/AndFix/blob/master/jni/andfix.cpp" title="andifx#replaceMethod" target="_blank" rel="noopener">andifx#replaceMethod</a></strong> 为 Navite 层被上层所调用的代码,对虚拟机内的方法进行 ”替换“</li>
+</ol>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static void replaceMethod(<span class="keyword">JNIEnv* </span>env, <span class="keyword">jclass </span>clazz, <span class="keyword">jobject </span>src,<span class="keyword">jobject </span>dest) &#123;</span><br><span class="line">  if (isArt) &#123;</span><br><span class="line">    art_replaceMethod(env, src, dest)<span class="comment">;</span></span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    dalvik_replaceMethod(env, src, dest)<span class="comment">;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码区分了<strong>Dalvi虚拟机</strong>和<strong>Art虚拟机</strong>的不同实现。</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">extern void __attribute__ ((visibility (<span class="string">"hidden"</span>))) art_replaceMethod(JNIEnv* <span class="keyword">env</span>, jobject src, jobject dest) &#123;</span><br><span class="line">    <span class="keyword">if</span> (apilevel &gt; <span class="number">23</span>) &#123;</span><br><span class="line">        replace_7_0(<span class="keyword">env</span>, src, dest);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (apilevel &gt; <span class="number">22</span>) &#123;</span><br><span class="line">    replace_6_0(<span class="keyword">env</span>, src, dest);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (apilevel &gt; <span class="number">21</span>) &#123;</span><br><span class="line">    replace_5_1(<span class="keyword">env</span>, src, dest);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (apilevel &gt; <span class="number">19</span>) &#123;</span><br><span class="line">    replace_5_0(<span class="keyword">env</span>, src, dest);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        replace_4_4(<span class="keyword">env</span>, src, dest);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是不同虚拟机版本，由于虚拟机底层数据结构并不相同，所以还进一步针对不同 Android 版本再做区分。</p>
+<p>这就头大了啊。这里以 6.0 版本的<strong>Art虚拟机</strong>的替换流程简单讲一下。</p>
+<p>每一个 Java 方法在<strong>Art虚拟机</strong>内都对应一个 <a href="https://android.googlesource.com/platform/art/+/refs/heads/nougat-release/runtime/art_method.h" title="art_method" target="_blank" rel="noopener">art_method</a> 结构，用于记录 Java 方法的所有信息，包括归属类，访问权限，代码执行地址等。然后对这些信息进行逐一替换，替换完之后再次调用替换方法就可直接走新方法逻辑。</p>
+<p>当 Java Code 被编译处理成 Dex Code 之后，<strong>Art虚拟机</strong> 加载并可通过解释模式或者 AOT 模式执行。要在热更之后调用新方法就得替换方法执行入口。</p>
+<p>解释模式下通过获取 <a href="https://android.googlesource.com/platform/art/+/refs/heads/nougat-release/runtime/art_method.h" title="art_method.entry_point_from_jni_" target="_blank" rel="noopener">art_method.entry_point_from_jni_</a> 方法获取执行入口，而 AOT 模式模式则调用 <a href="https://android.googlesource.com/platform/art/+/refs/heads/nougat-release/runtime/art_method.h" title="art_method.entry_point_from_jni_" target="_blank" rel="noopener">art_method.entry_point_from_jni_</a> 获取。</p>
+<p>除了获取执行入口替换外，还需要保证方案使用的 <a href="https://github.com/alibaba/AndFix/blob/master/jni/art/art_method_replace_6_0.cpp" title="art_method_replace_6_0#replace_6_0" target="_blank" rel="noopener">art_method_replace_6_0#replace_6_0</a> 数据结构与安卓源码 <a href="https://android.googlesource.com/platform/art/+/refs/heads/nougat-release/runtime/art_method.h" title="art_method" target="_blank" rel="noopener">art_method</a> 数据结构完全一致才可以。但由于各种厂商存在对 ROM 进行魔改，难以保证能够修复成功。</p>
+<p>针对上述兼容问题，<strong>Sophix</strong>探索出了一种突破底层结构差异的方法。</p>
+<p>这种方法把一个<a href="https://android.googlesource.com/platform/art/+/refs/heads/nougat-release/runtime/art_method.h" title="art_method" target="_blank" rel="noopener">art_method</a> 看成了一个整体进行替换而不必针对每个版本 <em>ArtMethod</em> 严格控制内容。换句话说，只要知道当前设备 <em>art_method</em> 的长度，就可以把整个结构体完全替换掉。</p>
+<p>由于 ArtMethod 是紧密排列的，所以相邻两个 ArtMethod 的起始地址差值就是 ArtMethod 的大小。通过定义一个简单类 <em>NativeMethodCal</em> 来模拟计算。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NativeMethodCal</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">final</span> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">f1</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">  <span class="function"><span class="keyword">final</span> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">f2</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">``` </span><br><span class="line">  </span><br><span class="line">两个方法属于**<span class="keyword">static</span>**方法 且该类只有这两个方法，所以必定相邻,Native 层的替换可为</span><br></pre></td></tr></table></figure>
+<p>void replacee(JNIEnv* env, jobject src, jobject dest) {<br>  size_t firMid = (size_t) env-&gt;GetStaticMethodID(nativeMethodCalClazz,”f1”,”()V”);<br>  size_t secMid = (size_t) env-&gt;GetStaticMethodID(nativeMethodCalClazz,”f2”,”()V”);<br>  size_t methodSize = secMid - firMid<br>  memcpy(smeth,dmeth, methodSize);<br>}<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">*<span class="strong">*小结一波*</span><span class="strong">*</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">了解了两种方案在 Native 层的类热更思路及作用，但这两种方案也存在一些限制与问题：</span></span><br><span class="line"><span class="strong">1. 针对反射调用非静态方法产生的问题。这类问题只能通过冷启动修复，原因是反射调用的 *</span>invoke* 底层回调用到 <span class="strong">*InvokeMethod*</span>,该方法会校验反射的对象和是不是*<span class="strong">*ArtMethod*</span><span class="strong">*的一个实例，但方案替换了*</span><span class="strong">*ArtMethod*</span><span class="strong">*导致校验失败。</span></span><br><span class="line"><span class="strong">2. 不适合类发生结构变化的修改。比如增删方法可能引起类及 Dex 方法数变化，进而改变方法索引。同样地，增删字段也会更改方法索引。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">### 资源修复</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">资源修复是很常见的操作，资源修复方案很多参考*</span><span class="strong">*InstantRun*</span><span class="strong">*的实现，*</span><span class="strong">*InstantRun*</span><span class="strong">*资源修复核心流程大致如下：</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">1. 构建一个新的*</span><span class="strong">*AssetManager*</span><span class="strong">*对象，并调用*</span>addAssetPath*添加新的资源包；</span><br><span class="line">2. 修改所有*<span class="strong">*Activity*</span><span class="strong">*的 *</span>Activity.mAssets(AssetManager实例)* 的引用指向新构建的*<span class="strong">*AssetManager*</span><span class="strong">*对象；</span></span><br><span class="line"><span class="strong">3. 修改所有*</span><span class="strong">*Resource*</span><span class="strong">*的 *</span>Resource.mAssets(AssetManager实例)* 的引用指向新构建的*<span class="strong">*AssetManager*</span><span class="strong">*对象.</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">对于任意的资源包，被 *</span>AssetManager#addAssetPath* 添加之后，解析*<span class="strong">*resourecs.asrc*</span><span class="strong">*并在 Native 层 *</span>mResources* 侧保存起来。可参考 [AssetManager.h](https://android.googlesource.com/platform/frameworks/base/+/master/libs/androidfw/include/androidfw/AssetManager.h "AssetManager.h") 的实现。</span><br><span class="line"><span class="code">  </span></span><br><span class="line">实际上 <span class="strong">*mResources*</span> 是一个*<span class="strong">*ResTable*</span><span class="strong">*结构体，存放*</span><span class="strong">*resourecs.asrc*</span><span class="strong">*信息用的。而且一个进程只会有一个*</span><span class="strong">*ResTable*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span><span class="strong">*ResTable*</span>* 可加载多个资源包，一个资源包都包含一个*<span class="strong">*resourecs.asrc*</span>* ，每一个*<span class="strong">*resourecs.asrc*</span>* 记录了该包的所有资源信息，每一个资源对应一个*<span class="strong">*ResChunk*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">每一个*</span><span class="strong">*ResChunk*</span><span class="strong">*都有唯一的编号，由该编号由三部分构成，比如*</span><span class="strong">*0x7f0e0000*</span><span class="strong">*，可以随便找一个 APK 解包查看 *</span>resourecs.asrc* 文件。</span><br><span class="line"><span class="bullet">* </span>前两位 <span class="strong">*0x7f*</span> 为 package id，用于区分是哪个资源包</span><br><span class="line"><span class="bullet">* </span>接着两位 <span class="strong">*0x0e*</span> 为 type id，用于区分是哪类型资源，比如 drawable，string 等</span><br><span class="line"><span class="bullet">* </span>最后四位 <span class="strong">*0x0000*</span> 为 entry id，用于表示一个资源项，第一个为 <span class="strong">*0x0000*</span>，第二个为 <span class="strong">*0x0001*</span> 依次递增。</span><br><span class="line"></span><br><span class="line">&gt; 值得注意的是，系统的资源包的 package id 为 0x01，我们的 apk 为 0x7f</span><br><span class="line"></span><br><span class="line">在应用启动之后，*<span class="strong">*ResourceManager*</span><span class="strong">*在构建*</span><span class="strong">*AssetManager*</span><span class="strong">*时候就已经加载了 APK 包的资源和系统的资源。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">补丁下发的资源 *</span>packageId* 也会是 <span class="strong">*0x7f*</span> ，我们使用已有的*<span class="strong">*AssetManager*</span><span class="strong">*进行加载，在*</span><span class="strong">*Android L*</span><span class="strong">*版本之后这些内容会继续追加到已经解析资源的后面。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">由于相同的 *</span>packageId* 的原因，有可能在获取某个资源是原 APK 已经存在近而忽略了补丁的新资源。故 *<span class="strong">*类InstantRun方案*</span><span class="strong">*只有*</span><span class="strong">*AssetManager*</span><span class="strong">*被完全替换才有效。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">假如完整替换*</span><span class="strong">*AssetManager*</span>* ，则需要完整的资源包。补丁包需要通过修复前后的资源包经过差异计算之后下发，客户端接收并合成完整的新资源包，运行时可能会耗费较多的时间和内存。</span><br><span class="line"></span><br><span class="line">*<span class="strong">*Sophix*</span><span class="strong">*给出了一种可以不用重新合成资源包的方案，该方案可被应用到*</span><span class="strong">*Android L*</span><span class="strong">*及后续版本。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">同样是比较新旧资源包得到补丁资源包，然后通过修改补丁资源包的 *</span>packageId* 为 <span class="strong">*0x66*</span> ，并利用已有的*<span class="strong">*AssetManager*</span><span class="strong">*直接使用。这个补丁资源包要遵循以下规则：*</span><span class="strong">*补丁包只包含新增的资源，包含纯新增的资源和修改旧包的资源，不包含旧包需要删除的资源*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span> 纯新增的资源，代码处直接引用该资源；</span><br><span class="line"><span class="bullet">* </span>旧包需要修改的资源，则新增修改后的对应资源，然后把代码处资源引用指向修改后资源；</span><br><span class="line"><span class="bullet">* </span>旧包需要删除的资源，则代码处不引用该资源就好。（虽然会占着坑）</span><br><span class="line"></span><br><span class="line">使用新资源包进行编译，代码中可能出现资源 <span class="strong">*ID*</span> 偏移，需修正代码处的资源引用。</span><br><span class="line"></span><br><span class="line">举个🌰。</span><br><span class="line"><span class="code">  </span></span><br><span class="line">比如原来有一个*<span class="strong">*Drawable*</span><span class="strong">*在代码的引用为 *</span>0x7f0002*，由于新资源包新增了一个*<span class="strong">*Drawable*</span><span class="strong">*，导致原*</span><span class="strong">*Drawable*</span><span class="strong">*在代码的引用为*</span>0x7f0003*。</span><br><span class="line"><span class="code">  </span></span><br><span class="line">这个时候就需要把代码引用更改回原来的 <span class="strong">*0x7f0002*</span>。因为*<span class="strong">*Sophix*</span>* 加载的是 <span class="strong">*packageId*</span> 为 <span class="strong">*0x66*</span> 的补丁包而不是重新合成新的资源包。同时，对于使用到补丁包内的资源，其引用也需改成对应补丁资源引用 <span class="strong">*0x66????*</span>（????为可改变）。</span><br><span class="line"></span><br><span class="line">但是这种做法会导致构建补丁资源时非常复杂，需要懂得分析新旧资源包的*<span class="strong">*resources.asrc*</span><span class="strong">*及对系统资源加载流程十分了解才行。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">针对 *</span><span class="strong">*Android KitKat*</span><span class="strong">*及以下版本，为了避免和*</span><span class="strong">*InstantRun*</span><span class="strong">*一样创建新的*</span><span class="strong">*AssetManager*</span><span class="strong">*并做大量反射修改工作，对原 *</span><span class="strong">*AssetManager*</span>* 对象析构和重构。</span><br><span class="line"><span class="code">  </span></span><br><span class="line">具体做法是让 Native 层的*<span class="strong">*AssetManager*</span><span class="strong">*释放所有已加载的旧资源，然后把 Java 层的*</span><span class="strong">*AssetManager*</span><span class="strong">*对其的引用设置为 *</span>null*。同时 Java 层的*<span class="strong">*AssetManager*</span><span class="strong">*重新调用 *</span>init* 方法驱动 Native 创建一个没有加载过资源的 *<span class="strong">*AssetManager*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">这样一来，java 层上层代码对*</span><span class="strong">*AssetManager*</span><span class="strong">*引用就不需要修改了，然后在对其调用 *</span>AddAssetPath* 添加所有资源包就可以了。</span><br><span class="line"></span><br><span class="line">*<span class="strong">*小结一波*</span><span class="strong">*</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">资源修复整体是围绕*</span><span class="strong">*AssetManager*</span><span class="strong">*展开，本文也只是记录了大体的思路，学习一下著名框架的设计思路及解决问题方法。中间细节自然存有一些难点兼容点需被攻克，感兴趣可查看文章末端参考资料中的书籍。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">### SO修复</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">要理解 so 如何被修复得先了解系统如何加载 so 库。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">安卓有两种加载 so 库的方法。</span></span><br><span class="line"><span class="strong">1. 调用 *</span>System.loadLibrary* 方法，接收一个 so 的名称作为参数进行加载。对于 APK 而言，其*<span class="strong">*libs*</span><span class="strong">*目录下的 so 文件会被复制到应用安装目录并完成加载；</span></span><br><span class="line"><span class="strong">2. 调用 *</span>System.load 方法* 方法，接收一个 so 的完整路径作为参数进行加载。</span><br><span class="line"></span><br><span class="line">系统加载完 so 库之后需要进行注册，注册也分*<span class="strong">*静态注册*</span><span class="strong">*和*</span><span class="strong">*动态注册*</span>* </span><br><span class="line"></span><br><span class="line">*<span class="strong">*静态注册*</span><span class="strong">*使用 *</span>Java<span class="emphasis">_&#123;类完整路径&#125;_</span>&#123;方法名&#125;* 作为 native 的方法名。当 so 已经被加载之后，native 方法在第一次被执行时候就会完成注册。</span><br></pre></td></tr></table></figure></p>
+<p>public class Test{<br>  public static native String test();<br>}<br>extern “C” jstring Java_com_effective_android_test(JNIEnv *env,jclass clazz)<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="strong">**动态注册**</span>借助 <span class="emphasis">*JNI_OnLoad*</span> 方法完成绑定。当 so 被加载时会调用 <span class="emphasis">*JNI_OnLoad*</span> 方法进行注册。</span><br></pre></td></tr></table></figure></p>
+<p>public class Test{<br>  public static native void testJni();<br>}<br>void test(JNIEnv *env,jclass clazz){<br>  //native 实现逻辑<br>}</p>
+<p>//申明列表<br>JNINativeMethod nativeMethods[] = {<br>  {“test”,”()V”,(void <em>) test}<br>}<br>JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM </em>vm,void *reserved){</p>
+<p>  //实现注册<br>  jclass clz = env-&gt;FindClass(“com/effective/android/Test”);<br>  if(env-&gt;RegisterNatives(clz, nativeMethods,sizeOf(nativeMethods)/sizeOf(nativeMethods[0])) != JNI_OK){<br>    return JNI_ERR;<br>  }<br>  //…<br>}<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在修复在上述两种注册场景的 so 会存在局限：</span><br><span class="line"><span class="code">  </span></span><br><span class="line">*<span class="strong">*针对动态注册场景*</span><span class="strong">*</span></span><br><span class="line"><span class="strong">*</span> 对于*<span class="strong">*Art虚拟机*</span><span class="strong">*需要再次加载补丁 so 来完成方法映射的更新；</span></span><br><span class="line"><span class="strong">*</span> 对*<span class="strong">*Dalvik虚拟机*</span><span class="strong">*则需要对补丁 so 重命名来完成 Art 下方法映射的更新。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">*</span><span class="strong">*针对静态注册场景*</span><span class="strong">*</span></span><br><span class="line"><span class="strong">*</span> 解除已经完成静态注册的方法工作难度大；</span><br><span class="line"><span class="bullet">* </span>so 中哪些静态注册的方法需要更新也很难得知。</span><br><span class="line"></span><br><span class="line">由于涉及补丁 so 的二次加载，内存损耗大，可能导致*<span class="strong">*JNI OOM*</span><span class="strong">*出现。同时如果动态注册 so 场景下中新增了一些方法但是对应的 *</span><span class="strong">*DEX文件*</span>* 中没有与之对应的方法，则会出现 <span class="strong">*NoSuchMethodError*</span> 异常。 </span><br><span class="line"></span><br><span class="line">虽然困难，但是方案也是有的。</span><br><span class="line"></span><br><span class="line">假如在在应用加载 so 之前能够先尝试加载补丁 so 再加载应用 so，就可以实现修复。</span><br><span class="line"><span class="code">  </span></span><br><span class="line">比如自定义一个方法，替换掉 <span class="strong">*System.loadLibrary*</span> 方法来完成这个逻辑，但是存在一个缺点就是很难修复已经混淆编译的第三方库。</span><br><span class="line"></span><br><span class="line">所以最后采取的是类似*<span class="strong">*类修复*</span><span class="strong">*的注入方案。so 库被加载之后，最终会在 *</span>DexPathList.nativeLibararyDirectories/nativeLiraryPathElements* 变量所表示的目录下遍历搜索到。前者*<span class="strong">*nativeLibararyDirectories*</span><span class="strong">*是 *</span>SDK&lt;23* 时的目录，后者*<span class="strong">*nativeLibararyDirectories*</span><span class="strong">*是 *</span>SDK&gt;=23* 时的目录，只需要把补丁 so 的路径插入到他们目录的最前面即可。</span><br><span class="line"></span><br><span class="line">但是 so 库文件存在多种 CPU 架构，补丁和 apk 一样都存在需要选择哪个*<span class="strong">*abi*</span><span class="strong">*的 so 来执行的问题。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span><span class="strong">*Sophix*</span>* 提供了一种思路, 通过从多个*<span class="strong">*abis*</span><span class="strong">*目录中选择一个合适的*</span><span class="strong">*primaryCpuAbi*</span><span class="strong">*目录插到 *</span>nativeLibararyDirectories/nativeLiraryPathElements* 数组中。</span><br><span class="line"></span><br><span class="line">1. <span class="strong">*SDK&gt;=21*</span>时直接反射拿到 ApplicationInfo 对象的*<span class="strong">*primaryCpuAbi*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">2. *</span>SDK&lt;21*时由于不支持 64 位所以直接把 <span class="strong">*Build.CPU_ABI, Build.CPU_ABI2*</span> 作为*<span class="strong">*primaryCpuAbi*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong">                </span></span><br><span class="line"><span class="strong">具体可实现为以下逻辑。</span></span><br></pre></td></tr></table></figure></p>
+<p>ApplicationInfo mAppInfo = pm.getApplicationInfo(mApp.getPackageName(),0);<br>if(mAppInfo != null){<br>   // SDK&gt;=21<br>  if(Build.VERSION&gt;SDK_INT &gt;= Build.VERSION_CODES&gt;LOLLIPOP){<br>    File thirdFiled = ApplicationInfo.class.getDeclaredFiled(“primaryCpuAbi”);<br>    thirdFiled.setAccessable(true);<br>    String cupAbi = (String) thirdFiled.get(mAppInfo);<br>    primaryCpuAbis = new String<a href="cpuAbi"></a>;<br>  }else{<br>    primaryCpuAbis = new String<a href="Build.CPU_ABI，Build.CPU_ABI2"></a>;<br>  }<br>}<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">  </span></span><br><span class="line">## 方案选型</span><br><span class="line"><span class="code">  </span></span><br><span class="line">两年前在旧的团队预研热修复的时候，我们选择了*<span class="strong">*tinker*</span><span class="strong">*。现在所在的团队也还是*</span><span class="strong">*tinker*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">对于中小团队而言，我们选择方案一般需要：*</span><span class="strong">*兼容性强*</span><span class="strong">*，*</span><span class="strong">*修复范围广*</span><span class="strong">*，*</span><span class="strong">*免费*</span><span class="strong">*，*</span><span class="strong">*开源社区活跃*</span><span class="strong">*。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span> 兼容性强，需要兼容 Android 的所有版本，我们也尝试过*<span class="strong">*AndFix*</span><span class="strong">*，*</span><span class="strong">*QZone*</span><span class="strong">*等方案，基本*</span><span class="strong">*Android N*</span><span class="strong">*之后就放弃了；</span></span><br><span class="line"><span class="strong">*</span> 修复范围广，除了能修复类场景，资源，so 也需要考虑；</span><br><span class="line"><span class="bullet">* </span>免费，一开始*<span class="strong">*AndFix*</span><span class="strong">*时最简单易用，后面转*</span><span class="strong">*sophix*</span><span class="strong">*后收费就放弃了。如果有金主爸爸可以忽略，*</span><span class="strong">*sophix*</span><span class="strong">*非常简单易用，上述原理技术也参考了*</span><span class="strong">*sophix*</span>* 的技术方案，非常优秀；</span><br><span class="line"><span class="bullet">* </span>社区活跃，目前*<span class="strong">*tinker*</span><span class="strong">*的开源维护还算不错。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">故我们最终选择以*</span><span class="strong">*tinker*</span><span class="strong">*作为热修复方案技术框架来实现热修功能。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">## 集成与实践流程</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">### Tinker 集成</span></span><br><span class="line"><span class="strong">在我们项目中，*</span><span class="strong">*tinker*</span><span class="strong">*相关代码是作为*</span><span class="strong">*Service*</span><span class="strong">*层中的一个模块。模块包含以下信息：</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*代码目录*</span><span class="strong">*，包含*</span><span class="strong">*tinker*</span><span class="strong">*提供的所有库及项目封装的代码，涉及下载，加载，调试，日志上报等场景；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*Gradle脚本*</span><span class="strong">*，配置信息等；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*基线资源*</span><span class="strong">*，用于存放未加固包，Mapping文件，R文件等；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*Shell脚本*</span><span class="strong">*，用于打包补丁的脚本，提供给*</span><span class="strong">*Jenkins*</span><span class="strong">*使用，用于读取基线资源联合*</span><span class="strong">*tinker*</span><span class="strong">*提供的插件进行补丁生成。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">主端项目由于我们使用*</span><span class="strong">*ApplicationLike*</span><span class="strong">*进行代理，所以是否开启热修复，都需要 tinker 来代理我们的 *</span><span class="strong">*Application*</span><span class="strong">*。主端根据是否打开热修复功能动态 *</span>apply* Gradle 脚本及对 <span class="strong">*DefaultLifeCycle.flag*</span> 进行开关切换。 </span><br><span class="line"><span class="code">  </span></span><br><span class="line"></span><br><span class="line">### 实践流程</span><br><span class="line"></span><br><span class="line">在生产环境中，我们通过*<span class="strong">*Jenkins*</span><span class="strong">*平台输出产物，并先把产物输出到内部测试平台。如需要对外发布则同时上传产物到*</span><span class="strong">*CDN*</span><span class="strong">*文件服务器。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">另外，内部维护的*</span><span class="strong">*CMS平台*</span><span class="strong">*可对补丁信息进行分发，客户端通过读取*</span><span class="strong">*CMS配置信息*</span><span class="strong">*来获取补丁信息，进而驱动客户端修复行为。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">下面梳理了线上涉及补丁业务的所有流程，完全可复用到任何项目场景：</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">1. release分支保留基线资源</span></span><br><span class="line"><span class="strong">2. 修复线上紧急缺陷</span></span><br><span class="line"><span class="strong">3. 生成补丁上传到服务器</span></span><br><span class="line"><span class="strong">4. 分发平台配置补丁信息</span></span><br><span class="line"><span class="strong">5. 客户端加载补丁信息</span></span><br><span class="line"><span class="strong">6. 调试与日志支持</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">每个模块都涉及到真实项目的流程。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">#### release 分支保留基线资源</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">一般的*</span><span class="strong">*Git*</span><span class="strong">*开发流程可参考 [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/ "Git Flow") 一文，核心的分支概念主要由以下五类分支：</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*master主分支*</span><span class="strong">*，发布线上应用及版本 Tag；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*develop开发分支*</span><span class="strong">*，开发总分支；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*feature功能分支*</span><span class="strong">*，版本功能开发测试分支；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*hotfix补丁分支*</span><span class="strong">*，紧急 Bug 修复分支；</span></span><br><span class="line"><span class="strong">*</span> *<span class="strong">*release预发分支*</span><span class="strong">*，功能测试回归预发版分支。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">一般一个版本可能需要开发多个功能，可从*</span><span class="strong">*develop*</span><span class="strong">*拉取一个该版本的总*</span><span class="strong">*feature*</span><span class="strong">*分支，然后该总*</span><span class="strong">*feature*</span><span class="strong">*分支再拉取各个子分支给团队内部人员开发。这样可尽可能避免或减少分支的合并冲突。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">下面以我们团队日常开发分支实践展开，同时区分常规发版及补丁发版来修复紧急 Bug 来梳理整个版本的开发流程，见下图(强烈建议认真看一下)。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">&lt;img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_4.png" align=center  /&gt;</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">&gt; 如果同一个版本存在多个补丁，比如 release 1.0.0 出现 Bug 需要修复，则可衍生出 hotfix 1.0.0.1 作为第一个补丁的分支，hotfix 1.0.0.2 作为第二个补丁分支一次类推。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">在*</span><span class="strong">*release*</span><span class="strong">*测试回归结束后，需要输出发版分支前，*</span><span class="strong">*Jenkins*</span><span class="strong">*打开输出基线资源的配置，基线资源就会跟随打包产物一起发布到内部测试平台。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">这些资源会通过一个序列号进行关联区分，在命名上体现。我们团队使用的是 Git 提交记录来作为序列号区分。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">#### 修复线上紧急缺陷</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">从原发布版本对应的*</span><span class="strong">*release*</span><span class="strong">*分支中拉出*</span><span class="strong">*hotfix*</span><span class="strong">*分支，针对紧急缺陷进行修复。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">同时从内部测试平台下载*</span><span class="strong">*基线资源*</span><span class="strong">*存放到规定的目录后，把该分支推送到*</span><span class="strong">*remote*</span><span class="strong">*远端。这里使用的是*</span>tinkerPatchRelease* 进行补丁合成，所有合成工作逻辑都写在了*<span class="strong">*Shell脚本*</span><span class="strong">*中连同项目一起推上远端，等待被*</span><span class="strong">*Jenkins*</span><span class="strong">*执行处理。</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">#### 生成补丁上传</span></span><br><span class="line"><span class="strong"></span></span><br><span class="line"><span class="strong">*</span><span class="strong">*Jenkins*</span><span class="strong">*建立一个*</span><span class="strong">*Job*</span><span class="strong">*用于生产补丁。每次构建补丁前，把*</span><span class="strong">*修复线上紧急缺陷*</span><span class="strong">*步骤对应的分支名写到*</span><span class="strong">*Job*</span><span class="strong">*配置信息中。</span></span><br><span class="line"><span class="strong">  </span></span><br><span class="line"><span class="strong">该 *</span><span class="strong">*Job*</span><span class="strong">*执行时会先从*</span><span class="strong">*remote*</span><span class="strong">*远端拉取*</span><span class="strong">*hotfix*</span><span class="strong">*分支，然后执行*</span><span class="strong">*shell脚本*</span><span class="strong">*对*</span><span class="strong">*基线资源*</span><span class="strong">*进行读取并完成 Gradle 脚本的配置，再调用 *</span>tinkerPatchRelease* 进行补丁合成，最后对补丁产物进行重命名后上传到内部测试平台。</span><br><span class="line"></span><br><span class="line">#### 分发平台配置补丁信息</span><br><span class="line"></span><br><span class="line">首先明确应用与版本，补丁间的关系：</span><br><span class="line"></span><br><span class="line"><span class="bullet">* </span>一个应用存在多个版本</span><br><span class="line"><span class="bullet">* </span>一个应用版本可存在多个补丁，同个版本的补丁可以互相覆盖</span><br><span class="line"></span><br><span class="line">根据这个关系，我们需要设计对应数据结构来承载补丁信息。</span><br><span class="line"></span><br><span class="line">定义补丁信息，版本补丁信息，应用补丁信息</span><br></pre></td></tr></table></figure></p>
+<p>public class PatchInfo {<br>    public String appPackageName;<br>    public String appVersionName;<br>    //灰度或者全量，在(0-10000]之间<br>    public int percent = Constants.VERSION_INVALID;<br>    //补丁版本，有效的版本应该是(1-正无穷)，0为回滚，如果找到patchData下的补丁version匹配，则修复，否则跳过<br>    public long version = Constants.VERSION_INVALID;<br>    //补丁包大小<br>    public long size;<br>    //补丁描述<br>    public String desc;<br>    //补丁创建时间<br>    public long createTime;<br>    //补丁下载链接<br>    public String downloadUrl;<br>    //补丁文件 md5<br>    public String md5;<br>  }<br><figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">``` </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VersionPatchInfo</span> </span>&#123;</span><br><span class="line">    <span class="comment">//应用包名</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> packageName;</span><br><span class="line">    <span class="comment">//应用版本</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> versionName;</span><br><span class="line">    <span class="comment">//目标补丁版本</span></span><br><span class="line">    <span class="keyword">public</span> long targetPatchVersion;</span><br><span class="line">    <span class="comment">//某个版本下的多个补丁信息，一个版本可有多个补丁</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;PatchInfo&gt; patchList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PatchScriptInfo</span> </span>&#123;</span><br><span class="line">    <span class="comment">//应用报名</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">String</span> packageName;              </span><br><span class="line">    <span class="comment">//当前所有补丁列表，按版本区分</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;<span class="keyword">String</span>, VersionPatchInfo&gt; versionPatchList;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>则三者的关系为</p>
+<p><img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_1.png" align="center"></p>
+<p>定义一份配置信息文件，用于声明全平台所有版本的补丁信息。</p>
+<p><img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_2.png" align="center"></p>
+<p>则我们的分发平台<strong>CMS</strong>会根据规则通过配置项来构建上述这份配置文件，客户端通过<strong>CMS</strong>提供的 <em>Api</em> 来请求这份配置信息文件。</p>
+<h4 id="客户端加载补丁信息"><a href="#客户端加载补丁信息" class="headerlink" title="客户端加载补丁信息"></a>客户端加载补丁信息</h4><p>除了主动拉取<strong>CMS</strong>配置信息文件外，一般还需要支持被动接收推送信息。</p>
+<ul>
+<li>被动接收推送，客户端通过接收推动信息来构建配置信息；</li>
+<li>主动拉取配置，通过<strong>CMS</strong>提供的 <em>Api</em> 来实时拉取配置信息，进而构建配置信息。</li>
+</ul>
+<p>无论通过哪种方式来构建配置信息，后续都需要完成以下流程：</p>
+<p><img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_3.png" align="center"></p>
+<h4 id="调试与日志支持"><a href="#调试与日志支持" class="headerlink" title="调试与日志支持"></a>调试与日志支持</h4><p><strong>调试</strong>除了 IDE 的 Debug 之后，还可支持线上应用某些入口支持加载配置信息并可手动调试补丁。比如说在某些业务无相关的页面如 <strong>关于页面</strong>的某个<strong>view</strong>在连续快速点击达到一定次数后弹出对话框，在对话框输入内部测试码之后就可进入<strong>调试界面</strong>。</p>
+<p><img src="https://raw.githubusercontent.com/YummyLau/hexo/master/source/pics/20200502/patch_info_5.jpg" height="790" width="365" align="center"></p>
+<p>另外在 <strong>分发平台配置补丁信息</strong>章节中涉及的配置信息下载或补丁下载 <em>downloadUrl</em>，可自定义协议扩展进行多场景支持。</p>
+<ul>
+<li><strong>cms协议</strong>，通过内部的 CMS 文件协议来获取文件或者 <em>Api</em> 接口来请求，如果 URL 是以 <strong>cms:</strong> 开头的协议则固定从 CMS 文件服务器读取。</li>
+<li><strong>http/https协议</strong>，如果 URL 是常规 <strong>http:/https:</strong> 开头的协议则默认需要下载。</li>
+<li><strong>sdcard协议</strong>，以设备的 SDCARD 根目录为起点进行检索，如果 URL 是以 <strong>sdcard:</strong> 开头的协议则默认读取 SDCARD 本地文件。该协议用于测试使用，比如 <em>/sdcard/patch/config.txt</em> 等。</li>
+</ul>
+<p><strong>调试界面</strong>在扫描补丁脚本配置时，只需要输入满足上述 3 种协议中一种的 URL 来获取补丁信息。除此之外，整个加载流程都会定义流程码进行标示,可定义枚举类来支持，以下仅供参考。</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">public enum ReportStep &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取脚本，1开头</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    STEP_FETCH_SCRIPT(<span class="number">1</span>, <span class="string">"获取热修复配置脚本"</span>),</span><br><span class="line">    STEP_FETCH_SCRIPT_REMOTE(<span class="number">10</span>, <span class="string">"获取远端配置脚本"</span>),</span><br><span class="line">    STEP_FETCH_SCRIPT_LOCAL(<span class="number">11</span>, <span class="string">"获取本地配置脚本"</span>),</span><br><span class="line">    STEP_FETCH_SCRIPT_CMS(<span class="number">12</span>, <span class="string">"获取CMS配置脚本"</span>),</span><br><span class="line">    STEP_FETCH_SCRIPT_SUCCESS(<span class="number">100</span>, <span class="string">"获取配置成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_FETCH_SCRIPT_FAIL(<span class="number">101</span>, <span class="string">"获取配置失败"</span>, Level.ERROR),</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 解析脚本，2开头</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    STEP_RESOLVING_SCRIPT(<span class="number">2</span>, <span class="string">"解析热修复配置脚本"</span>),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_REMOTE(<span class="number">20</span>, <span class="string">"解析远端配置脚本"</span>),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_LOCAL(<span class="number">21</span>, <span class="string">"解析本地配置脚本"</span>),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_CMS(<span class="number">22</span>, <span class="string">"解析CMS配置脚本"</span>),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_LOCAL_SUCCESS(<span class="number">200</span>, <span class="string">"解析成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_LOCAL_FAIL(<span class="number">201</span>, <span class="string">"解析失败"</span>, Level.ERROR),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_MISS_CUR_PATCH_VERSION(<span class="number">2000</span>, <span class="string">"当前客户端版本找不到目标补丁"</span>, Level.ERROR),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_CUR_PATCH_INVALID(<span class="number">2001</span>, <span class="string">"补丁为无效补丁，补丁配置信息配置错误"</span>, Level.ERROR),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_CUR_PATCH_CANT_HIT(<span class="number">2002</span>, <span class="string">"客户端版本目标补丁未命中灰度"</span>, Level.ERROR),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_CUR_PATCH_IS_REDUCTION(<span class="number">2003</span>, <span class="string">"目标补丁为回滚补丁"</span>, Level.DEBUG),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_CUR_PATCH_HAS_PATCHED(<span class="number">2004</span>, <span class="string">"目标补丁已经被加载过，跳过"</span>, Level.DEBUG),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_HAS_SAME_NAME_FILE_BUT_MD5(<span class="number">2005</span>, <span class="string">"本地补丁目录查询到与目标补丁同名的文件，但md5校验失败"</span>, Level.ERROR),</span><br><span class="line">    STEP_RESOLVING_SCRIPT_HAS_SAME_NAME_FILE_AND_MATCH_MD5(<span class="number">2006</span>, <span class="string">"本地补丁目录查询到与目标补丁同名的文件，md5校验成功"</span>, Level.DEBUG),</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获取补丁，3开头</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    STEP_FETCH_PATCH_FILE(<span class="number">3</span>, <span class="string">"获取补丁"</span>),</span><br><span class="line">    STEP_FETCH_PATCH_FILE_REMOTE(<span class="number">30</span>, <span class="string">"从远端获取下载补丁文件"</span>),</span><br><span class="line">    STEP_FETCH_PATCH_FILE_LOCAL(<span class="number">31</span>, <span class="string">"从本地目录获取补丁文件"</span>),</span><br><span class="line">    STEP_FETCH_PATCH_SUCCESS(<span class="number">300</span>, <span class="string">"获取补丁文件成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_FETCH_PATCH_FAIL(<span class="number">301</span>, <span class="string">"获取补丁文件失败"</span>, Level.ERROR),</span><br><span class="line">    STEP_FETCH_PATCH_MATCH_MD5(<span class="number">3000</span>, <span class="string">"校验补丁文件 md5 成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_FETCH_PATCH_MISS_MD5(<span class="number">3001</span>, <span class="string">"校验补丁文件 md5 失败"</span>, Level.ERROR),</span><br><span class="line">    STEP_FETCH_PATCH_WRITE_DISK_SUCCESS(<span class="number">3002</span>, <span class="string">"补丁文件写入补丁目录成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_FETCH_PATCH_WRITE_DISK_FAIL(<span class="number">3003</span>, <span class="string">"补丁文件写入补丁目录失败"</span>, Level.ERROR),</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 修复补丁，4开头</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    STEP_PATCH(<span class="number">4</span>, <span class="string">"补丁修复"</span>),</span><br><span class="line">    STEP_PATCH_LOAD_SUCCESS(<span class="number">40</span>, <span class="string">"读取补丁文件成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_PATCH_LOAD_FAIL(<span class="number">41</span>, <span class="string">"读取补丁文件失败"</span>, Level.ERROR),</span><br><span class="line">    STEP_PATCH_RESULT_SUCCESS(<span class="number">400</span>, <span class="string">"补丁修复成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_PATCH_RESULT_FAIL(<span class="number">4001</span>, <span class="string">"补丁修复失败"</span>, Level.ERROR),</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 补丁回滚，4开头</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    STEP_ROLLBACK(<span class="number">5</span>, <span class="string">"补丁回滚"</span>),</span><br><span class="line">    STEP_ROLLBACK_RESULT_SUCCESS(<span class="number">50</span>, <span class="string">"补丁回滚成功"</span>, Level.DEBUG),</span><br><span class="line">    STEP_ROLLBACK_RESULT_FAIL(<span class="number">51</span>, <span class="string">"补丁回滚失败"</span>, Level.ERROR);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public int step;</span><br><span class="line">    public String desc;</span><br><span class="line">    @Level</span><br><span class="line">    public int logLevel;</span><br><span class="line"></span><br><span class="line">    ReportStep(int step, String desc) &#123;</span><br><span class="line">        this(step, desc, Level.INFO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ReportStep(int step, String desc, int logLevel) &#123;</span><br><span class="line">        this.step = step;</span><br><span class="line">        this.desc = desc;</span><br><span class="line">        this.logLevel = logLevel;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在补丁流程的每一个节点都进行 Log 日志输出，除了输出到 IDE 和<strong>调试界面</strong>外，还需上传到每个项目的日志服务器以便分析线上补丁流程的具体情况及补丁效果。</p>
+<p>到这，从<strong>技术原理-技术选型-实践流程</strong>整体思路上希望会大家有帮助~。</p>
+<p>码字不易，如对你有价值，点赞支持一下吧~</p>
+<p><strong>专注 Android 进阶技术分享，记录架构师野蛮成长之路</strong></p>
+<blockquote>
+<p>如果在Android领域有遇到任何问题，包括项目遇到的技术问题，面试及简历描述问题，亦或对未来职业规划有疑惑，可添加我微信  「Ming_Lyan」 或关注公众号 「Android之禅」，会尽自所能和你讨论解决。<br>后续会针对 “Android 领域的必备进阶技术”，“Android高可用架构设计及实践” ，“业务中的疑难杂症及解决方案” 等实用内容进行分享。<br>也会分享作为技术者如何在公司野蛮成长，包括技术进步，职级及收入的提升。<br>欢迎来撩。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2020/12/07/2020-12-07/" title="救我于水深火热的「热修复」">http://yummylau.com/2020/12/07/2020-12-07/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/热修复/" rel="tag"># 热修复</a>
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/27/如何读懂晦涩的 Class 文件｜进阶必备/" rel="next" title="如何读懂晦涩的Class文件｜进阶必备">
+                <i class="fa fa-chevron-left"></i> 如何读懂晦涩的Class文件｜进阶必备
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#技术原理"><span class="nav-number">1.</span> <span class="nav-text">技术原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类冷修复"><span class="nav-number">1.1.</span> <span class="nav-text">类冷修复</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#QZone方案"><span class="nav-number">1.1.1.</span> <span class="nav-text">QZone方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#手Q方案"><span class="nav-number">1.2.</span> <span class="nav-text">手Q方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tinker方案"><span class="nav-number">1.3.</span> <span class="nav-text">Tinker方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sophix方案"><span class="nav-number">1.4.</span> <span class="nav-text">Sophix方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类热更新"><span class="nav-number">1.5.</span> <span class="nav-text">类热更新</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端加载补丁信息"><span class="nav-number">1.5.1.</span> <span class="nav-text">客户端加载补丁信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调试与日志支持"><span class="nav-number">1.5.2.</span> <span class="nav-text">调试与日志支持</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

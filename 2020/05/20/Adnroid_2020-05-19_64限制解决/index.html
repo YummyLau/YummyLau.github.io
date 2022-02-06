@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="源码,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="初衷分享这个填坑的记录，主要是感觉身边很多 Androider 都会遇到和我一样的场景。  遇到一个 BUG ，优先按照自己经验修复 修复不了了，开始 Google（不要百度，再三强调），寻找一切和我们 BUG 相似的问题，然后看看有没有解决方案 尝试了很多解决方案，a 方案不行换 b 方案，b 方案不行换 c 方案… 知道没有方案可以尝试了，开始绝望… 如果影响不大，那就丢在项目里（估计也没人">
+<meta name="keywords" content="源码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="我是如何一步一步爬上 “64K限制” 的坑 ｜ 经验贴">
+<meta property="og:url" content="http://yummylau.com/2020/05/20/Adnroid_2020-05-19_64限制解决/index.html">
+<meta property="og:site_name" content="YummyLau">
+<meta property="og:description" content="初衷分享这个填坑的记录，主要是感觉身边很多 Androider 都会遇到和我一样的场景。  遇到一个 BUG ，优先按照自己经验修复 修复不了了，开始 Google（不要百度，再三强调），寻找一切和我们 BUG 相似的问题，然后看看有没有解决方案 尝试了很多解决方案，a 方案不行换 b 方案，b 方案不行换 c 方案… 知道没有方案可以尝试了，开始绝望… 如果影响不大，那就丢在项目里（估计也没人">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2022-02-06T18:25:08.925Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="我是如何一步一步爬上 “64K限制” 的坑 ｜ 经验贴">
+<meta name="twitter:description" content="初衷分享这个填坑的记录，主要是感觉身边很多 Androider 都会遇到和我一样的场景。  遇到一个 BUG ，优先按照自己经验修复 修复不了了，开始 Google（不要百度，再三强调），寻找一切和我们 BUG 相似的问题，然后看看有没有解决方案 尝试了很多解决方案，a 方案不行换 b 方案，b 方案不行换 c 方案… 知道没有方案可以尝试了，开始绝望… 如果影响不大，那就丢在项目里（估计也没人">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yummylau.com/2020/05/20/Adnroid_2020-05-19_64限制解决/">
+
+
+
+
+
+  <title>我是如何一步一步爬上 “64K限制” 的坑 ｜ 经验贴 | YummyLau</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YummyLau</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Keep moving！</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2020/05/20/Adnroid_2020-05-19_64限制解决/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yummyLau">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YummyLau">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">我是如何一步一步爬上 “64K限制” 的坑 ｜ 经验贴</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-20T00:00:00+08:00">
+                2020-05-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2020/05/20/Adnroid_2020-05-19_64限制解决/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2020/05/20/Adnroid_2020-05-19_64限制解决/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <a id="more"></a>
+<h3 id="初衷"><a href="#初衷" class="headerlink" title="初衷"></a>初衷</h3><p>分享这个填坑的记录，主要是感觉身边很多 Androider 都会遇到和我一样的场景。</p>
+<ol>
+<li>遇到一个 BUG ，优先按照自己经验修复</li>
+<li>修复不了了，开始 Google（不要百度，再三强调），寻找一切和我们 BUG 相似的问题，然后看看有没有解决方案</li>
+<li>尝试了很多解决方案，a 方案不行换 b 方案，b 方案不行换 c 方案… 知道没有方案可以尝试了，开始绝望…</li>
+<li>如果影响不大，那就丢在项目里（估计也没人发现），如果影响很大，那只能寻找别人帮助，如果别人也给不了建议，那就原地💥 </li>
+</ol>
+<p>其实无论影响大不大，丢在项目里总不太好。 当别人帮助不了的时候，真的就只有代码能帮你。尝试过很多方案不可行，很多时候是因为每个方案的背景不一样，包括开发环境背景如 gradle 版本，编译版本 ，api 版本等。我遇到的这个问题也是如此。 </p>
+<p>希望通过以下的记录能帮助你在面对无能为力的 “BUG” 时更坚定地寻找解决方案。</p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><blockquote>
+<p>在我们项目最近的一个版本中，QA 测试 feature 功能时反馈 “4.4设备上，APP 都 crash 啦！” 由于反馈该问题的时候已经快周末了，按照 PM 的流程我们需要在下周一封包给 MTL 做质量测试，这个问题必须在周一前解决。 =。=</p>
+</blockquote>
+<p>第一反应 “GG，感觉应该是坑”。立刻借了两台 4.4 的机型对发生 Crash 的包体进行调试，发现都是 “java.lang.NoClassDefFoundError”。 这个crash表明找不到引用的类原本应该在 主 Dex 文件中，但是主 Dex 文件中却没有提供这个类。</p>
+<p>难道我们没有 keep 住这个类吗？ 不应该啊，显然是因为构建工具已经知道这个类应该被打进去，却因为某些原因没有被打进去。我尝试使用 mutilDexKeepProguard keep 住这个类，然后编译直接不通过了。收到的异常为：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D8: Cannot fit requested classes <span class="keyword">in</span> <span class="keyword">the</span> main-dex <span class="built_in">file</span> (<span class="comment"># methods: 87855 &gt; 65536 ; # fields: 74641 &gt; 65536)</span></span><br></pre></td></tr></table></figure>
+<h3 id="定位问题"><a href="#定位问题" class="headerlink" title="定位问题"></a>定位问题</h3><p>上述异常你可能很熟悉。 Dex 文件规范明确指出，单个 dex 文件内引用的方法总数只能为 65536，而这个限制来源于是 davilk 指令中调用方法的引用索引数值，该数值采用 16位 二进制记录，也就是 2^16 = 65536。 这些方法数包括了 Android Framework 层方法，第三方库方法及应用代码方法。</p>
+<p>所谓 主dex，其实就是 classes.dex。还可能存在 classes1.dex,classes2.dex…classesN.dex，因为完整的项目可能包含超过 65536 个方法，因为需要对项目的 class 进行切分。主dex会被最先加载，必须包含启动引用所需要的类及“依赖类”（后面会有详细介绍）。而我所遇到的问题就是 “包含启动引用所需要的类及“依赖类包含的方法数” 超过 65536 个，构建系统不给我继续构建了。 </p>
+<p>事实上，在 minsdkVersion &gt;= 21 的应用环境下是不会出现这种异常的。因为构建apk时方法数虽然超过 65536必须分包处理大，但由于使用 ART 运行的设备在加载 apk 时会加载多个dex文件，在安装时执行预编译，扫描 classesN.dex 文件，并把他们编译成单个.oat 文件。所以 “包含启动引用所需要的类及“依赖类”  可以散落在不同的 dex 文件上。</p>
+<p>但是 minsdkVersion &lt; 21 就不一样了，5.0以下的机型用的是 Dalvik 虚拟机，在安装时仅仅会对 主dex 做编译优化，然后启动的时候直接加载 主dex。如果必要的类被散落到其他未加载的dex中，则会出现crash。也就是开头所说的   <code>java.lang.NoClassDefFoundError</code>。</p>
+<blockquote>
+<p>关于这个exception 和 “java.lang.ClassNoFoundError” 很像，但是有比较大的区别。后者在 Android中常见于混淆引起类无法找到所致。</p>
+</blockquote>
+<h3 id="寻找解决方案"><a href="#寻找解决方案" class="headerlink" title="寻找解决方案"></a>寻找解决方案</h3><p>明白了上述的技术背景之后，就可以想办法减少主dex里面的类，同时确保应用能够正常启动。</p>
+<p>但是官方只告诉我们 “如何 Keep 类来新增主 dex 里面的类”，但是没有告诉我们怎么减少啊 ！卧槽了…</p>
+<p>于是乎，我开始 Google + 各种github/issue 查看关于如何避免主 dex 方法爆了的方案，全都是几年前的文章，这些文章出奇一致地告诉你。</p>
+<p><strong>“尽量避免在application中引用太多第三方开源库或者避免为了一些简单的功能而引入一个较大的库”</strong></p>
+<p><strong>“四大组件会被打包进 classes.dex”</strong></p>
+<p>首先我觉得很无奈，首先我无法知道构建系统是如何将所谓的 “四大组件” 打包进 classes.dex，无从考证。其次在 本次版本 feature 已经验收完毕之下我无法直接对启动的依赖树进行调整，而且业务迭代了很久，移除或者移动一个启动依赖是比较大的改动，风险太大了。 </p>
+<p>我非常努力地优化，再跑一下。</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">D8: Cannot fit requested classes <span class="keyword">in</span> <span class="keyword">the</span> main-dex <span class="built_in">file</span> (<span class="comment"># methods:87463 &gt; 65536 ; # fields: 74531 &gt; 65536)</span></span><br></pre></td></tr></table></figure>
+<p>此时的我是非常绝望的，按照这样优化不可能降低到 65536 以下。 </p>
+<p>在这里，我花费了很多时间在尝试网上所说的各种方案。 我很难用 “浪费” 来描述对这段时间的使用，因为如果不是这样，我可能不会意识到对待这类问题上我的做法可能是错误的，并指导我以后应该这样做。</p>
+<h3 id="“被迫”啃下源码"><a href="#“被迫”啃下源码" class="headerlink" title="“被迫”啃下源码"></a>“被迫”啃下源码</h3><p>既然是从 .class 到生成 .dex 环节出现了问题，那就只能从构建流程中该环节切入去熟悉。 项目用的是 AGP3.4.1 版本，开始从 <strong>Transform</strong> 方向去尝试解惑：从 <a href="https://android.googlesource.com/platform/tools/base/+/refs/tags/gradle_3.4.0/" target="_blank" rel="noopener">gradle 源码</a> 中尝试跟踪并找到一下问题的答案。</p>
+<ol>
+<li>处理分包的 Transform 是哪个，主要做了什么</li>
+<li>影响 maindexlist 最终的 keep 逻辑是怎么确定的 ？ 构建系统本身 keep 了哪些，开发者可以 keep 哪些？</li>
+<li>从上游输入中接受的 clasee 是怎么根据 kepp 逻辑进行过滤的</li>
+<li>maindexlist 文件是什么时候生成的，在哪里生成。</li>
+</ol>
+<p>跟源码比较痛苦，特别是 gradle 源码不支持跳转只能一个一个类查，有些逻辑要看上四五遍。下面流程只列出核心步骤及方法。</p>
+<h4 id="寻找分包-Transform"><a href="#寻找分包-Transform" class="headerlink" title="寻找分包 Transform"></a>寻找分包 Transform</h4><p>在应用构建流程中，会经历 “评估” 阶段。当 apply “com.android.application” 插件之后，评估前后会经历以下流程</p>
+<ol>
+<li>com.android.build.gradle.BasePlugin#apply()</li>
+<li>com.android.build.gradle.BasePlugin#basePluginApply()</li>
+<li>com.android.build.gradle.BasePlugin#createTasks()</li>
+<li>com.android.build.gradle.BasePlugin#createAndroidTasks()</li>
+<li><strong>com.android.build.gradle.internal.VariantManager#createAndroidTasks(</strong>） //重点关注一</li>
+<li>com.android.build.gradle.internal.VariantManager#createTasksForVariantData()</li>
+<li>com.android.build.gradle.internal.ApplicationTaskManager#createTasksForVariantScope()  </li>
+<li>com.android.build.gradle.internal.ApplicationTaskManager#addCompileTask() </li>
+<li><strong>com.android.build.gradle.internal.TaskManager#createPostCompilationTasks()</strong> //重点关注二</li>
+<li>com.android.build.gradle.internal.pipeline.TransformManager#addTransform() </li>
+</ol>
+<p>上述流程有两个点留意：</p>
+<ol>
+<li>知道 <code>VariantManager#createAndroidTasks</code> 开始构建 Android tasks</li>
+<li><code>TaskManager#createPostCompilationTasks()</code> 为某一个构建场景添加 task，其中包含了支持 Multi-Dex 的 task</li>
+</ol>
+<p>Multi-Dex support 核心代码如下</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">D8MainDexListTransform <span class="keyword">multiDexTransform </span>= new D8MainDexListTransform(variantScope)<span class="comment">;</span></span><br><span class="line">transformManager.<span class="keyword">addTransform(taskFactory, </span>variantScope, <span class="keyword">multiDexTransform,</span></span><br><span class="line"><span class="keyword"> </span>       taskName -&gt; &#123;</span><br><span class="line">            File mainDexListFile =</span><br><span class="line">                    variantScope</span><br><span class="line">                            .getArtifacts()</span><br><span class="line">                            .appendArtifact(</span><br><span class="line">                                    InternalArtifactType.LEGACY_MULTIDEX_MAIN_DEX_LIST,</span><br><span class="line">                                    taskName,</span><br><span class="line">                                    <span class="string">"mainDexList.txt"</span>)<span class="comment">;</span></span><br><span class="line">            <span class="keyword">multiDexTransform.setMainDexListOutputFile(mainDexListFile);</span></span><br><span class="line"><span class="keyword"> </span>       &#125;, null, variantScope::<span class="keyword">addColdSwapBuildTask);</span></span><br></pre></td></tr></table></figure>
+<p><code>transformManager#addTransform</code>  一共有6个参数</p>
+<ul>
+<li>第三个为 multiDexTransform 对象</li>
+<li>第四个为 预配置的任务，用于生成 mainDexList.txt 的 action，其实就是为了延迟创建任务的，用于设置 mainDexList.txt 文件路径。</li>
+</ul>
+<p>到这里，有点头绪了。</p>
+<h4 id="D8MainDexListTransform-做了什么？"><a href="#D8MainDexListTransform-做了什么？" class="headerlink" title="D8MainDexListTransform 做了什么？"></a>D8MainDexListTransform 做了什么？</h4><p> <a href="https://android.googlesource.com/platform/tools/base/+/refs/tags/gradle_3.4.0/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/transforms/D8MainDexListTransform.kt" target="_blank" rel="noopener">D8MainDexListTransform</a> 的构造器参数很关键。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D8MainDexListTransform</span></span>(</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> manifestProguardRules: BuildableArtifact,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> userProguardRules: Path? = <span class="literal">null</span>,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> userClasses: Path? = <span class="literal">null</span>,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> includeDynamicFeatures: <span class="built_in">Boolean</span> = <span class="literal">false</span>,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> bootClasspath: Supplier&lt;List&lt;Path&gt;&gt;,</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">val</span> messageReceiver: MessageReceiver) : Transform(), MainDexListWriter &#123;&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>manifestProguardRules 为 aapt 混淆规则，编译时产生在 <code>build/intermediates/legacy_multidex_appt_derived_proguard_rules</code> 目录下的 manifest_keep.txt</li>
+<li>userProguardRules 为项目 multiDexKeepProguard 申明的 keep 规则</li>
+<li>userClasses 为项目 multiDexKeepFile 申明的 keep class </li>
+</ol>
+<p>这三份文件都会影响最终决定那些 class 会被打到 clesses.dex 中，逻辑在 <code>transform()</code> 里面:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">transform</span><span class="params">(invocation: <span class="type">TransformInvocation</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> inputs = getByInputType(invocation)</span><br><span class="line">        <span class="keyword">val</span> programFiles = inputs[ProguardInput.INPUT_JAR]!!</span><br><span class="line">        <span class="keyword">val</span> libraryFiles = inputs[ProguardInput.LIBRARY_JAR]!! + bootClasspath.<span class="keyword">get</span>()</span><br><span class="line">         <span class="comment">// 1 处</span></span><br><span class="line">        <span class="keyword">val</span> proguardRules =listOfNotNull(manifestProguardRules.singleFile().toPath(), userProguardRules)</span><br><span class="line">        <span class="keyword">val</span> mainDexClasses = mutableSetOf&lt;String&gt;()</span><br><span class="line">        <span class="comment">//  2 处</span></span><br><span class="line">        mainDexClasses.addAll(</span><br><span class="line">            D8MainDexList.generate(</span><br><span class="line">                getPlatformRules(),</span><br><span class="line">                proguardRules,</span><br><span class="line">                programFiles,</span><br><span class="line">                libraryFiles,</span><br><span class="line">                messageReceiver</span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">        <span class="comment">// 3 处</span></span><br><span class="line">        <span class="keyword">if</span> (userClasses != <span class="literal">null</span>) &#123;</span><br><span class="line">            mainDexClasses.addAll(Files.readAllLines(userClasses))</span><br><span class="line">        &#125;</span><br><span class="line">        Files.deleteIfExists(outputMainDexList)</span><br><span class="line">        <span class="comment">// 4处</span></span><br><span class="line">        Files.write(outputMainDexList, mainDexClasses)</span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: D8MainDexList.MainDexListException) &#123;</span><br><span class="line">        <span class="keyword">throw</span> TransformException(<span class="string">"Error while generating the main dex list:<span class="subst">$&#123;System.lineSeparator()&#125;</span><span class="subst">$&#123;e.message&#125;</span>"</span>, e)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>第一处代码拿到 multiDexKeepProguard keep 规则.</li>
+<li><p>第二处代码使用 <code>D8MainDexList#generate</code> 生成所有需要 keep 在 classes.dex 的 class 集合， <code>getPlatformRules()</code> 方法中强强制写死了一些规则.</p>
+ <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="function"><span class="keyword">fun</span> <span class="title">getPlatformRules</span><span class="params">()</span></span>: List&lt;String&gt; = listOf(</span><br><span class="line">    <span class="string">"-keep public class * extends android.app.Instrumentation &#123;\n"</span></span><br><span class="line">            + <span class="string">"  &lt;init&gt;(); \n"</span></span><br><span class="line">            + <span class="string">"  void onCreate(...);\n"</span></span><br><span class="line">            + <span class="string">"  android.app.Application newApplication(...);\n"</span></span><br><span class="line">            + <span class="string">"  void callApplicationOnCreate(android.app.Application);\n"</span></span><br><span class="line">            + <span class="string">"  Z onException(java.lang.Object, java.lang.Throwable);\n"</span></span><br><span class="line">            + <span class="string">"&#125;"</span>,</span><br><span class="line">    <span class="string">"-keep public class * extends android.app.Application &#123; "</span></span><br><span class="line">            + <span class="string">"  &lt;init&gt;();\n"</span></span><br><span class="line">            + <span class="string">"  void attachBaseContext(android.content.Context);\n"</span></span><br><span class="line">            + <span class="string">"&#125;"</span>,</span><br><span class="line">    <span class="string">"-keep public class * extends android.app.backup.BackupAgent &#123; &lt;init&gt;(); &#125;"</span>,</span><br><span class="line">    <span class="string">"-keep public class * implements java.lang.annotation.Annotation &#123; *;&#125;"</span>,</span><br><span class="line">    <span class="string">"-keep public class * extends android.test.InstrumentationTestCase &#123; &lt;init&gt;(); &#125;"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第三处代码把 multiDexKeepFile 申明需要保留的 class 添加到 2 步骤生成的集合中</p>
+</li>
+<li>第四出代码最终输入到 outputMainDexList ，这个文件就是在添加 D8MainDexListTransform 的时候预设置的 mainDexList.txt，保存在 <code>build/intermediates/legacy_multidex_main_dex_list</code> 目录下。</li>
+</ol>
+<p>到这里，想办法在勾住 <code>mainDexList.txt</code>， 在真正打包 classes.dex 之前修改文件时应该能保证方法数控制在 65536 之下的。我们项目中使用了 tinker， tinker 也 keep 了一些类到 classes.dex。从 multiDexKeepProguard/multiDexKeepFile 手段上不存在操作空间，因为这些是业务硬要求的逻辑。只能看编译之后生成的 mainDexList.txt，然后凭借经验去掉一些看起来可能 “前期不需要” 的 class，但稍微不慎都有可能导致 crash 产生。</p>
+<h4 id="寻找明确的-“Keep”-链"><a href="#寻找明确的-“Keep”-链" class="headerlink" title="寻找明确的 “Keep” 链"></a>寻找明确的 “Keep” 链</h4><p>希望能从代码逻辑上得到 “更为明确的指导”，就得了解下为啥 D8 构建流程， 为啥 keep 了那么多类，这些类是否存在删减的空间。</p>
+<p>但是我在 gradle 源码中并没有找到  <strong><a href="https://android.googlesource.com/platform/tools/base/+/refs/tags/gradle_3.4.0/build-system/builder/src/main/java/com/android/builder/multidex/D8MainDexList.java" target="_blank" rel="noopener">D8MainDexList.java</a></strong>#generate 的相关信息，它被放到 <code>build-system</code>  的另一个目录中，核心逻辑如下。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">static</span> <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; generate(</span><br><span class="line">        <span class="meta">@NonNull</span> <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; mainDexRules,		</span><br><span class="line">        <span class="meta">@NonNull</span> <span class="built_in">List</span>&lt;Path&gt; mainDexRulesFiles,</span><br><span class="line">        <span class="meta">@NonNull</span> Collection&lt;Path&gt; programFiles,</span><br><span class="line">        <span class="meta">@NonNull</span> Collection&lt;Path&gt; libraryFiles,</span><br><span class="line">        <span class="meta">@NonNull</span> MessageReceiver messageReceiver)</span><br><span class="line">        throws MainDexListException &#123;</span><br><span class="line">    D8DiagnosticsHandler d8DiagnosticsHandler =</span><br><span class="line">            <span class="keyword">new</span> InterceptingDiagnosticsHandler(messageReceiver);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        GenerateMainDexListCommand.Builder command =</span><br><span class="line">                GenerateMainDexListCommand.builder(d8DiagnosticsHandler)</span><br><span class="line">                        .addMainDexRules(mainDexRules, Origin.unknown()) <span class="comment">//d8强制写死的规则</span></span><br><span class="line">                        .addMainDexRulesFiles(mainDexRulesFiles) <span class="comment">//开发者通过 multiDexKeepProguard 添加的规则</span></span><br><span class="line">                        .addLibraryFiles(libraryFiles);</span><br><span class="line">        <span class="keyword">for</span> (Path program : programFiles) &#123;</span><br><span class="line">            <span class="keyword">if</span> (Files.isRegularFile(program)) &#123;</span><br><span class="line">                command.addProgramFiles(program);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">try</span> (Stream&lt;Path&gt; classFiles = Files.walk(program)) &#123;</span><br><span class="line">                    <span class="built_in">List</span>&lt;Path&gt; allClasses = classFiles</span><br><span class="line">                            .filter(p -&gt; p.toString().endsWith(SdkConstants.DOT_CLASS))</span><br><span class="line">                            .collect(Collectors.toList());</span><br><span class="line">                    command.addProgramFiles(allClasses);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">          <span class="comment">//最终调用 GenerateMainDexList#run</span></span><br><span class="line">        <span class="keyword">return</span> ImmutableList.copyOf(</span><br><span class="line">                GenerateMainDexList.run(command.build(), ForkJoinPool.commonPool()));</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> getExceptionToRethrow(e, d8DiagnosticsHandler);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述最终通过构建 <code>GenerateMainDexListCommand</code> 对象并传递给  <strong>GenerateMainDexList</strong> 执行。 这两个类在我们本地 AndroidSdk 里，路径为 <code>{AndroidSdk}/build-tools/{buildToolsVersion}/lib/d8.jar</code> 中，可通过 <strong>JD_GUI</strong> 工具查看。</p>
+<p><em>GenerateMainDexListCommandBuilder#build()</em>  在构建对象的时候做了以下工作：</p>
+<ol>
+<li>构建 <strong>DexItemFactory</strong> 工厂对象，用于构建 DexString，DexMethod 等相关 dex 信息</li>
+<li>预处理了规则文件，比如删除 “#” 注解相关等，解析成 <strong>ProguardConfigurationRule</strong> 对象集</li>
+<li>构建 <strong>AndroidApp</strong> 对象，用于记录程序资源的信息，比如 dexClass，libraryResource 等等</li>
+</ol>
+<p>最终传递 <strong>AndroidApp</strong>  对象 给 <em>GenerateMainDexList#run()</em> 调用。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> List&lt;String&gt; run(AndroidApp app, ExecutorService executor) <span class="keyword">throws</span> IOException, ExecutionException &#123;</span><br><span class="line">    <span class="comment">// 步骤一</span></span><br><span class="line">	DirectMappedDexApplication directMappedDexApplication =</span><br><span class="line">		 (<span class="keyword">new</span> ApplicationReader(app, <span class="keyword">this</span>.<span class="keyword">options</span>, 	<span class="keyword">this</span>.timing)).<span class="keyword">read</span>(executor).toDirect();</span><br><span class="line">	<span class="comment">// 步骤二</span></span><br><span class="line">	AppInfoWithSubtyping appInfo = <span class="keyword">new</span> AppInfoWithSubtyping((DexApplication)directMappedDexApplication);</span><br><span class="line">	<span class="comment">// 步骤三</span></span><br><span class="line">	RootSetBuilder.RootSet mainDexRootSet = </span><br><span class="line">		(<span class="keyword">new</span> RootSetBuilder((DexApplication)directMappedDexApplication, (AppInfo)appInfo, (List)<span class="keyword">this</span>.<span class="keyword">options</span>.mainDexKeepRules, <span class="keyword">this</span>.<span class="keyword">options</span>)).run(executor);</span><br><span class="line">	Enqueuer enqueuer = <span class="keyword">new</span> Enqueuer(appInfo, <span class="keyword">this</span>.<span class="keyword">options</span>, <span class="keyword">true</span>);</span><br><span class="line">	Enqueuer.AppInfoWithLiveness mainDexAppInfo = enqueuer.traceMainDex(mainDexRootSet, <span class="keyword">this</span>.timing);</span><br><span class="line">	<span class="comment">// 步骤四</span></span><br><span class="line">	Set&lt;DexType&gt; mainDexClasses = (<span class="keyword">new</span> MainDexListBuilder(<span class="keyword">new</span> HashSet(mainDexAppInfo.liveTypes), 		(DexApplication)directMappedDexApplication)).run();</span><br><span class="line">	List&lt;String&gt; result = (List&lt;String&gt;)mainDexClasses.stream().map(c -&gt; c.toSourceString().replace(<span class="string">'.'</span>, <span class="string">'/'</span>) + 			<span class="string">".class"</span>).sorted().<span class="keyword">collect</span>(Collectors.<span class="keyword">toList</span>());</span><br><span class="line">	<span class="keyword">if</span> (<span class="keyword">this</span>.<span class="keyword">options</span>.mainDexListConsumer != <span class="keyword">null</span>)</span><br><span class="line">  		<span class="keyword">this</span>.<span class="keyword">options</span>.mainDexListConsumer.accept(String.<span class="keyword">join</span>(<span class="string">"\n"</span>, (Iterable)result), (DiagnosticsHandler)<span class="keyword">this</span>.<span class="keyword">options</span>.reporter); </span><br><span class="line">	<span class="keyword">if</span> (mainDexRootSet.reasonAsked.<span class="keyword">size</span>() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		TreePruner pruner = <span class="keyword">new</span> TreePruner((DexApplication)directMappedDexApplication, mainDexAppInfo.withLiveness(), <span class="keyword">this</span>.<span class="keyword">options</span>);</span><br><span class="line">		DexApplication dexApplication = pruner.run();</span><br><span class="line">		ReasonPrinter reasonPrinter = enqueuer.getReasonPrinter(mainDexRootSet.reasonAsked);</span><br><span class="line">		reasonPrinter.run(dexApplication);</span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>步骤一，构建了 <em>ApplicationReader</em> 对象，阻塞等待 <em>read()</em> 方法读取了所有程序的资源，如果是存在 .dex 资源，则归类到 dex 类型；如果存在 class 类型，则归到 class 类型（但是过滤了 module-info.class 的文件）。这部分逻辑可在 <code>com.android.tools.r8.util.FilteredArchiveProgramResourceProvider</code> 查看。dex 类型使用 dex 格式解析，class 类型使用字节码格式解析之后保存到 <em>directMappedDexApplication</em>  对象中。</li>
+<li>步骤二 <strong>AppInfoWithSubtyping</strong> 读取了 <em>directMappedDexApplication</em>，计算并设置类的super/sub 关系。</li>
+<li>步骤三 把所有收集到的类信息及类的super/sub 关系，及 keep 的规则传递给 RootSetBuilder 用于计算 <strong>Root</strong> 集合，该集合决定哪些类将最终被 keep 到 classes.dex 里面。经过匹配混淆之后获得 <strong>Root</strong> 集合之后，调用 <em>run()</em> 进行向下检索。主要是计算 <strong>Root</strong>  集合内的 class 的依赖及使用枚举作为运行时注解类。</li>
+<li>步骤四 根据 <strong>Root</strong> 集合，按照以下两个方法顺序检索得到 <strong>mainDexClass</strong> 集合，方法逻辑如下。<ol>
+<li><code>traceMainDexDirectDependencies()</code>方法 <ul>
+<li>添加 Root 节点 class，添加其所有父类及接口；</li>
+<li>添加 Root 节点 class 中静态变量，成员变量；</li>
+<li>添加 Root 节点 class 中的方法的参数类型的 class，返回值类型对应的 class；</li>
+<li>收集 Root 节点 class 的注解。</li>
+</ul>
+</li>
+<li><code>traceRuntimeAnnotationsWithEnumForMainDex()</code> 方法<ul>
+<li>所有类中，如果 class 是注解类型且使用枚举类，则收集；</li>
+<li>所有类中，如果 class 使用了上一条规则的枚举类且枚举可见，则也收集。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>因此，最终生成的集合，会在 <strong><a href="https://android.googlesource.com/platform/tools/base/+/refs/tags/gradle_3.4.0/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/transforms/D8MainDexListTransform.kt" target="_blank" rel="noopener">D8MainDexListTransform</a></strong>#transform 中合并存在的 multiDexKeepFile 规则，并最终写到 <code>build/intermediates/legacy_mltidex_main_dex_list/</code> 目录下的 <code>maindexlist.txt</code> 文件。</p>
+<h3 id="尝试新方案"><a href="#尝试新方案" class="headerlink" title="尝试新方案"></a>尝试新方案</h3><p>那么 <strong>D8MainDexListTransform</strong> 能够被我勾住使用呢？ 当然可以。 找到 <strong>D8MainDexListTransform</strong> 对应的 <strong>Task</strong>，可以通过 <em>project.tasks.findByName</em> 来获取 <em>task</em> 对象，然后在 gradle 脚本中监听这个 <em>task</em> 的执行，在 task 结束之后并返回结果之前插入我们自定义的 task，可通过 <em>finalizeBy</em> 方法实现。</p>
+<p>而 D8MainDexListTransform 对应 Task 的名字的逻辑通过阅读 <a href="https://android.googlesource.com/platform/tools/base/+/refs/tags/gradle_3.4.0/build-system/gradle-core/src/main/java/com/android/build/gradle/internal/pipeline/TransformManager.java" target="_blank" rel="noopener">TransformManager</a>#getTaskNamePrefix 可推断。</p>
+<p>把上述所有逻辑封装成一个 gradle 脚本并在 application 模块中 apply 就行了。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">project</span>.afterEvaluate &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">println</span> <span class="string">"handle main-dex by user，start..."</span></span><br><span class="line">    <span class="keyword">if</span> (android.defaultConfig.minSdkVersion.getApiLevel() &gt;= <span class="number">21</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">println</span> <span class="string">"main-dex，minSdkVersion is $&#123;android.defaultConfig.minSdkVersion.getApiLevel()&#125;"</span></span><br><span class="line">    android.applicationVariants.all &#123; variant -&gt;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">def</span> variantName = variant.name.capitalize()</span><br><span class="line">        <span class="keyword">def</span> multidexTask = <span class="keyword">project</span>.tasks.findByName(<span class="string">"transformClassesWithMultidexlistFor$&#123;variantName&#125;"</span>)</span><br><span class="line">        <span class="keyword">def</span> exist = multidexTask != <span class="keyword">null</span></span><br><span class="line">        <span class="keyword">println</span> <span class="string">"main-dex multidexTask(transformClassesWithMultidexlistFor$&#123;variantName&#125;) exist: $&#123;exist&#125;"</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (exist) &#123;</span><br><span class="line">            <span class="keyword">def</span> replaceTask = createReplaceMainDexListTask(variant);</span><br><span class="line">            multidexTask.finalizedBy replaceTask</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> createReplaceMainDexListTask(variant) &#123;</span><br><span class="line">    <span class="keyword">def</span> variantName = variant.name.capitalize()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">task</span>(<span class="string">"replace$&#123;variantName&#125;MainDexClassList"</span>).<span class="keyword">doLast</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//从主dex移除的列表</span></span><br><span class="line">        <span class="keyword">def</span> excludeClassList = []</span><br><span class="line">        <span class="keyword">File</span> excludeClassFile = <span class="keyword">new</span> <span class="keyword">File</span>(<span class="string">"&#123;存放剔除规则的路径&#125;/main_dex_exclude_class.txt"</span>)</span><br><span class="line">        <span class="keyword">println</span> <span class="string">"$&#123;project.projectDir&#125;/main_dex_exclude_class.txt exist: $&#123;excludeClassFile.exists()&#125;"</span></span><br><span class="line">        <span class="keyword">if</span> (excludeClassFile.exists()) &#123;</span><br><span class="line">            excludeClassFile.<span class="keyword">eachLine</span> &#123; line -&gt;</span><br><span class="line">                <span class="keyword">if</span> (!line.trim().isEmpty() &amp;&amp; !line.startsWith(<span class="string">"#"</span>)) &#123;</span><br><span class="line">                    excludeClassList.add(line.trim())</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            excludeClassList.unique()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">def</span> mainDexList = []</span><br><span class="line">        <span class="keyword">File</span> mainDexFile = <span class="keyword">new</span> <span class="keyword">File</span>(<span class="string">"$&#123;project.buildDir&#125;/intermediates/legacy_multidex_main_dex_list/$&#123;variant.dirName&#125;/transformClassesWithMultidexlistFor$&#123;variantName&#125;/maindexlist.txt"</span>)</span><br><span class="line">        <span class="keyword">println</span> <span class="string">"$&#123;project.buildDir&#125;/intermediates/legacy_multidex_main_dex_list/$&#123;variant.dirName&#125;/transformClassesWithMultidexlistFor$&#123;variantName&#125;/maindexlist.txt exist : $&#123;mainDexFile.exists()&#125;"</span></span><br><span class="line">        <span class="comment">//再次判断兼容 linux/mac 环境获取</span></span><br><span class="line">        <span class="keyword">if</span>(!mainDexFile.exists())&#123;</span><br><span class="line">            mainDexFile = <span class="keyword">new</span> <span class="keyword">File</span>(<span class="string">"$&#123;project.buildDir&#125;/intermediates/legacy_multidex_main_dex_list/$&#123;variant.dirName&#125;/transformClassesWithMultidexlistFor$&#123;variantName&#125;/mainDexList.txt"</span>)</span><br><span class="line">            <span class="keyword">println</span> <span class="string">"$&#123;project.buildDir&#125;/intermediates/legacy_multidex_main_dex_list/$&#123;variant.dirName&#125;/transformClassesWithMultidexlistFor$&#123;variantName&#125;/mainDexList.txt exist : $&#123;mainDexFile.exists()&#125;"</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (mainDexFile.exists()) &#123;</span><br><span class="line">            mainDexFile.<span class="keyword">eachLine</span> &#123; line -&gt;</span><br><span class="line">                <span class="keyword">if</span> (!line.isEmpty()) &#123;</span><br><span class="line">                    mainDexList.add(line.trim())</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mainDexList.unique()</span><br><span class="line">            <span class="keyword">if</span> (!excludeClassList.isEmpty()) &#123;</span><br><span class="line">                <span class="keyword">def</span> newMainDexList = mainDexList.findResults &#123; mainDexItem -&gt;</span><br><span class="line">                    <span class="keyword">def</span> isKeepMainDexItem = <span class="keyword">true</span></span><br><span class="line">                    <span class="keyword">for</span> (excludeClassItem in excludeClassList) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (mainDexItem.contains(excludeClassItem)) &#123;</span><br><span class="line">                            isKeepMainDexItem = <span class="keyword">false</span></span><br><span class="line">                            <span class="keyword">break</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (isKeepMainDexItem) mainDexItem <span class="keyword">else</span> <span class="keyword">null</span></span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (newMainDexList.<span class="keyword">size</span>() &lt; mainDexList.<span class="keyword">size</span>()) &#123;</span><br><span class="line">                    mainDexFile.<span class="keyword">delete</span>()</span><br><span class="line">                    mainDexFile.createNewFile()</span><br><span class="line">                    mainDexFile.<span class="keyword">withWriterAppend</span> &#123; writer -&gt;</span><br><span class="line">                        newMainDexList.<span class="keyword">each</span> &#123;</span><br><span class="line">                            writer &lt;&lt; it &lt;&lt; <span class="string">'\n'</span></span><br><span class="line">                            writer.flush()</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而 <code>main_dex_exclude_class.txt</code>  的内容很简单，规则和 multiDexKeepFile 是一样的，比如：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">com<span class="regexp">/facebook/</span>fresco</span><br><span class="line">com<span class="regexp">/android/</span>activity/BaseLifeActivity.<span class="keyword">class</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>这样就可以啦～ 如果你找不到 D8MainDexListTransform 对应的 Task，那你应该是用了 r8 ，r8 会合并 mainDexList 的构建流程到新的 Task，你可以选择关闭 r8 或者寻找新的 hook 点，思路是一样的。</p>
+<p><strong>“什么，你讲了一遍流程，但是还是没有说哪些可以删  ”</strong></p>
+<p><strong>“其实，除了 D8 强制 keep 住的类和 contentProvider, 其他都可以删。”</strong></p>
+<p><strong>“但是我看到网上很多文章说，四大组件都要 keep 住哦”</strong></p>
+<p><strong>“建议以我为准。”</strong></p>
+<p>当然，我已经试过了，你把入口 Activity 删除，也只是慢一些而已，只是不建议罢了。或者你可以选择把二级页面全部移除出去，这样可能会大大减少  classes.dex 的方法数。</p>
+<p><strong>最终效果： methods: 87855 &gt; 49386。</strong></p>
+<p>上述分析存在错误欢迎指正或有更好的处理建议，欢迎评论留言哦。 </p>
+<blockquote>
+<p>解决问题很痛苦，逼着你去寻找答案，但解决之后真的爽。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    yummyLau
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yummylau.com/2020/05/20/Adnroid_2020-05-19_64限制解决/" title="我是如何一步一步爬上 “64K限制” 的坑 ｜ 经验贴">http://yummylau.com/2020/05/20/Adnroid_2020-05-19_64限制解决/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码/" rel="tag"># 源码</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/13/面试_2020-05-13_这些年，我所经历的面试｜写在正在求职的 Androider/" rel="next" title="这些年，我所经历的所有面试｜写给正在求职的 Androider">
+                <i class="fa fa-chevron-left"></i> 这些年，我所经历的所有面试｜写给正在求职的 Androider
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/27/一个更贴近 android 场景的启动框架 | Anchors/" rel="prev" title="一个更贴近 android 场景的启动框架 | Anchors">
+                一个更贴近 android 场景的启动框架 | Anchors <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="yummyLau">
+            
+              <p class="site-author-name" itemprop="name">yummyLau</p>
+              <p class="site-description motion-element" itemprop="description">努力让自己更优秀。</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/YummyLau" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#初衷"><span class="nav-number">1.</span> <span class="nav-text">初衷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#背景"><span class="nav-number">2.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定位问题"><span class="nav-number">3.</span> <span class="nav-text">定位问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#寻找解决方案"><span class="nav-number">4.</span> <span class="nav-text">寻找解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“被迫”啃下源码"><span class="nav-number">5.</span> <span class="nav-text">“被迫”啃下源码</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找分包-Transform"><span class="nav-number">5.1.</span> <span class="nav-text">寻找分包 Transform</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#D8MainDexListTransform-做了什么？"><span class="nav-number">5.2.</span> <span class="nav-text">D8MainDexListTransform 做了什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#寻找明确的-“Keep”-链"><span class="nav-number">5.3.</span> <span class="nav-text">寻找明确的 “Keep” 链</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#尝试新方案"><span class="nav-number">6.</span> <span class="nav-text">尝试新方案</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yummyLau</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'pPdkM9YTrgYDV8coDCdALdmi-gzGzoHsz',
+        appKey: '5HrONz3gb8XPDrUna01sa0gY',
+        placeholder: '留下你的足迹呗 ヾﾉ≧∀≦)o',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
