@@ -1223,7 +1223,7 @@ New repository 创建一个仓库。
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yummyLau">
@@ -1242,7 +1242,7 @@ New repository 创建一个仓库。
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/" itemprop="url">Android View体系之Touch事件传递源码解析(8.0)</a></h1>
+                <a class="post-title-link" href="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/" itemprop="url">Android View体系之基础常识及技巧</a></h1>
         
 
         <div class="post-meta">
@@ -1295,8 +1295,8 @@ New repository 创建一个仓库。
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/" itemprop="commentCount"></span>
+                <a href="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1326,15 +1326,12 @@ New repository 创建一个仓库。
       
         
           
-          技术背景
-从 View 体系中认识 Touch 事件传递，暂时留一条线索：＂　View 最原始的事件从哪里来？　”从 WindowCallbacKWrapper开始的。那么，我们开始吧！
-
-tip：阅读源码前，建议读懂 Android View体系之基础常识及技巧。
-千里之行，始于Activity从
+          可视界面结构通过 Android Device Monitor - Hierarchy View 查看任意界面，都可看到以下布局层次。也可以通过 Tool - Android - LayoutInspector 查看。
+123456789101112- DecorView	- LinearLayou
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/#more" rel="contents">
+            <a class="btn" href="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1544,7 +1541,7 @@ tip：阅读源码前，建议读懂 Android View体系之基础常识及技巧�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/">
+    <link itemprop="mainEntityOfPage" href="http://yummylau.com/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yummyLau">
@@ -1563,7 +1560,7 @@ tip：阅读源码前，建议读懂 Android View体系之基础常识及技巧�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/" itemprop="url">Android View体系之基础常识及技巧</a></h1>
+                <a class="post-title-link" href="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/" itemprop="url">Android View体系之Touch事件传递源码解析(8.0)</a></h1>
         
 
         <div class="post-meta">
@@ -1616,8 +1613,8 @@ tip：阅读源码前，建议读懂 Android View体系之基础常识及技巧�
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count valine-comment-count" data-xid="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/" itemprop="commentCount"></span>
+                <a href="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1647,12 +1644,15 @@ tip：阅读源码前，建议读懂 Android View体系之基础常识及技巧�
       
         
           
-          可视界面结构通过 Android Device Monitor - Hierarchy View 查看任意界面，都可看到以下布局层次。也可以通过 Tool - Android - LayoutInspector 查看。
-123456789101112- DecorView	- LinearLayou
+          技术背景
+从 View 体系中认识 Touch 事件传递，暂时留一条线索：＂　View 最原始的事件从哪里来？　”从 WindowCallbacKWrapper开始的。那么，我们开始吧！
+
+tip：阅读源码前，建议读懂 Android View体系之基础常识及技巧。
+千里之行，始于Activity从
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/03/05/Android_2018-03-05_View体系之基础常识及技巧/#more" rel="contents">
+            <a class="btn" href="/2018/03/05/源码解析_2018-03-05_Touch事件源码解析/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
